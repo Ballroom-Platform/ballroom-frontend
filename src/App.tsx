@@ -19,6 +19,7 @@ function App() {
 
   const [userId, setUserId] = useState("" as string);
   const [challengeId, setChallengeId] = useState("" as string);
+  const [contestId, setContestId] = useState("" as string);
   const [submissionFile, setSubmissionFile] = useState({} as FileList);
   const [errorStates, setErrorStates] = useState<IErrorStates>(defaultErrorStates);
   const [sucessStates, setSuccessStates] = useState<ISuccessStates>(defaultSuccessStates)
@@ -31,11 +32,15 @@ function App() {
     setChallengeId(event.currentTarget.value);
   }
 
+  const onContestIdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setContestId(event.currentTarget.value);
+  }
+
   const onSubmissionFileChange = (event : React.ChangeEvent<HTMLInputElement>) => {
     setSubmissionFile(prev => ({...prev, ...event.target.files}));
   }
   const onSubmit = () => {
-    if( userId === "" || challengeId === "" || Object.keys(submissionFile).length === 0){
+    if( userId === "" || challengeId === "" || contestId === "" ||  Object.keys(submissionFile).length === 0){
       setErrorStates(prev => ({...prev, emptyFields : true}));
       return;
     }
@@ -43,9 +48,10 @@ function App() {
     setErrorStates(defaultErrorStates);
 
     const formData = new FormData();
-    formData.append('submission', submissionFile[0], userId + "_" + challengeId + "_" + Date.now());
+    formData.append('submission', submissionFile[0], userId + "_" + contestId + "_" + challengeId + "_" + Date.now());
     formData.append("userId", userId);
     formData.append("challengeId", challengeId);
+    formData.append("contestId", contestId);
 
     const url = BFF_URLS.uploadService;
     const method = "POST";
@@ -64,6 +70,7 @@ function App() {
     <div style={{display:'flex', flexDirection:'column', width:'30%', margin:'auto', paddingTop:'10%'}}>
       <InputWrapper label="User ID: "><input type="text" name="userId" value={userId} onChange={onUserIdChange} style={{flex:6}}/></InputWrapper>
       <InputWrapper label="Challenge ID: "><input type="text" name="challengeId" value={challengeId} onChange={onChallengeIdChange} style={{flex:6}}/></InputWrapper>
+      <InputWrapper label="Contest ID: "><input type="text" name="contestId" value={contestId} onChange={onContestIdChange} style={{flex:6}}/></InputWrapper>
       <InputWrapper label="Upload the zip file: "><input type="file" name="submissionFile" accept=".zip" onChange={onSubmissionFileChange} style={{flex:6}}/></InputWrapper>
       <button onClick={onSubmit} style={{width:'40%', margin:'auto'}}>Submit</button>
       <div style={{margin:'auto', paddingTop:'20px'}}>
