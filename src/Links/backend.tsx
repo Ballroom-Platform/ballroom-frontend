@@ -1,3 +1,3 @@
 export const BFF_URLS = {
-    uploadService: ""
+    uploadService: "http://localhost:9090/uploadSolution"
 }

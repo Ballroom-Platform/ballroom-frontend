@@ -43,7 +43,7 @@ function App() {
     setErrorStates(defaultErrorStates);
 
     const formData = new FormData();
-    formData.append('submission', submissionFile[0]);
+    formData.append('submission', submissionFile[0], userId + "_" + challengeId + "_" + Date.now());
     formData.append("userId", userId);
     formData.append("challengeId", challengeId);
 
