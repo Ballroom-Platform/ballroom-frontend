@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useState } from "react";
-import { InputWrapper } from "./Components";
+import { InputWrapper, ScorePrompt } from "./Components";
 import { BFF_URLS } from "./Links";
 
 interface IErrorStates {
@@ -23,6 +23,7 @@ function App() {
   const [submissionFile, setSubmissionFile] = useState({} as FileList);
   const [errorStates, setErrorStates] = useState<IErrorStates>(defaultErrorStates);
   const [sucessStates, setSuccessStates] = useState<ISuccessStates>(defaultSuccessStates)
+  const [submissionId, setSubmissionId] = useState<string | null>(null);
 
   const onUserIdChange = (event : React.ChangeEvent<HTMLInputElement>) => {
     setUserId(event.currentTarget.value);
@@ -58,8 +59,10 @@ function App() {
     const headers = {};
     const data = formData;
 
-    axios({url, method, headers, data }).then(()=>{
+    axios({url, method, headers, data }).then((res)=>{
       setSuccessStates(prev => ({...prev, uploadComplete: true}));
+      setSubmissionId(res.data);
+      console.log(res);
     }).catch((err) => {
       setSuccessStates(defaultSuccessStates);
       setErrorStates(prev => ({...prev, uploadFailed:true}));
@@ -78,6 +81,7 @@ function App() {
         {errorStates.uploadFailed && (<div style={{color:"red"}}>Upload Failed</div>)}
         {sucessStates.uploadComplete && (<div style={{color:"green"}}>Upload Completed</div>)}
       </div>
+      {submissionId && <ScorePrompt submissionId={submissionId}/>}
     </div>
   );
 }
