@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react"
-import { BFF_URLS } from "../Links";
+import { BFF_URLS } from "../links";
 
 interface IProp {
     submissionId : string | null
