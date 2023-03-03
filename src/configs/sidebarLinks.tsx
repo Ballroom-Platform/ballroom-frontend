@@ -1,7 +1,9 @@
 import {
     DirectionsCar,
+    EmojiEvents,
     History,
     LocalCarWash,
+    Settings,
   } from '@mui/icons-material'
   import { ISidebarItem } from '../helpers/interfaces'
   
@@ -15,29 +17,21 @@ import {
     staff: {
       General: [
         {
-          label: 'Find vehicle',
-          icon: DirectionsCar,
-          url: '/staff/dashboard/general/findVehicle',
+          label: 'Contests',
+          icon: EmojiEvents,
+          url: '/dashboard',
           id: getId(),
           parent: 'General',
-          subSections: [],
+          subSections: ['Test1', 'Test2'],
         },
         {
-          label: 'In Process',
-          icon: LocalCarWash,
-          url: '/staff/dashboard/general/inProcess',
-          id: getId(),
-          parent: 'General',
-          subSections: ['/staff/dashboard/general/inProcess/process'],
-        },
-        {
-          label: 'History',
-          icon: History,
-          url: '/staff/dashboard/general/history',
-          id: getId(),
-          parent: 'General',
-          subSections: ['/staff/dashboard/general/history/jobHistory'],
-        },
+            label: 'Settings',
+            icon: Settings,
+            url: '/settings',
+            id: getId(),
+            parent: 'General',
+            subSections: [],
+          }
       ],
     }
     

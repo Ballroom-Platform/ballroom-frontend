@@ -31,7 +31,7 @@ ISidebarItem & { itemMeta: ISidebarItem }
   const fontColor = selected
     ? theme.palette.primary.main
     : theme.palette.grey[600]
-
+    
   return (
     <ListItem
     disablePadding

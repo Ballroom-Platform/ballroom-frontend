@@ -1,5 +1,6 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import React, { useState } from "react";
+import { uploadSubmission } from "../api/contestant";
 import { InputWrapper, ScorePrompt } from "../components";
 import { BFF_URLS } from "../links";
 
@@ -54,19 +55,18 @@ export const Form : React.FC = () => {
         formData.append("challengeId", challengeId);
         formData.append("contestId", contestId);
 
-        const url = BFF_URLS.uploadService;
-        const method = "POST";
-        const headers = {};
-        const data = formData;
+        const successHandler = (res: AxiosResponse) => {
+            setSuccessStates(prev => ({...prev, uploadComplete: true}));
+            setSubmissionId(res.data);
+            console.log(res);
+        }
 
-        axios({url, method, headers, data }).then((res)=>{
-        setSuccessStates(prev => ({...prev, uploadComplete: true}));
-        setSubmissionId(res.data);
-        console.log(res);
-        }).catch((err) => {
-        setSuccessStates(defaultSuccessStates);
-        setErrorStates(prev => ({...prev, uploadFailed:true}));
-        });
+        const failHandler = () => {
+            setSuccessStates(defaultSuccessStates);
+            setErrorStates(prev => ({...prev, uploadFailed:true}));
+        }
+
+        uploadSubmission(formData, successHandler, failHandler)
     }
 
     return (

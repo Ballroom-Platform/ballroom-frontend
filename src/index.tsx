@@ -5,9 +5,9 @@ import App from './App';
 import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from '@asgardeo/auth-react';
 import { asgardeoConfig } from './configs/asgardeoConfig';
-import { ThemeProvider } from '@emotion/react';
 import { defaultTheme } from './themes/default';
-import { CssBaseline } from '@mui/material';
+import { CssBaseline, ThemeProvider } from '@mui/material';
+import AppContextProvider from './contexts/AppContext';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -19,10 +19,12 @@ root.render(
   <React.StrictMode>
     <ThemeProvider theme={defaultTheme}>
       <AuthProvider config={asgardeoConfig}>
-        <BrowserRouter>
-          <CssBaseline />
-          <App />
-        </BrowserRouter>
+        <AppContextProvider>
+          <BrowserRouter>
+            <CssBaseline />
+            <App />
+          </BrowserRouter>
+        </AppContextProvider>
       </AuthProvider>
     </ThemeProvider>
   </React.StrictMode>

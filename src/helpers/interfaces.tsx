@@ -9,3 +9,12 @@ export interface ISidebarItem{
   parent: string
   subSections: Array<string>
 }
+
+
+export interface IAppState {
+    auth : {
+      status : "active" | "inactive";
+      accessToken? : string;
+      userID? : string;
+    }
+}

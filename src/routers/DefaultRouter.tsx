@@ -1,6 +1,7 @@
 import { SecureRoute, useAuthContext } from "@asgardeo/auth-react"
 import React from "react";
 import { Route, Switch } from "react-router"
+import { Layout } from "../components/templates";
 import { Dashboard, Home } from "../pages"
 
 export const DefaultRouter : React.FC = () => {
@@ -8,7 +9,9 @@ export const DefaultRouter : React.FC = () => {
     return(
         <Switch>
             <Route exact path="/" component={Home} />
-            <SecureRoute path="/dashboard" component={Dashboard} callback={() => signIn()}/>
+            <Layout>
+                <SecureRoute path="/dashboard" component={Dashboard} callback={() => signIn()}/>
+            </Layout>
         </Switch>
     )
 }
