@@ -3,10 +3,10 @@ import { teal } from "@mui/material/colors"
 
 export const themeColors = {
   brand: {
-    primary: '#9A86A4',
-    accent: '#B1BCE6',
-    secondary: '#B7E5DD',
-    neutral: '#F1F0C0'
+    primary: '#0E8388',
+    accent: '#2E4F4F',
+    secondary: '#2C3333',
+    neutral: '#CBE4DE'
   },
 }
 
@@ -19,9 +19,11 @@ const fonts = {
 export const defaultTheme = createTheme({
   palette:{
     primary: {
-      main : '#9A86A4'
+      main : '#2E4F4F'
     },
-    secondary : teal
+    secondary : {
+      main: "#2C3333"
+    }
   },
   typography: {
     fontFamily: "\"Poppins\", \"Courier\"",

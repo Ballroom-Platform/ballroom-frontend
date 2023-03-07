@@ -1,6 +1,7 @@
 import { useAuthContext } from '@asgardeo/auth-react'
 import { Box } from '@mui/material'
 import React, { useEffect, useState } from 'react'
+import { useHistory } from 'react-router'
 import { fetchAccessToken } from '../../api/common'
 import { useApp } from '../../hooks/useApp'
 import { Sidebar, TopBar } from '../organisms'
@@ -14,11 +15,11 @@ export const Layout: React.FC<IProps> = ({ children }) => {
   const {appState, setAppState} = useApp();
   const {getAccessToken, signOut, state} = useAuthContext();
   const [idpToken, setIdpToken] = useState<string | null>(null);
+  const history = useHistory()
 
 
   useEffect(()=>{
-    if (appState.auth.status === "inactive") {
-
+    if (appState.auth.status === "inactive" && state.isAuthenticated) {
       const getToken = async () => {
         const token  = await getAccessToken();
         setIdpToken(token);
@@ -28,12 +29,10 @@ export const Layout: React.FC<IProps> = ({ children }) => {
       if(idpToken !== null){
         fetchAccessToken(idpToken, setAppState, signOut);
       }else{
-        if(state.isAuthenticated){
-          getToken();
-        }
+        getToken();
       }
     }
-  }, [])
+  }, [appState.auth.status, state.isAuthenticated, idpToken])
 
   return (
     <>

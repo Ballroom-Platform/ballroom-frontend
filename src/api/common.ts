@@ -1,6 +1,4 @@
-import { useAuthContext } from "@asgardeo/auth-react";
 import { IAppState } from "../helpers/interfaces";
-import { useApp } from "../hooks/useApp";
 import { STS_URLS } from "../links/backend";
 import axios from "./axios";
 
@@ -17,5 +15,7 @@ export const fetchAccessToken = (idpToken : string, setAppState : React.Dispatch
         }else{
             signOut();
         }
-    }).catch(()=> signOut());
+    }).catch(()=> {
+        signOut();
+    });
 }

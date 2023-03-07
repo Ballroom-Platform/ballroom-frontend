@@ -1,42 +1,35 @@
 import { useAuthContext } from "@asgardeo/auth-react"
 import { Box, Button, Card, Grid, Typography } from "@mui/material";
-import Image from "mui-image";
+import { Link } from "react-router-dom";
+import { FRONTEND_PUBLIC } from "../links";
 import { themeColors } from "../themes/default";
 
 
 export const Home: React.FC = () => {
     const {signIn, } = useAuthContext();
     return (
-        <Box maxWidth="100vw" maxHeight="100vh" width="100vw" height='100vh' display='flex' sx={{justifyContent:'center', alignItems:'center'}} padding="5%">
-            <Card elevation={5} sx={{width:'30%', height:'80%', display:'flex', alignItems:'center', justifyContent:'center'}}>
-                <Box display='flex' width='100%' height='95%' sx={{alignItems:'center', flexDirection:'column', border: `dashed 2px ${themeColors.brand.primary}`}} paddingTop="10%" margin="2.5%">
-                    <Image src="logo.png" fit="contain" width="50%" height="auto"/>
-                    <Box display='flex' width='100%' height='100%' sx={{ alignItems:'center', flexDirection:'column'}} rowGap='5%' paddingTop="20%">
-                        <Typography variant="h5" fontWeight='regular' textAlign='center'>Login to your account</Typography>
-                        <Button variant='contained' size="large" onClick={() => signIn()}>Login</Button>  
-                    </Box>
+        <Box padding="2% 10%" height="100vh" maxHeight="100vh">
+            {/* Top Bar */}
+            <Box flexDirection="row" display="flex" height="15%" alignItems="center" justifyContent="space-between">
+                <img src={FRONTEND_PUBLIC.logo.black} style={{objectFit:"cover"}} height="100%"/>
+                <Box display="flex" flexDirection="row" alignItems="center" justifyContent="space-between" width="28%">
+                    <Link to="" style={{textDecoration:"none", color: themeColors.brand.accent}}>About Us</Link>
+                    <Link to="" style={{textDecoration:"none", color: themeColors.brand.accent}}>Features</Link>
+                    <Link to="" style={{textDecoration:"none", color: themeColors.brand.accent}}>Team</Link>
+                    <Link to="" style={{textDecoration:"none", color: themeColors.brand.accent}}>Company</Link>
                 </Box>
-                
-            </Card>
+                <Button color="secondary" variant="contained" sx={{height:"3.5rem", width:"10%", borderRadius:"4rem"}}>Contact Us</Button>
+            </Box>
+            <Box textAlign="center" paddingTop="2%">
+                <Typography variant="h1" fontWeight="bold" color={themeColors.brand.secondary}>Hacker's</Typography>
+                <Typography variant="h1" fontWeight="bold" color={themeColors.brand.primary}>Playground...</Typography>
+                <Box width="100%" paddingTop="3%">
+                    <Button variant="contained" sx={{height:"3.8rem", width:"10%", borderRadius:"4rem"}} onClick={() => signIn()}>Get Started</Button>
+                </Box>
+            </Box>
+            <Box textAlign="right" marginRight="15%">
+                <img src="home_pic.jpg" style={{objectFit:"contain"}} width="30%"/>
+            </Box>
         </Box>
     )
 }
-
-{/* <Box maxWidth="100vw" maxHeight="100vh" width="100vw" height='100vh' display='flex' sx={{justifyContent:'center', alignItems:'center'}} padding="5%" bgcolor={themeColors.brand.grey}>
-            <Box display='flex' width="100%" height="100%" columnGap='1%'>
-                <Card variant="outlined" sx={{width:'70%', display:'flex', alignItems:'center', justifyContent:'center', padding:'2% 0'}}>
-                    <Box display='flex' width='100%' height='100%' sx={{justifyContent:'center', alignItems:'center', flexDirection:'column'}}>
-
-                        <Typography variant="h1" fontWeight='bold' textAlign='center'>Ballroom</Typography>
-
-                        <Image src="login_page_pic.jpg" fit="contain" width="70%"/>
-                    </Box>
-                </Card>
-                <Card sx={{width:'30%', display:'flex', alignItems:'center', justifyContent:'center', bgcolor:themeColors.brand.primary}} elevation={4}>
-                    <Box display='flex' width='100%' height='100%' sx={{justifyContent:'center', alignItems:'center', flexDirection:'column'}} rowGap='5%'>
-                        <Typography variant="h4" fontWeight='bold' textAlign='center' color={themeColors.brand.neutral}>Login to your account</Typography>
-                        <Button variant='contained' size="large" onClick={() => signIn()}>Login</Button>  
-                    </Box>
-                </Card>
-            </Box>
-        </Box> */}
