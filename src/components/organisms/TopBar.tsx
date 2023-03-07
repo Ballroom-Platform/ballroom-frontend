@@ -15,6 +15,7 @@ import {
     Logout,
   } from '@mui/icons-material'
 import { useAuthContext } from '@asgardeo/auth-react'
+import zIndex from '@mui/material/styles/zIndex'
   
   export const TopBar: React.FC = () => {
     const theme = useTheme()
@@ -29,13 +30,17 @@ import { useAuthContext } from '@asgardeo/auth-react'
     return (
       <>
         <Paper
-          elevation={0}
+          elevation={50}
           sx={{
             height: '10rem',
             width: '100%',
             padding: '0.75rem 1rem',
             display: 'flex',
             alignItems: 'center',
+            position: 'sticky',
+            top: '0',
+            zIndex: '1000',
+            boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2)'
           }}
         >
           <Grid
