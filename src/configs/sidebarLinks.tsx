@@ -5,6 +5,9 @@ import {
     LocalCarWash,
     Settings,
   } from '@mui/icons-material'
+import { SvgIconTypeMap } from '@mui/material'
+import { OverridableComponent } from '@mui/material/OverridableComponent'
+import { FunctionDeclaration } from 'typescript'
   import { ISidebarItem } from '../helpers/interfaces'
   
   let idCount = -1
@@ -12,27 +15,38 @@ import {
     idCount += 1
     return idCount
   }
+
+  export const URL_LIST : Record<string, string> = {
+    contests : "/contests",
+    settings : "/settings"
+  }
+
+  interface IGetItem {
+    (
+      key: string,
+      label: string,
+      icon : OverridableComponent<SvgIconTypeMap>,
+      parent : string,
+      subSections : Array<string>
+    ) : ISidebarItem
+  }
+
+  const getItem : IGetItem = (key, label, icon, parent, subSections)=> {
+    return {
+      label,
+      icon,
+      url : URL_LIST[key],
+      id: getId(),
+      parent,
+      subSections,
+    }
+  }
   
   const SidbarLinks: Record<string, Record<string, Array<ISidebarItem>>> = {
     staff: {
       General: [
-        {
-          label: 'Contests',
-          icon: EmojiEvents,
-          url: '/dashboard',
-          id: getId(),
-          parent: 'General',
-          subSections: ['Test1', 'Test2'],
-        },
-        {
-            label: 'Settings',
-            icon: Settings,
-            url: '/settings',
-            id: getId(),
-            parent: 'General',
-            subSections: [],
-          }
-      ],
+        getItem("contests", "Contests", EmojiEvents, "General", ['Test1', 'Test2']),
+        getItem("settings", "Settings", Settings, "General", [])]
     }
     
   }

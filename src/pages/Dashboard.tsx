@@ -1,12 +1,13 @@
-import { useAuthContext } from "@asgardeo/auth-react"
-import { Grid } from "@mui/material"
-import { ContestCard } from "../components/molecules"
-
+import { useEffect } from "react"
+import { useHistory } from "react-router";
+import { useApp } from "../hooks/useApp"
+import { URL_LIST } from "../configs/sidebarLinks";
 
 export const Dashboard : React.FC = () => {
-    return(
-        <Grid>
-            <ContestCard contestImageURL="contest_image.jpg" contestName="Game Jam" startTime="" endTime="" forcedState="active" owner=""/>
-        </Grid>
-    )
+    const {appState} = useApp();
+    const history = useHistory()
+    useEffect(() => {
+        history.push(URL_LIST[appState.page.section]);
+    }, [])
+    return(<></>)
 }

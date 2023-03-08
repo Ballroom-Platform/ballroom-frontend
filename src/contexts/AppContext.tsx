@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useState } from 'react'
 import { IAppState } from '../helpers/interfaces'
 
 interface IProps {
@@ -8,6 +8,10 @@ interface IProps {
 const initialAppState : IAppState = {
   auth : {
     status : "inactive"
+  },
+  page : {
+    section: "contests",
+    subsection : ""
   }
 }
 

@@ -3,7 +3,7 @@ import SidebarLinks from '../../configs/sidebarLinks'
 import { SidebarSection, ProfileCard } from '../molecules'
 import { KeyboardDoubleArrowLeft } from '@mui/icons-material'
 import { ISidebarItem } from '../../helpers/interfaces'
-import Image from 'mui-image'
+import { FRONTEND_PUBLIC } from '../../links'
 
 export const Sidebar: React.FC = () => {
   let links: Record<string, Array<ISidebarItem>>
@@ -22,20 +22,14 @@ export const Sidebar: React.FC = () => {
         }}
         elevation={0}
       >
-        <Image
+        <img
           alt="Logo"
-          src="https://localhost:3000/logo.png"
-          fit="contain"
+          src={FRONTEND_PUBLIC.logo.black}
+          style={{objectFit:"contain"}}
           width="220px"
           height="93px"
         />
       </Paper>
-      <ProfileCard
-        name="John Edmond"
-        userType="Contestant"
-        url="https://localhost:3000/avatar.png"
-        minimized={false}
-      />
       <div style={{ paddingTop: '2rem' }}>
         {Object.keys(links).map((key, index) => (
           <SidebarSection section={key} key={index} itemsArray={links[key]} />

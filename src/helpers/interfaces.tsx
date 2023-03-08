@@ -16,5 +16,9 @@ export interface IAppState {
       status : "active" | "inactive";
       accessToken? : string;
       userID? : string;
+    },
+    page : {
+      section : string,
+      subsection : string
     }
 }
