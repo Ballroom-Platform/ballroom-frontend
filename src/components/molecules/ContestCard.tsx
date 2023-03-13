@@ -29,7 +29,7 @@ export const ContestCard : React.FC<IProps> = ({contestName, contestImageURL, st
         }
     }
     return (
-        <ButtonBase disabled={state === 'active' ? false : true} sx={{width:'350px', height:'300px'}}>
+        <ButtonBase disabled={state === 'active' ? false : true} sx={{width:'350px', height:'300px', margin: '1rem'}}>
             <Card sx={{width:'100%', height:'100%'}}>
                 <CardMedia image={contestImageURL} sx={{height:'50%'}}/>
                 <CardContent>
