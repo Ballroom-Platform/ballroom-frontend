@@ -11,7 +11,7 @@ export const Sidebar: React.FC = () => {
 
   return (
     <Paper
-      sx={{ height: '100vh', padding: '1rem', width: '18%', position: 'fixed' }}
+      sx={{ height: '100vh', padding: '1rem', width: '20%', position: 'fixed' }}
       elevation={3}
     >
       <Paper

@@ -1,9 +1,10 @@
 import { useAuthContext } from '@asgardeo/auth-react'
 import { Box } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-import { useHistory } from 'react-router'
+import { useHistory, useLocation } from 'react-router'
 import { fetchAccessToken } from '../../api/common'
 import { useApp } from '../../hooks/useApp'
+import { URL_LIST } from '../../links/frontend'
 import { Sidebar, TopBar } from '../organisms'
 
 interface IProps {
@@ -15,7 +16,7 @@ export const Layout: React.FC<IProps> = ({ children }) => {
   const {appState, setAppState} = useApp();
   const {getAccessToken, signOut, state} = useAuthContext();
   const [idpToken, setIdpToken] = useState<string | null>(null);
-  const history = useHistory()
+
 
 
   useEffect(()=>{
@@ -49,7 +50,9 @@ export const Layout: React.FC<IProps> = ({ children }) => {
             </Box>
             <section style={{ width: '80%', maxWidth: '80%' }}>
                 <TopBar />
-                {children}
+                <Box marginX="4rem">
+                  {children}
+                </Box>
             </section>
         </main>
     </>

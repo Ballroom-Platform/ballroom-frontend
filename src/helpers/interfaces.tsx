@@ -18,7 +18,32 @@ export interface IAppState {
       userID? : string;
     },
     page : {
-      section : string,
-      subsection : string
-    }
+      section? : string,
+      subsection? : string,
+      selectedItem? : string,
+      redirectURL? : string,
+    },
+    contests : Record<string, IContest>,
+    challenges : Record<string, IChallenge>
+}
+
+export interface IContest {
+  contestId : string,
+  title : string,
+  description : string,
+  constraints : string,
+  startTime : string,
+  endTime : string,
+  contestImageURL : string,
+  problemFiles : string,
+  forcedState : string,
+  challenges : Array<string>
+}
+
+export interface IChallenge {
+  challengeId : string,
+  title : string,
+  tags : Array<string>,
+  difficulty : string;
+  status : string;
 }

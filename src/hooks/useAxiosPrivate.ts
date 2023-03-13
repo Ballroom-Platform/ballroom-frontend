@@ -1,10 +1,12 @@
-import { useAuthContext } from '@asgardeo/auth-react'
 import { useEffect } from 'react'
 import { axiosPrivate } from '../api/axios'
+import { useApp } from './useApp'
+import useRefreshToken from './useRefreshToken'
 
 const useAxiosPrivate = async () => {
-    const {getAccessToken, refreshAccessToken} = useAuthContext()
-    let accessToken = await getAccessToken();
+    const {appState} = useApp();
+    const refresh = useRefreshToken();
+    let accessToken = appState.auth.accessToken;
 
     useEffect(() => {
         const requestIntercept = axiosPrivate.interceptors.request.use(
@@ -23,8 +25,7 @@ const useAxiosPrivate = async () => {
             const prevRequest = error?.config
             if (error?.response?.status === 403 && !prevRequest?.sent) {
             prevRequest.sent = true
-            await refreshAccessToken();
-            accessToken = await getAccessToken();
+            accessToken = await refresh();
             prevRequest.headers['Authorization'] = `Bearer ${accessToken}`
             return axiosPrivate(prevRequest)
             }

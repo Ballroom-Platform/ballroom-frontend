@@ -1,6 +1,5 @@
 import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import TableContainer from "@mui/material/TableContainer";
 import TableCell from "@mui/material/TableCell";
 import Table from "@mui/material/Table";
@@ -8,14 +7,12 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TableBody from "@mui/material/TableBody";
 import DownloadIcon from '@mui/icons-material/Download';
+import { Layout } from "../components/templates";
 
 
 const PreviousSubmissions = () => {
     return ( 
-        <>
-            <Paper sx={{display: 'flex', justifyContent: "space-between", marginY: '2rem', paddingX: '3rem'}} elevation={0}>
-                <Button variant="contained" startIcon={<ArrowBackIosNewIcon/>}>Back to Challenge</Button>
-            </Paper>
+        <Layout>
             <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
@@ -38,7 +35,7 @@ const PreviousSubmissions = () => {
                 <TableCell align="center">{row.submittedTime}</TableCell>
                 <TableCell align="center">{row.score}</TableCell>
                 <TableCell align="center">
-                    <Button variant="contained" startIcon={<DownloadIcon />}>
+                    <Button variant="outlined" startIcon={<DownloadIcon />}>
                         Download
                     </Button>
                 </TableCell>
@@ -47,7 +44,7 @@ const PreviousSubmissions = () => {
           </TableBody>
         </Table>
       </TableContainer>
-        </>
+        </Layout>
     );
 }
  

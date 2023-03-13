@@ -7,6 +7,9 @@ export const BFF_URLS = {
     score_submissionScore: BFF_BASE_URLS.scoreAPI + "/submissionScore"
 }
 
+const STS_BASE = "http://localhost:9093/sts";
+
 export const STS_URLS = {
-    accessToken : "http://localhost:9093/sts/accessToken"
+    accessToken :  STS_BASE + "/accessToken",
+    refreshToken : STS_BASE + "/refreshToken"
 }
