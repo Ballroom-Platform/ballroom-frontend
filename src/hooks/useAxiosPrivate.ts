@@ -3,7 +3,7 @@ import { axiosPrivate } from '../api/axios'
 import { useApp } from './useApp'
 import useRefreshToken from './useRefreshToken'
 
-const useAxiosPrivate = async () => {
+const useAxiosPrivate = () => {
     const {appState} = useApp();
     const refresh = useRefreshToken();
     let accessToken = appState.auth.accessToken;
