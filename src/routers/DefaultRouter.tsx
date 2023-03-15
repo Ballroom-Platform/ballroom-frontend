@@ -25,8 +25,8 @@ export const DefaultRouter : React.FC = () => {
                 <Route exact path="/contests" component={Contest}/>
                 <Route exact path="/createContest" component={CreateContest}/>
                 <Route exact path="/upcomingContests" component={UpcomingContests}/>
-                <Route exact path="/contestControls" component={ContestControls}/>
-                <Route exact path="/addChallengeToContest" component={AddChallengeToContest}/>
+                <Route exact path="/contestControls/:contestId" component={ContestControls}/>
+                <Route exact path="/addChallengeToContest/:contestId" component={AddChallengeToContest}/>
             </Layout>
 
 

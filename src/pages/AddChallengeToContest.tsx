@@ -3,14 +3,21 @@ import Paper from "@mui/material/Paper";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { useEffect, useState } from "react";
+import { useParams } from "react-router"
+
+type ContestId = {
+    contestId: string;
+};
 
 const addChallenge = (contestId: string, challengeId: string) => {
+
     console.log("Contest Id is : " + contestId + ", Challenge Id is : " + challengeId);
+    // insert api call here
 }
 
-const AddChallengeToContest = ({}) => {
+const AddChallengeToContest = () => {
 
-    const contestId = "23";
+    const {contestId} = useParams<ContestId>();
 
     const [challengeId, setchallengeId] = useState("");
 
