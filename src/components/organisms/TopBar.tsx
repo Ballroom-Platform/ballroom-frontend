@@ -6,6 +6,7 @@ import {
     Avatar,
     IconButton,
     useTheme,
+    Box,
   } from '@mui/material'
   import {
     FiberManualRecord,
@@ -13,9 +14,10 @@ import {
     BedtimeOutlined,
     Notifications,
     Logout,
+    KeyboardArrowLeft,
   } from '@mui/icons-material'
 import { useAuthContext } from '@asgardeo/auth-react'
-import { useLocation } from 'react-router'
+import { useHistory, useLocation } from 'react-router'
   
 export const TopBar: React.FC = () => {
   const getBreadcrumbs = (path : string) => {
@@ -23,9 +25,10 @@ export const TopBar: React.FC = () => {
   }
   const theme = useTheme()
   const location = useLocation();
+  const history = useHistory();
   const breadcrumbs = getBreadcrumbs(location.pathname);
   const selectedSection = breadcrumbs[1]
-  //const backButton = breadcrumbs.length > 3 ? true : false
+  const backButton = breadcrumbs.length > 3 ? true : false
   const {signOut} = useAuthContext()
   const logoutHandler = async () => {
     signOut();
@@ -48,18 +51,23 @@ export const TopBar: React.FC = () => {
           sx={{ alignItems: 'center', justifyContent: 'space-between' }}
         >
           <Grid item lg={8} sx={{ display: { md: 'block', xs: 'none' } }}>
-            <Breadcrumbs
-              separator={<FiberManualRecord sx={{ fontSize: '0.5rem' }} />}
-              aria-label="breadcrumb"
-            >
-              {breadcrumbs?.map((subSection, index) => {
-                return (
-                  <Typography variant="h6" key={index}>
-                    {subSection}
-                  </Typography>
-                )
-              })}
-            </Breadcrumbs>
+            <Box display="flex" alignItems="center">
+              <IconButton onClick={() => history.goBack()}>
+                <KeyboardArrowLeft />
+              </IconButton>
+              <Breadcrumbs
+                separator={<FiberManualRecord sx={{ fontSize: '0.5rem' }} />}
+                aria-label="breadcrumb"
+              >
+                {breadcrumbs?.map((subSection, index) => {
+                  return (
+                    <Typography variant="h6" key={index}>
+                      {subSection}
+                    </Typography>
+                  )
+                })}
+              </Breadcrumbs>
+            </Box>
           </Grid>
           <Grid
             item

@@ -9,6 +9,9 @@ export const BFF_URLS = {
     contestService: BFF_BASE_URLS.contestService
 }
 
+const STS_BASE = "http://localhost:9093/sts";
+
 export const STS_URLS = {
-    accessToken : "http://localhost:9093/sts/accessToken"
+    accessToken :  STS_BASE + "/accessToken",
+    refreshToken : STS_BASE + "/refreshToken"
 }
