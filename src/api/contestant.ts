@@ -9,3 +9,7 @@ export const uploadSubmission = async (axiosPrivate : AxiosInstance, data : Form
     axiosPrivate({url, method, headers, data }).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
 }
 
+// export const getContests = () => {
+//     const url = BFF_URLS.
+// }
+

@@ -18,7 +18,7 @@ export const Contests : React.FC = () => {
     return(
         <Layout>
             <Grid>
-                {Object.keys(appState.contests).map((key) => <ContestCard contestImageURL={null} key={key} contestId={appState.contests[key].contestId} contestName={appState.contests[key].title} startTime="" endTime="" forcedState="active" owner="" clickHandler={clickHandler}/>)}
+                {Object.keys(appState.contests).map((key) => <ContestCard contestImageURL={appState.contests[key].contestImageURL} key={key} contestId={appState.contests[key].contestId} contestName={appState.contests[key].title} startTime="" endTime="" forcedState="active" owner="" clickHandler={clickHandler}/>)}
             </Grid>
         </Layout>
     )
