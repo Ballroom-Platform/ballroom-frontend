@@ -47,3 +47,31 @@ export interface IChallenge {
   difficulty : string;
   status : string;
 }
+
+export type Challenge = {
+  title: string;
+  difficulty: string;
+};
+
+export type BalDateTime = {
+  year: number;
+  month: number;
+  day: number;
+  hour: number;
+  minute: number;
+  second: number;
+}
+
+export type NewContest = {
+  name: string;
+  startTime: BalDateTime;
+  endTime: BalDateTime;
+}
+
+export type IMinimalContest = {
+  contestId: string;
+  name: string;
+  startTime: BalDateTime;
+  endTime: BalDateTime;
+  moderator: string;
+}
