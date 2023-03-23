@@ -6,11 +6,12 @@ import CardActions from "@mui/material/CardActions";
 import Paper from "@mui/material/Paper";
 import { useParams } from "react-router"
 import { useEffect, useState } from "react";
-import { getChallenge, getChallengesInContest } from "../api/admin";
+import { getChallenge, getChallengesInContest, getContest } from "../api/admin";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { Layout } from "../components/templates";
 import { Link } from "react-router-dom";
 import CreateContest from "./CreateContest";
+import { AxiosInstance } from "axios";
 
 
 
@@ -28,9 +29,9 @@ type Challenge = {
 const ContestControls: React.FC = () => {
 
     const {contestId} = useParams<ContestId>();
+    const [contestTitle, setcontestTitle] = useState();
     const [challenges, setchallenges] = useState<Challenge[]>([]);
     const axiosIns = useAxiosPrivate();
-    const [isLoadedChallenges, setisLoadedChallenges] = useState(false);
 
     const someFunc = (res: any) => {
         console.log("The size of response array is " + res.data.length)
@@ -44,20 +45,18 @@ const ContestControls: React.FC = () => {
     }
     
     useEffect(() => {
-        if (!isLoadedChallenges) {
-            console.log("------------------------------------------------")
-            setisLoadedChallenges(true)
-            getChallengesInContest( axiosIns, contestId, someFunc, (err: any) => console.log(err))
-            console.log(isLoadedChallenges)
-            console.log("++++++++++++++++++++++++++++++++++++++++++++++++")
-        }
+        getChallengesInContest( axiosIns, contestId, someFunc, (err: any) => console.log(err))
+        getContest(axiosIns, contestId,(res: any) => {setcontestTitle(res.data.title)}, () => console.log("ËRROR OCCURRED"));
     },[]);
 
     return ( 
         <Layout>
             <Typography variant="h3" gutterBottom>
-                    ID: {contestId}<br></br> 
-                    Name: Game Jam
+                    Name: {contestTitle}
+            </Typography>
+
+            <Typography sx={{color: 'gray'}}variant="h6" gutterBottom>
+                Contest ID: {contestId}<br></br> 
             </Typography>
 
             <Link to={`/addChallengeToContest/${contestId}`}>
@@ -117,4 +116,4 @@ const ContestControls: React.FC = () => {
     );
 }
  
-export default ContestControls;
+export default ContestControls
