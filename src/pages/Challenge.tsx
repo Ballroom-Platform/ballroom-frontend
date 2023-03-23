@@ -7,12 +7,29 @@ import UploadIcon from '@mui/icons-material/Upload';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import { useHistory } from "react-router";
 import { Layout } from "../components/templates";
+import axios from "axios";
+import { BFF_URLS } from "../links";
 
 const Challenge : React.FC = () => {
     const history = useHistory();
-
+    // challengeId should be in state variable
+    const challengeId = "challenge_001"
     const handler = () => {
         history.push("/previousSubmissions");
+    }
+
+    const downloadFunction = async () => {
+        let results = await axios({
+            // url: 'http://localhost:9096/challengeService/challenges/template/challenge-01edc945-d615-14d0-8073-fa56b59dff29',
+            url: `${BFF_URLS}/challenges/${challengeId}`,
+            method: 'GET',
+            responseType: 'blob'
+         })
+         let hidden_a = document.createElement('a');
+         hidden_a.href = window.URL.createObjectURL(new Blob([results.data]));
+         hidden_a.setAttribute('download', 'template.zip');
+         document.body.appendChild(hidden_a);
+         hidden_a.click();
     }
 
     return (
@@ -42,6 +59,8 @@ const Challenge : React.FC = () => {
                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Veniam ex soluta possimus ab officia obcaecati atque voluptate recusandae. Blanditiis vel possimus ad accusamus quibusdam consequatur nihil? Eveniet facere fuga atque?
                 </Typography>
 
+                <a href="localhost:9096/challengeService/challenges/template/challenge-01edc945-d615-14d0-8073-fa56b59dff29">downlaoddsjkndkjn</a>
+
                 <Typography sx={{marginTop:'3rem'}} variant="h6" gutterBottom>
                     Constraints:
                 </Typography>
@@ -52,7 +71,7 @@ const Challenge : React.FC = () => {
                 </Typography>
             </Paper>
             <Box sx={{marginTop: '1rem'}}>
-                <Button variant="outlined" startIcon={<DownloadIcon />}>Dowload Template</Button>
+                <Button variant="outlined" onClick={downloadFunction}startIcon={<DownloadIcon />}>Dowload Template</Button>
             </Box>
             <Box>
                 <Button variant="outlined" component="label" startIcon={<UploadIcon/>}>
