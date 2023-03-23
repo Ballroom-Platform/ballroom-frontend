@@ -24,6 +24,7 @@ const UpcomingContests = () => {
 
     useEffect(() => {
         getUpcomingContests(axiosIns, (res: any) => setcontests((prevstate) => prevstate ? [...prevstate, ...res.data] : [{}]),(err: any) => console.log(err))
+
     }, []);
 
     return ( 
@@ -36,7 +37,7 @@ const UpcomingContests = () => {
             <Grid container sx={{marginY: '2rem'}}>
             {/* {Object.keys(appState.contests).map((key) => <ContestCard contestImageURL={null} key={key} contestId={appState.contests[key].contestId} contestName={appState.contests[key].title} startTime="" endTime="" forcedState="active" owner="" clickHandler={clickHandler}/>)} */}
 
-            {contests.map((contest) => <Link to={`../contestControls/${contest.contestId}`}><ContestCard contestImageURL={null} key={contest.contestId} contestId={contest.contestId} contestName={contest.name} startTime="" endTime="" forcedState="active" owner="" clickHandler={clickHandler}/></Link>)}
+            {contests.map((contest) => <Link to={`../contestControls/${contest.contestId}`}><ContestCard contestImageURL={null} key={contest.contestId} contestId={contest.contestId} contestName={contest.title} startTime="" endTime="" forcedState="active" owner="" clickHandler={clickHandler}/></Link>)}
                 
             </Grid>
         </Layout>

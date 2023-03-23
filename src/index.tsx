@@ -16,7 +16,7 @@ const root = ReactDOM.createRoot(
 console.log(defaultTheme);
 
 root.render(
-  <React.StrictMode>
+  // <React.StrictMode>
     <ThemeProvider theme={defaultTheme}>
       <AuthProvider config={asgardeoConfig}>
         <AppContextProvider>
@@ -27,5 +27,5 @@ root.render(
         </AppContextProvider>
       </AuthProvider>
     </ThemeProvider>
-  </React.StrictMode>
+  // </React.StrictMode>
 );

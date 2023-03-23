@@ -61,14 +61,15 @@ export type BalDateTime = {
 }
 
 export type NewContest = {
-  name: string;
+  title: string;
+  description: string;
   startTime: BalDateTime;
   endTime: BalDateTime;
 }
 
 export type IMinimalContest = {
   contestId: string;
-  name: string;
+  title: string;
   startTime: BalDateTime;
   endTime: BalDateTime;
   moderator: string;

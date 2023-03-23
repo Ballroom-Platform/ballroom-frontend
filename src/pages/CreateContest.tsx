@@ -16,6 +16,7 @@ import { BalDateTime } from "../helpers/interfaces";
 const CreateContest = () => {
 
     const [contestName, setcontestName] = useState<string>("");
+    const [contestDescription, setcontestDescription] = useState<string>("");
     const [startTime, setstartTime] = useState<BalDateTime>();
     const [endTime, setendTime] = useState<BalDateTime>();
 
@@ -28,6 +29,8 @@ const CreateContest = () => {
             </Typography>
 
             <TextField id="outlined-basic" label="Name" variant="outlined" value={contestName} onChange={(e) => setcontestName(e.target.value)}/>
+
+            <TextField fullWidth multiline rows={4} sx={{marginY: '1rem'}}  id="outlined-basic" label="Description" variant="outlined" value={contestDescription} onChange={(e) => setcontestDescription(e.target.value)}/>
 
             <LocalizationProvider sx={{border: '1px solid red'}} dateAdapter={AdapterDayjs}>
                 <DemoContainer sx={{marginY: '1rem', width: '30%'}} components={['DateTimePicker']}>
@@ -52,7 +55,7 @@ const CreateContest = () => {
                 </DemoContainer>
             </LocalizationProvider>
 
-            {startTime && endTime && (<Button variant="contained" onClick={() => createContest(axiosIns, {name: contestName, startTime: startTime, endTime: endTime},(res: any) => {console.log(res);}, (err: any) => console.log(err))}>Create</Button>)}
+            {startTime && endTime && (<Button variant="contained" onClick={() => createContest(axiosIns, {title: contestName, description: contestDescription, startTime: startTime, endTime: endTime},(res: any) => {console.log(res);}, (err: any) => console.log(err))}>Create</Button>)}
 
             {!(startTime && endTime) && (<Button variant="outlined" >Disabled</Button>) }
 
