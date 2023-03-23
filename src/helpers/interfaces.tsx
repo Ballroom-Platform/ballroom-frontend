@@ -22,9 +22,7 @@ export interface IAppState {
       subsection? : string,
       selectedItem? : string,
       redirectURL? : string,
-    },
-    contests : Record<string, IContest>,
-    challenges : Record<string, IChallenge>
+    }
 }
 
 export interface IContest {

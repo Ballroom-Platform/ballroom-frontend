@@ -6,11 +6,12 @@ import CardActions from "@mui/material/CardActions";
 import Paper from "@mui/material/Paper";
 import { useParams } from "react-router"
 import { useEffect, useState } from "react";
-import { getChallenge, getChallengesInContest } from "../api/admin";
+import { getChallenge } from "../api/admin";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { Layout } from "../components/templates";
 import { Link } from "react-router-dom";
 import CreateContest from "./CreateContest";
+import { getChallengesInContest } from "../api/common";
 
 
 
