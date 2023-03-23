@@ -30,8 +30,6 @@ export interface IAppState {
 export interface IContest {
   contestId : string,
   title : string,
-  description : string,
-  constraints : string,
   startTime : string,
   endTime : string,
   contestImageURL : string,
@@ -43,6 +41,8 @@ export interface IContest {
 export interface IChallenge {
   challengeId : string,
   title : string,
+  description : string,
+  constraints : string,
   tags : Array<string>,
   difficulty : string;
   status : string;

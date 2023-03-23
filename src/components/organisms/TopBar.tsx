@@ -48,25 +48,31 @@ export const TopBar: React.FC = () => {
       >
         <Grid
           container
+          height="100%"
           sx={{ alignItems: 'center', justifyContent: 'space-between' }}
         >
-          <Grid item lg={8} sx={{ display: { md: 'block', xs: 'none' } }}>
-            <Box display="flex" alignItems="center">
-              <IconButton onClick={() => history.goBack()}>
-                <KeyboardArrowLeft />
-              </IconButton>
-              <Breadcrumbs
-                separator={<FiberManualRecord sx={{ fontSize: '0.5rem' }} />}
-                aria-label="breadcrumb"
-              >
-                {breadcrumbs?.map((subSection, index) => {
-                  return (
-                    <Typography variant="h6" key={index}>
-                      {subSection}
-                    </Typography>
-                  )
-                })}
-              </Breadcrumbs>
+          <Grid item height="100%" lg={8} sx={{ display: { md: 'block', xs: 'none' } }}>
+            <Box display="flex" height="100%" flexDirection="column">
+              <Box display="flex" alignItems="center">
+                <IconButton onClick={() => history.goBack()} size="small">
+                  <KeyboardArrowLeft/>
+                </IconButton>
+                <Breadcrumbs
+                  separator={<FiberManualRecord sx={{ fontSize: '0.4rem' }} />}
+                  aria-label="breadcrumb"
+                >
+                  {breadcrumbs?.map((subSection, index) => {
+                    return (
+                      <Typography variant="body1" key={index}>
+                        {subSection}
+                      </Typography>
+                    )
+                  })}
+                </Breadcrumbs>
+              </Box>
+              <Box>
+                // Add subsections here
+              </Box>
             </Box>
           </Grid>
           <Grid

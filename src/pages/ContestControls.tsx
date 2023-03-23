@@ -5,7 +5,7 @@ import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
 import Paper from "@mui/material/Paper";
 import { useParams } from "react-router"
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getChallenge, getChallengesInContest } from "../api/admin";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { Layout } from "../components/templates";
@@ -30,7 +30,6 @@ const ContestControls: React.FC = () => {
     const {contestId} = useParams<ContestId>();
     const [challenges, setchallenges] = useState<Challenge[]>([]);
     const axiosIns = useAxiosPrivate();
-    const [isLoadedChallenges, setisLoadedChallenges] = useState(false);
 
     const someFunc = (res: any) => {
         console.log("The size of response array is " + res.data.length)
@@ -44,13 +43,8 @@ const ContestControls: React.FC = () => {
     }
     
     useEffect(() => {
-        if (!isLoadedChallenges) {
-            console.log("------------------------------------------------")
-            setisLoadedChallenges(true)
-            getChallengesInContest( axiosIns, contestId, someFunc, (err: any) => console.log(err))
-            console.log(isLoadedChallenges)
-            console.log("++++++++++++++++++++++++++++++++++++++++++++++++")
-        }
+        getChallengesInContest( axiosIns, contestId, someFunc, (err: any) => console.log(err));
+
     },[]);
 
     return ( 
