@@ -26,6 +26,7 @@ const CreateChallenge = () => {
     const [challengeDescription, setchallengeDescription] = useState<string>("");
     const [challengeDifficulty, setchallengeDifficulty] = useState<string>("MEDIUM");
     const [testCaseFile, settestCaseFile] = useState({} as FileList);
+    const [templateFile, settemplateFile] = useState({} as FileList);
 
     
 
@@ -33,7 +34,8 @@ const CreateChallenge = () => {
 
     const handleSubmit = () => {
         const formData = new FormData();
-        formData.append('testCaseFile', testCaseFile[0], "test001 "+ "_" + Date.now());
+        formData.append('testCase', testCaseFile[0], "test001 "+ "_" + Date.now());
+        formData.append('template', templateFile[0], "template001 "+ "_" + Date.now())
         formData.append('title', challengeTitle)
         formData.append('description', challengeDescription)
         formData.append('difficulty', challengeDifficulty)
@@ -60,10 +62,12 @@ const CreateChallenge = () => {
 
     const onTestCaseFileChange = (e : any) => {
         settestCaseFile(prev => ({...prev, ...e.target.files}));
-        console.log("HERE IS THE FILE ARRAY")
-        console.log(e.target.files)
     }
 
+    const onTemplateFileChange = (e : any) => {
+        settemplateFile(prev => ({...prev, ...e.target.files}));
+
+    }
     
     return ( 
         <Layout>
@@ -96,6 +100,8 @@ const CreateChallenge = () => {
 
 
             <InputWrapper  label="Upload Test Case .zip File: "><input onChange={onTestCaseFileChange} id="testFileInput" type="file" name="submissionFile" accept=".zip"  style={{flex:6}}/></InputWrapper>
+
+            <InputWrapper  label="Upload Template .zip File: "><input onChange={onTemplateFileChange} id="testFileInput" type="file" name="templateFile" accept=".zip"  style={{flex:6}}/></InputWrapper>
 
             <Button sx={{margin: '1rem'}}variant="contained" onClick={()=>handleSubmit()}>Submit</Button>
 

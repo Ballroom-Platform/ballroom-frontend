@@ -52,3 +52,10 @@ export const createChallenge = (axiosPrivate : AxiosInstance, data: FormData, su
     };
     axiosPrivate({url, method, headers, data }).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
 }
+
+export const getContest = (axiosPrivate: AxiosInstance, contestId: string, successHandler : Function, failHandler : Function) => {
+    const url = `${BFF_URLS.contestService}/contest/${contestId}`
+    const method = "GET";
+    const headers = {};
+    axiosPrivate({url, method, headers}).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
+}
