@@ -6,7 +6,7 @@ import { useHistory, useLocation } from "react-router"
 import { Layout } from "../components/templates";
 import { IMinimalContest } from "../helpers/interfaces";
 import { useEffect, useState } from "react";
-import { getUpcomingContests } from "../api/admin";
+import { getUpcomingContests } from "../api/common";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { Link } from "react-router-dom";
 
