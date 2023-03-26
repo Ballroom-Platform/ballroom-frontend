@@ -5,12 +5,14 @@ import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
 import Paper from "@mui/material/Paper";
 import { useParams } from "react-router"
-import { useEffect, useRef, useState } from "react";
-import { getChallenge, getChallengesInContest } from "../api/admin";
+import { useEffect, useState } from "react";
+import { getChallenge, getContest } from "../api/admin";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { Layout } from "../components/templates";
 import { Link } from "react-router-dom";
 import CreateContest from "./CreateContest";
+import { getChallengesInContest } from "../api/common";
+import { AxiosInstance } from "axios";
 
 
 
@@ -28,6 +30,7 @@ type Challenge = {
 const ContestControls: React.FC = () => {
 
     const {contestId} = useParams<ContestId>();
+    const [contestTitle, setcontestTitle] = useState();
     const [challenges, setchallenges] = useState<Challenge[]>([]);
     const axiosIns = useAxiosPrivate();
 
@@ -43,15 +46,18 @@ const ContestControls: React.FC = () => {
     }
     
     useEffect(() => {
-        getChallengesInContest( axiosIns, contestId, someFunc, (err: any) => console.log(err));
-
+        getChallengesInContest( axiosIns, contestId, someFunc, (err: any) => console.log(err))
+        getContest(axiosIns, contestId,(res: any) => {setcontestTitle(res.data.title)}, () => console.log("ËRROR OCCURRED"));
     },[]);
 
     return ( 
         <Layout>
             <Typography variant="h3" gutterBottom>
-                    ID: {contestId}<br></br> 
-                    Name: Game Jam
+                    Name: {contestTitle}
+            </Typography>
+
+            <Typography sx={{color: 'gray'}}variant="h6" gutterBottom>
+                Contest ID: {contestId}<br></br> 
             </Typography>
 
             <Link to={`/addChallengeToContest/${contestId}`}>
@@ -111,4 +117,4 @@ const ContestControls: React.FC = () => {
     );
 }
  
-export default ContestControls;
+export default ContestControls

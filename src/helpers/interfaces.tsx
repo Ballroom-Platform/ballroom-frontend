@@ -22,9 +22,7 @@ export interface IAppState {
       subsection? : string,
       selectedItem? : string,
       redirectURL? : string,
-    },
-    contests : Record<string, IContest>,
-    challenges : Record<string, IChallenge>
+    }
 }
 
 export interface IContest {
@@ -63,14 +61,15 @@ export type BalDateTime = {
 }
 
 export type NewContest = {
-  name: string;
+  title: string;
+  description: string;
   startTime: BalDateTime;
   endTime: BalDateTime;
 }
 
 export type IMinimalContest = {
   contestId: string;
-  name: string;
+  title: string;
   startTime: BalDateTime;
   endTime: BalDateTime;
   moderator: string;
