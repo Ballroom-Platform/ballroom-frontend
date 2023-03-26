@@ -11,7 +11,6 @@ const initialAppState : IAppState = {
   },
   page : {
     redirectURL: "/contests"
-  
   }
 }
 

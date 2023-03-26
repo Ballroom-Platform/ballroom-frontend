@@ -28,7 +28,7 @@ export const Layout: React.FC<IProps> = ({ children }) => {
       }
 
       if(idpToken !== null){
-        fetchAccessToken(idpToken, setAppState, signOut);
+        fetchAccessToken(idpToken, setAppState, () => {});
       }else{
         getToken();
       }
