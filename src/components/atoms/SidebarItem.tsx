@@ -15,7 +15,7 @@ ISidebarItem & { itemMeta: ISidebarItem }
   const history = useHistory()
 
   const selected =
-  location.pathname === url || subSections.indexOf(location.pathname) > -1
+  location.pathname.includes(url)|| subSections.indexOf(location.pathname) > -1
       ? true
       : false
 
