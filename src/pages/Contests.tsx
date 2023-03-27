@@ -1,8 +1,9 @@
 import { useAuthContext } from "@asgardeo/auth-react"
-import { Grid } from "@mui/material"
+import { Button, Grid } from "@mui/material"
 import { AxiosResponse } from "axios"
 import { useEffect, useState } from "react"
 import { useHistory, useLocation } from "react-router"
+import { Link } from "react-router-dom"
 import { axiosPrivate } from "../api/axios"
 import { getUpcomingContests } from "../api/common"
 import { ContestCard } from "../components/molecules"
@@ -12,6 +13,8 @@ import { useApp } from "../hooks/useApp"
 
 
 export const Contests : React.FC = () => {
+    const {appState} = useApp();
+    console.log(appState);
     const history = useHistory();
     const location = useLocation();
     const [loading, setLoading] = useState<boolean>(true);
@@ -37,6 +40,7 @@ export const Contests : React.FC = () => {
 
     return(
         <Layout>
+            <Link to={`/createChallenge`}><Button size="small">View</Button></Link>
             {!loading && (
                 <>
                     <Grid>

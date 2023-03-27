@@ -12,7 +12,8 @@ export const fetchAccessToken = (idpToken : string, setAppState : React.Dispatch
         },
     }).then(res => {
         if (res.status === 200){
-            setAppState(prev => ({...prev, auth : {...prev.auth, status: "active", accessToken: res?.data?.accessToken}}));
+            console.log("Setting App state");
+            setAppState(prev => ({...prev, auth : {...(prev.auth), status: "active", accessToken: res?.data?.data?.accessToken}}));
         }else{
             signOut();
         }
