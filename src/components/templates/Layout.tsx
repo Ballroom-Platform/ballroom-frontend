@@ -14,7 +14,7 @@ interface IProps {
 export const Layout: React.FC<IProps> = ({ children }) => {
 
   const {appState, setAppState} = useApp();
-  const {getAccessToken, signOut, state} = useAuthContext();
+  const {getAccessToken, getBasicUserInfo, signOut, state} = useAuthContext();
   const [idpToken, setIdpToken] = useState<string | null>(null);
 
 
@@ -23,7 +23,9 @@ export const Layout: React.FC<IProps> = ({ children }) => {
     if (appState.auth.status === "inactive" && state.isAuthenticated) {
       const getToken = async () => {
         const token  = await getAccessToken();
+        const userInfo = await getBasicUserInfo();
         setIdpToken(token);
+        setAppState(prev => ({...prev, auth:{...prev.auth, userID: userInfo.sub}}))
         return;
       }
 

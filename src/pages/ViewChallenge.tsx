@@ -1,31 +1,19 @@
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
-import DownloadIcon from '@mui/icons-material/Download';
-import UploadIcon from '@mui/icons-material/Upload';
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-import { useHistory, useParams } from "react-router";
+import { Box, Button, Paper, Typography } from "@mui/material";
 import { Layout } from "../components/templates";
-import axios from "axios";
+import DownloadIcon from '@mui/icons-material/Download';
 import { BFF_URLS } from "../links";
+import axios from "axios";
+import { useParams } from "react-router";
 
 type ChallengeId = {
     challengeId: string;
 };
 
-const Challenge : React.FC = () => {
-    const history = useHistory();
-    // challengeId should be in state variable
+const ViewChallenge = () => {
     const {challengeId} = useParams<ChallengeId>()
-    const handler = () => {
-        history.push("/previousSubmissions");
-    }
-
     const downloadFunction = async () => {
         let results = await axios({
-            // url: 'http://localhost:9096/challengeService/challenges/template/challenge-01edc945-d615-14d0-8073-fa56b59dff29',
-            url: `${BFF_URLS}/challenges/${challengeId}`,
+            url: `${BFF_URLS}/challenges/template/${challengeId}`,
             method: 'GET',
             responseType: 'blob'
          })
@@ -36,16 +24,17 @@ const Challenge : React.FC = () => {
          hidden_a.click();
     }
 
-    return (
+    return ( 
         <Layout>
-            <Paper sx={{display: 'flex', justifyContent: "flex-end", marginY: '2rem', paddingX: '3rem'}} elevation={0}>
-                <Button variant="outlined" onClick={handler}>Previous Submissions</Button>
-            </Paper>
             
             <Paper sx={{padding: '1rem'}}>
                 
                 <Typography variant="h4" gutterBottom>
                     The Hardest Challenge in the world!
+                </Typography>
+
+                <Typography variant="h6" gutterBottom>
+                    Challenge ID: {challengeId}
                 </Typography>
 
                 <Typography sx={{marginTop:'3rem'}} variant="h6" gutterBottom>
@@ -72,20 +61,12 @@ const Challenge : React.FC = () => {
                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Dignissimos id neque voluptatem blanditiis aliquam, nam at, magni quidem adipisci pariatur quis commodi quod nemo rem eaque? Iure eum molestiae saepe.
                 </Typography>
             </Paper>
-            <Box sx={{marginTop: '1rem'}}>
+            <Box sx={{marginY: '1rem'}}>
                 <Button variant="outlined" onClick={downloadFunction}startIcon={<DownloadIcon />}>Dowload Template</Button>
-            </Box>
-            <Box>
-                <Button variant="outlined" component="label" startIcon={<UploadIcon/>}>
-                    Upload Solution
-                <input hidden accept="image/*" multiple type="file" />
-                </Button>
-
-                <Button sx={{margin: '1rem'}}variant="contained">Submit</Button>
             </Box>
             
         </Layout>
     );
 }
  
-export default Challenge;
+export default ViewChallenge;

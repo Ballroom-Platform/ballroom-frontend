@@ -44,6 +44,11 @@ const SidbarLinks: Record<string, Record<string, Array<ISidebarItem>>> = {
     General: [
       getItem("contests", "Contests", EmojiEvents, "General", ["/contests/contest"]),
       getItem("settings", "Settings", Settings, "General", [])]
+  },
+  admin: {
+    Administrator: [
+      getItem("contestControls", "Contest Controls", Settings, "Administrator", [])
+    ]
   }
   
 }

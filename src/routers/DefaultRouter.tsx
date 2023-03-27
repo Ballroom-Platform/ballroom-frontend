@@ -12,6 +12,7 @@ import { Contests, Home, PageNotFound, Dashboard, Challenges } from "../pages"
 import { BrowserRouter } from "react-router-dom";
 import { useSignIn } from "../hooks/useSignIn";
 import CreateChallenge from "../pages/CreateChallenge";
+import ViewChallenge from "../pages/ViewChallenge";
 
 export const DefaultRouter : React.FC = () => {
     const {signInHandler} = useSignIn();
@@ -21,24 +22,25 @@ export const DefaultRouter : React.FC = () => {
         <BrowserRouter>
             <Switch>
                 <Route exact path="/" component={Home} />
-                {/* <SecureRoute exact path="/dashboard" component={Dashboard} callback={signInHandler}/>
-                <SecureRoute exact path="/contests/:contestId/:challengeId"  component={Challenge} callback={signInHandler}/>
-                <SecureRoute exact path="/previousSubmissions" component={PreviousSubmissions} callback={signInHandler}/>
-                <SecureRoute exact path="/contests" component={Contests} callback={signInHandler} />
-                <SecureRoute exact path="/contests/:contestId" component={Challenges} callback={signInHandler} />  */}
+                {/* <SecureRoute exact path="/dashboard" component={Dashboard}  callback={signInHandler} callback={signInHandler}/>
+                <SecureRoute exact path="/contests/:contestId/:challengeId"  component={Challenge}  callback={signInHandler} callback={signInHandler}/>
+                <SecureRoute exact path="/previousSubmissions" component={PreviousSubmissions}  callback={signInHandler} callback={signInHandler}/>
+                <SecureRoute exact path="/contests" component={Contests}  callback={signInHandler}  callback={signInHandler}/>
+                <SecureRoute exact path="/contests/:contestId" component={Challenges}  callback={signInHandler}  callback={signInHandler}/>  */}
 
-                <Route exact path="/dashboard" component={Dashboard}  />
-                <Route exact path="/contests/:contestId/:challengeId"  component={Challenge}  />
-                <Route exact path="/previousSubmissions" component={PreviousSubmissions}  />
-                <Route exact path="/contests" component={Contests}   />
-                <Route exact path="/contests/:contestId" component={Challenges}   /> 
+                <SecureRoute exact path="/dashboard" component={Dashboard}   callback={signInHandler}/>
+                <SecureRoute exact path="/contests/:contestId/:challengeId"  component={Challenge}   callback={signInHandler}/>
+                <SecureRoute exact path="/previousSubmissions" component={PreviousSubmissions}   callback={signInHandler}/>
+                <SecureRoute exact path="/contests" component={Contests}    callback={signInHandler}/>
+                <SecureRoute exact path="/contests/:contestId" component={Challenges}    callback={signInHandler}/> 
 
-                <Route exact path="/contestControls/:contestId" component={ContestControls}/>
-                <Route exact path="/addChallengeToContest/:contestId" component={AddChallengeToContest}/>
-                <Route exact path="/createContest" component={CreateContest}/>
-                <Route exact path="/upcomingContests" component={UpcomingContests}/>
-                <Route exact path="/createChallenge" component={CreateChallenge}/>
-                <Route component={PageNotFound} />
+                <SecureRoute exact path="/contestControls/:contestId" component={ContestControls} callback={signInHandler}/>
+                <SecureRoute exact path="/addChallengeToContest/:contestId" component={AddChallengeToContest} callback={signInHandler}/>
+                <SecureRoute exact path="/createContest" component={CreateContest}  callback={signInHandler}/>
+                <SecureRoute exact path="/upcomingContests" component={UpcomingContests} callback={signInHandler}/>
+                <SecureRoute exact path="/createChallenge" component={CreateChallenge} callback={signInHandler}/>
+                <SecureRoute exact path="/viewChallenge/:challengeId" component={ViewChallenge} callback={signInHandler}/>
+                <SecureRoute component={PageNotFound}  callback={signInHandler}/>
             </Switch>
         </BrowserRouter>
     )

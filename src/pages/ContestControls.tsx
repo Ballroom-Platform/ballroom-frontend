@@ -34,7 +34,7 @@ const ContestControls: React.FC = () => {
     const [challenges, setchallenges] = useState<Challenge[]>([]);
     const axiosIns = useAxiosPrivate();
 
-    const someFunc = (res: any) => {
+    const handleRecievedChallengeArray = (res: any) => {
         console.log("The size of response array is " + res.data.length)
         res.data.forEach((challengeId: any) => {
             console.log(challengeId)
@@ -46,7 +46,7 @@ const ContestControls: React.FC = () => {
     }
     
     useEffect(() => {
-        getChallengesInContest( axiosIns, contestId, someFunc, (err: any) => console.log(err))
+        getChallengesInContest( axiosIns, contestId, handleRecievedChallengeArray, (err: any) => console.log(err))
         getContest(axiosIns, contestId,(res: any) => {setcontestTitle(res.data.title)}, () => console.log("ËRROR OCCURRED"));
     },[]);
 

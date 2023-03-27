@@ -13,6 +13,7 @@ export const getChallenge = (axiosPrivate: AxiosInstance, challengeId : string, 
 }
 
 export const createContest = (axiosPrivate : AxiosInstance, contest: NewContest, successHandler : Function, failHandler : Function)=> {
+    console.log(contest)
     const url = `${BFF_URLS.contestService}/contest`;
     const method = "POST";
     const headers = {};
@@ -41,4 +42,12 @@ export const getContest = (axiosPrivate: AxiosInstance, contestId: string, succe
     const method = "GET";
     const headers = {};
     axiosPrivate({url, method, headers}).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
+}
+
+export const getChallangesByDifficulty = (axiosPrivate: AxiosInstance, difficulty : string, successHandler : Function, failHandler : Function)=> {
+    const url = `${BFF_URLS.challengeService}/challenges/difficulty/${difficulty}`
+    const method = "GET";
+    const headers = {};
+    axiosPrivate({url, method, headers}).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
+
 }

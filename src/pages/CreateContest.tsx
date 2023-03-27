@@ -6,12 +6,14 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import Button from "@mui/material/Button";
 import { Layout } from "../components/templates";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import internal from "stream";
 import { valueToPercent } from "@mui/base";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { createContest } from "../api/admin";
 import { BalDateTime } from "../helpers/interfaces";
+import { useApp } from "../hooks/useApp";
+import { useAuthContext } from "@asgardeo/auth-react";
 
 const CreateContest = () => {
 
@@ -19,6 +21,8 @@ const CreateContest = () => {
     const [contestDescription, setcontestDescription] = useState<string>("");
     const [startTime, setstartTime] = useState<BalDateTime>();
     const [endTime, setendTime] = useState<BalDateTime>();
+    const {appState} = useApp()
+    console.log(appState);
 
     const axiosIns = useAxiosPrivate();
 
@@ -55,7 +59,7 @@ const CreateContest = () => {
                 </DemoContainer>
             </LocalizationProvider>
 
-            {startTime && endTime && (<Button variant="contained" onClick={() => createContest(axiosIns, {title: contestName, description: contestDescription, startTime: startTime, endTime: endTime},(res: any) => {console.log(res);}, (err: any) => console.log(err))}>Create</Button>)}
+            {startTime && endTime && (<Button variant="contained" onClick={() => createContest(axiosIns, {title: contestName, description: contestDescription, startTime: startTime, endTime: endTime, moderator: appState.auth.userID!},(res: any) => {console.log(res);}, (err: any) => console.log(err))}>Create</Button>)}
 
             {!(startTime && endTime) && (<Button variant="outlined" >Disabled</Button>) }
 
