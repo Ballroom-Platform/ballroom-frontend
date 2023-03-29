@@ -13,6 +13,7 @@ import { BrowserRouter } from "react-router-dom";
 import { useSignIn } from "../hooks/useSignIn";
 import CreateChallenge from "../pages/CreateChallenge";
 import ViewChallenge from "../pages/ViewChallenge";
+import Users from "../pages/Users";
 
 export const DefaultRouter : React.FC = () => {
     const {signInHandler} = useSignIn();
@@ -22,11 +23,6 @@ export const DefaultRouter : React.FC = () => {
         <BrowserRouter>
             <Switch>
                 <Route exact path="/" component={Home} />
-                {/* <SecureRoute exact path="/dashboard" component={Dashboard}  callback={signInHandler} callback={signInHandler}/>
-                <SecureRoute exact path="/contests/:contestId/:challengeId"  component={Challenge}  callback={signInHandler} callback={signInHandler}/>
-                <SecureRoute exact path="/previousSubmissions" component={PreviousSubmissions}  callback={signInHandler} callback={signInHandler}/>
-                <SecureRoute exact path="/contests" component={Contests}  callback={signInHandler}  callback={signInHandler}/>
-                <SecureRoute exact path="/contests/:contestId" component={Challenges}  callback={signInHandler}  callback={signInHandler}/>  */}
 
                 <SecureRoute exact path="/dashboard" component={Dashboard}   callback={signInHandler}/>
                 <SecureRoute exact path="/contests/:contestId/:challengeId"  component={Challenge}   callback={signInHandler}/>
@@ -40,7 +36,9 @@ export const DefaultRouter : React.FC = () => {
                 <SecureRoute exact path="/upcomingContests" component={UpcomingContests} callback={signInHandler}/>
                 <SecureRoute exact path="/createChallenge" component={CreateChallenge} callback={signInHandler}/>
                 <SecureRoute exact path="/viewChallenge/:challengeId" component={ViewChallenge} callback={signInHandler}/>
+                <SecureRoute exact path="/users" component={Users} callback={signInHandler}/>
                 <SecureRoute component={PageNotFound}  callback={signInHandler}/>
+                
             </Switch>
         </BrowserRouter>
     )

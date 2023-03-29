@@ -72,7 +72,7 @@ const CreateChallenge = () => {
     return ( 
         <Layout>
             <Typography variant="h3" gutterBottom>
-                    Create a Contest
+                    Create a Challenge
             </Typography>
 
             <TextField sx={{marginY: '2rem'}} id="outlined-basic" label="Title" variant="outlined" value={challengeTitle} onChange={(e) => setchallengeTitle(e.target.value)}/>

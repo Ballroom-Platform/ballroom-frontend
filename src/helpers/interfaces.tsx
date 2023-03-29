@@ -75,3 +75,10 @@ export type IMinimalContest = {
   endTime: BalDateTime;
   moderator: string;
 }
+
+export type User = {
+  userId: string;
+  username: string;
+  fullname: string;
+  role: string;
+}
