@@ -40,7 +40,6 @@ export const Contests : React.FC = () => {
 
     return(
         <Layout>
-            <Link to={`/createChallenge`}><Button size="small">View</Button></Link>
             {!loading && (
                 <>
                     <Grid>
