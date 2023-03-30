@@ -14,6 +14,9 @@ import { createContest } from "../api/admin";
 import { BalDateTime } from "../helpers/interfaces";
 import { useApp } from "../hooks/useApp";
 import { useAuthContext } from "@asgardeo/auth-react";
+import { IconButton, Snackbar } from "@mui/material";
+import React from "react";
+import CloseIcon from '@mui/icons-material/Close';
 
 const CreateContest = () => {
 
@@ -21,10 +24,18 @@ const CreateContest = () => {
     const [contestDescription, setcontestDescription] = useState<string>("");
     const [startTime, setstartTime] = useState<BalDateTime>();
     const [endTime, setendTime] = useState<BalDateTime>();
+    const [showNotification, setshowNotification] = useState(false);
     const {appState} = useApp()
     console.log(appState);
 
     const axiosIns = useAxiosPrivate();
+
+    const clearAllInputs = () => {
+        setcontestName("");
+        setcontestDescription("");
+        setstartTime(undefined);
+        setendTime(undefined);
+    }
 
     return ( 
         <Layout>
@@ -59,9 +70,11 @@ const CreateContest = () => {
                 </DemoContainer>
             </LocalizationProvider>
 
-            {startTime && endTime && (<Button variant="contained" onClick={() => createContest(axiosIns, {title: contestName, description: contestDescription, startTime: startTime, endTime: endTime, moderator: appState.auth.userID!},(res: any) => {console.log(res);}, (err: any) => console.log(err))}>Create</Button>)}
+            {startTime && endTime && (<Button variant="contained" onClick={() => createContest(axiosIns, {title: contestName, description: contestDescription, startTime: startTime, endTime: endTime, moderator: appState.auth.userID!},(res: any) => {console.log(res); setshowNotification(true); clearAllInputs()}, (err: any) => console.log(err))}>Create</Button>)}
 
             {!(startTime && endTime) && (<Button variant="outlined" >Disabled</Button>) }
+
+            <Snackbar  open={showNotification} autoHideDuration={6000} onClose={() => setshowNotification(false)} message="Contest Successfully Created" action={ <IconButton size="small" aria-label="close" color="inherit" onClick={() => setshowNotification(false)}> <CloseIcon fontSize="small" /> </IconButton>} />
 
         </Layout>
      );
