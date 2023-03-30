@@ -84,33 +84,14 @@ const ContestControls: React.FC = () => {
                         </CardContent>  
 
                         <CardActions>
-                            <Link to={`/contests/${contestId}/${challenge.challengeId}`}><Button size="small">View</Button></Link>
+                            <Link to={`/viewChallenge/${challenge.challengeId}`}><Button size="small">View</Button></Link>
                         </CardActions>
 
                     </Card>
             ))}
             
             <Paper sx={{marginY: '2rem'}}>
-
-                {/* <Card sx={{marginY: '1rem', width: '75%'}} >
-
-                    <CardContent>
-                        <Typography variant="h5" component="div">
-                        The Hardest Challenge in the World
-                        </Typography>
-                        <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                        HARD
-                        </Typography>
-                    </CardContent>
-
-                    <CardActions>
-                        <Button size="small">View</Button>
-                    </CardActions>
-
-                </Card> */}
-
-                
-                
+ 
             </Paper>
             
         </Layout>
