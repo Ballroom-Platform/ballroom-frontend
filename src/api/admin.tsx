@@ -66,3 +66,10 @@ export const upgradeContestantToAdmin = (axiosPrivate: AxiosInstance, userId: st
     const headers = {};
     axiosPrivate({url, method, headers}).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
 }
+
+export const removeChallengeFromContest = (axiosPrivate: AxiosInstance, contestId: string, challengeId: string, successHandler : Function, failHandler : Function) => {
+    const url = `${BFF_URLS.contestService}/contest/${contestId}/challenge/${challengeId}`
+    const method = "DELETE";
+    const headers = {};
+    axiosPrivate({url, method, headers}).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
+}
