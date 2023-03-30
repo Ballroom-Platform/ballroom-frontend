@@ -6,7 +6,7 @@ import CardActions from "@mui/material/CardActions";
 import Paper from "@mui/material/Paper";
 import { useParams } from "react-router"
 import { useEffect, useState } from "react";
-import { getChallenge, getContest } from "../api/admin";
+import { getChallenge, getContest, removeChallengeFromContest } from "../api/admin";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { Layout } from "../components/templates";
 import { Link } from "react-router-dom";
@@ -45,10 +45,15 @@ const ContestControls: React.FC = () => {
         });
     }
     
+    const handleRemoval = (challengeId: string) => {
+        setchallenges((prevstate) => prevstate ? prevstate.filter((challenge) => challenge.challengeId !== challengeId) : []);
+    }
+
     useEffect(() => {
         getChallengesInContest( axiosIns, contestId, handleRecievedChallengeArray, (err: any) => console.log(err))
         getContest(axiosIns, contestId,(res: any) => {setcontestTitle(res.data.title)}, () => console.log("ËRROR OCCURRED"));
     },[]);
+
 
     return ( 
         <Layout>
@@ -85,6 +90,7 @@ const ContestControls: React.FC = () => {
 
                         <CardActions>
                             <Link to={`/viewChallenge/${challenge.challengeId}`}><Button size="small">View</Button></Link>
+                            <Button sx={{color: 'red'}} size="small" onClick={() => removeChallengeFromContest(axiosIns, contestId, challenge.challengeId, (res: any)=> {console.log(res.data); handleRemoval(challenge.challengeId)}, () => console.log("ERROR!"))}>Remove</Button>
                         </CardActions>
 
                     </Card>
