@@ -13,7 +13,7 @@ import internal from "stream";
 import { valueToPercent } from "@mui/base";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { BalDateTime } from "../helpers/interfaces";
-import { FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, useFormControl } from "@mui/material";
+import { FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, Snackbar, useFormControl } from "@mui/material";
 import { InputWrapper } from "../components";
 import { createChallenge } from "../api/admin";
 import axios from "../api/axios";
@@ -28,7 +28,15 @@ const CreateChallenge = () => {
     const [testCaseFile, settestCaseFile] = useState({} as FileList);
     const [templateFile, settemplateFile] = useState({} as FileList);
 
-    
+    const [showNotification, setshowNotification] = useState(false);
+
+    const clearAllInputs = () => {
+        setchallengeTitle("");
+        setchallengeDescription("");
+        setchallengeDifficulty("MEDIUM");
+        settestCaseFile({} as FileList);
+        settemplateFile({} as FileList);
+    }
 
     const axiosIns = useAxiosPrivate();
 
@@ -39,7 +47,7 @@ const CreateChallenge = () => {
         formData.append('title', challengeTitle)
         formData.append('description', challengeDescription)
         formData.append('difficulty', challengeDifficulty)
-        createChallenge(axiosIns, formData, (res: any) => console.log("MEKA SUSCESS WUNO"), (err: any) => console.log("KELA WUNANEH"))
+        createChallenge(axiosIns, formData, (res: any) => {setshowNotification(true); clearAllInputs();}, (err: any) => console.log("KELA WUNANEH"))
 
         // fetch("http://localhost:9092/challengeService/challenge", {
         //     method: "POST",
@@ -105,6 +113,7 @@ const CreateChallenge = () => {
 
             <Button sx={{margin: '1rem'}}variant="contained" onClick={()=>handleSubmit()}>Submit</Button>
 
+            <Snackbar open={showNotification} autoHideDuration={6000} onClose={() => setshowNotification(false)} message="Challenge Created Successfully" />
         </Layout>
      );
 }
