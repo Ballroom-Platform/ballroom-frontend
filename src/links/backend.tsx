@@ -5,10 +5,12 @@ const BFF_BASE_URLS = {
 }
 
 export const BFF_URLS = {
-    uploadService: "http://localhost:9090/uploadSolution",
+    uploadService: "http://localhost:9094/uploadSolution",
     score_submissionScore: BFF_BASE_URLS.scoreAPI + "/submissionScore",
     contestService: BFF_BASE_URLS.contestService,
-    challengeService: BFF_BASE_URLS.challengeService
+    challengeService: BFF_BASE_URLS.challengeService,
+    submissionList: BFF_BASE_URLS.scoreAPI + "/submissionList",
+    submissionFile: BFF_BASE_URLS.scoreAPI + "/submissionFile"
 }
 
 const STS_BASE = "http://localhost:9093/sts";

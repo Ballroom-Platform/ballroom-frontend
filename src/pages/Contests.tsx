@@ -33,18 +33,19 @@ export const Contests : React.FC = () => {
     }
 
     useEffect(() => {
-        getUpcomingContests(axiosPrivate,getContestsSuccess, getContestsFail);
-        setLoading(false);
-    }, [])
+        if(loading){
+            getUpcomingContests(axiosPrivate,getContestsSuccess, getContestsFail);
+            setLoading(false);
+        }
+    }, [loading])
 
 
     return(
         <Layout>
-            <Link to={`/createChallenge`}><Button size="small">View</Button></Link>
             {!loading && (
                 <>
                     <Grid>
-                        {contests.map((item) => <ContestCard contestImageURL={item.contestImageURL} key={item.contestId} contestId={item.contestId} contestName={item.title} startTime="" endTime="" forcedState="active" owner="" clickHandler={clickHandler}/>)}
+                        {contests.map((item) => <ContestCard contestImageURL={null} key={item.contestId} contestId={item.contestId} contestName={item.title} startTime="" endTime="" forcedState="active" owner="" clickHandler={clickHandler}/>)}
                     </Grid>
                 </>
             )}

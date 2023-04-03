@@ -8,9 +8,87 @@ import TableRow from "@mui/material/TableRow";
 import TableBody from "@mui/material/TableBody";
 import DownloadIcon from '@mui/icons-material/Download';
 import { Layout } from "../components/templates";
+import { useEffect, useState } from "react";
+import { getSubmissionFile, getSubmissions } from "../api/contestant";
+import { axiosPrivate } from "../api/axios";
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import { useParams } from "react-router";
+import { useApp } from "../hooks/useApp";
+import { AxiosError, AxiosResponse } from "axios";
+
+
+interface IRow {
+  submissionId: string;
+  submittedTime: ISubmissionTime;
+  score: number;
+}
+
+type IParams = {
+  challengeId: string;
+  contestId : string
+};
+
+interface ISubmissionTime {
+  year:number;
+  month:number;
+  day:number;
+  hour:number;
+  minute:number;
+  second:number;
+}
+
+interface ISubmission{
+  submission_id : string;
+  user_id:string;
+  contest_id:string;
+  challenge_id:string;
+  submitted_time:ISubmissionTime;
+  score:number;
+};
 
 
 const PreviousSubmissions = () => {
+
+    const [loading, setLoading] = useState<boolean>(true);
+    const [rows, setRows] = useState<Array<IRow>>([] as Array<IRow>);
+    const axiosPrivate = useAxiosPrivate();
+    const {appState} = useApp();
+    const {contestId, challengeId} = useParams<IParams>();
+    const userId = appState.auth.userID;
+
+    const getSubmissionFileSucess = (res : AxiosResponse, submissionId: string) => {
+      var link = document.createElement("a");
+      link.href = window.URL.createObjectURL(new Blob([res.data]));
+      link.download = "submission_" + submissionId + ".zip";
+      link.click();
+  }
+
+  const getSubmissionFileFail = () => {
+      console.log("Getting template failed")
+  }
+
+  const downloadFunction = async (submissionId: string) => {
+      getSubmissionFile(axiosPrivate, submissionId, getSubmissionFileSucess, getSubmissionFileFail)
+  }
+
+    const getSubmissionsSuccess = (res : AxiosResponse) => {
+      const tempArr = res.data.data.map((item:ISubmission) => (createData(item.submission_id, item.submitted_time, item.score)));
+      setRows([...tempArr]);
+      setLoading(false);
+    }
+
+    const getSubmissionFail = (err: AxiosError) =>{
+      console.log("Getting submissions failed", err.message)
+    }
+
+    useEffect(()=> {
+      if(loading)
+      {
+        getSubmissions(axiosPrivate, userId!, contestId, challengeId, getSubmissionsSuccess, getSubmissionFail)
+      }
+      
+    }, [])
+
     return ( 
         <Layout>
             <TableContainer component={Paper}>
@@ -24,23 +102,25 @@ const PreviousSubmissions = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => (
-              <TableRow
-                key={row.submissionId}
-                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-              >
-                <TableCell component="th" scope="row" >
-                  {row.submissionId}
-                </TableCell>
-                <TableCell align="center">{row.submittedTime}</TableCell>
-                <TableCell align="center">{row.score}</TableCell>
-                <TableCell align="center">
-                    <Button variant="outlined" startIcon={<DownloadIcon />}>
-                        Download
-                    </Button>
-                </TableCell>
-              </TableRow>
-            ))}
+            {loading === false && (
+              rows.map((row) => (
+                <TableRow
+                  key={row.submissionId}
+                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                >
+                  <TableCell component="th" scope="row" >
+                    {row.submissionId}
+                  </TableCell>
+                  <TableCell align="center">{ new Date(row.submittedTime.year, row.submittedTime.month - 1, row.submittedTime.day, row.submittedTime.hour, row.submittedTime.minute, row.submittedTime.second).toLocaleString()}</TableCell>
+                  <TableCell align="center">{row.score}</TableCell>
+                  <TableCell align="center">
+                      <Button variant="outlined" onClick={() => downloadFunction(row.submissionId)} startIcon={<DownloadIcon />}>
+                          Download
+                      </Button>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </TableContainer>
@@ -52,16 +132,8 @@ export default PreviousSubmissions;
 
 function createData(
     submissionId: string,
-    submittedTime: string,
+    submittedTime: ISubmissionTime,
     score: number,
   ) {
     return { submissionId, submittedTime, score};
   }
-  
-  const rows = [
-    createData('Sub__001', "2023/03/95 8.45PM", 6.0),
-    createData('Sub__001', "2023/03/95 8.45PM", 9.0),
-    createData('Sub__001', "2023/03/95 8.45PM", 16.0),
-    createData('Sub__001', "2023/03/95 8.45PM", 3.7),
-    createData('Sub__001', "2023/03/95 8.45PM", 16.0),
-  ];

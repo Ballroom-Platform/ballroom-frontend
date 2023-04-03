@@ -4,12 +4,12 @@ import { NewContest } from "../helpers/interfaces";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { BFF_URLS } from "../links/backend";
 
-export const getChallenge = (axiosPrivate: AxiosInstance, challengeId : string, successHandler : Function, failHandler : Function)=> {
+export const getChallenge = (axiosPrivate: AxiosInstance, challengeId : string) => {
     const url = `${BFF_URLS.challengeService}/challenge/${challengeId}`
     const method = "GET";
     const headers = {};
-    axiosPrivate({url, method, headers}).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
-
+    return axiosPrivate({url, method, headers})
+    
 }
 
 export const createContest = (axiosPrivate : AxiosInstance, contest: NewContest, successHandler : Function, failHandler : Function)=> {

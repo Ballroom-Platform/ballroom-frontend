@@ -30,7 +30,7 @@ export const DefaultRouter : React.FC = () => {
 
                 <SecureRoute exact path="/dashboard" component={Dashboard}   callback={signInHandler}/>
                 <SecureRoute exact path="/contests/:contestId/:challengeId"  component={Challenge}   callback={signInHandler}/>
-                <SecureRoute exact path="/previousSubmissions" component={PreviousSubmissions}   callback={signInHandler}/>
+                <SecureRoute exact path="/contests/:contestId/:challengeId/previousSubmissions"  component={PreviousSubmissions}   callback={signInHandler}/>
                 <SecureRoute exact path="/contests" component={Contests}    callback={signInHandler}/>
                 <SecureRoute exact path="/contests/:contestId" component={Challenges}    callback={signInHandler}/> 
 

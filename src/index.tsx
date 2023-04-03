@@ -13,8 +13,6 @@ const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 
-console.log(defaultTheme);
-
 root.render(
     <ThemeProvider theme={defaultTheme}>
       <AuthProvider config={asgardeoConfig}>

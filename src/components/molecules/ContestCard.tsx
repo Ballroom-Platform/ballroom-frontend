@@ -1,4 +1,4 @@
-import { ButtonBase, Card, CardContent, CardMedia, Typography } from "@mui/material"
+import { Button, ButtonBase, Card, CardContent, CardMedia, IconButton, Typography } from "@mui/material"
 
 interface IProps {
     contestId: string;
