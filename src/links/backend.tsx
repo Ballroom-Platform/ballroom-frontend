@@ -12,7 +12,7 @@ export const BFF_URLS = {
     challengeService: BFF_BASE_URLS.challengeService,
     submissionList: BFF_BASE_URLS.scoreAPI + "/submissionList",
     submissionFile: BFF_BASE_URLS.scoreAPI + "/submissionFile",
-    leaderboard : BFF_BASE_URLS.scoreAPI + "/leaderboard"
+    leaderboard : BFF_BASE_URLS.scoreAPI + "/leaderboard",
     userService: BFF_BASE_URLS.userService
 }
 
