@@ -108,7 +108,7 @@ const Challenge : React.FC = () => {
 
     return (
         <Layout>
-            <Paper sx={{display: 'flex', justifyContent: "flex-end", marginBottom: '2rem', paddingX: '3rem'}} elevation={0}>
+            <Paper sx={{display: 'flex', justifyContent: "flex-end", marginBottom: '2rem'}} elevation={0}>
                 <Button variant="outlined" onClick={handler}>Previous Submissions</Button>
             </Paper>
             

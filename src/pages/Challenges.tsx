@@ -1,3 +1,4 @@
+import { Box, Button } from "@mui/material";
 import { AxiosError, AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
 import { useHistory, useLocation, useParams } from "react-router"
@@ -46,20 +47,33 @@ export const Challenges : React.FC = () => {
     }, [loadingDetails, loadingIds, challengeIds, challengeDetails])
 
     const clickHandler = (challengeId : string) => {
-        history.push(location.pathname + "/" + challengeId);
+        history.push(location.pathname + "/challenge/" + challengeId);
+    }
+
+    const leaderboardHandler = () => {
+        history.push(location.pathname + "/leaderboard");
     }
 
 
     return (
         <Layout>
-            {loading === false && challengeDetails.map(item => <ChallengeCard
-            challengeId={item.challengeId} 
-            title={item.title} 
-            status={"Incomplete"} 
-            difficulty={item.difficulty}
-            tags={["Ballerina"]}
-            clickHandler={clickHandler}
-            />)}
+            {loading === false && (
+                <>
+                    <Box sx={{display: 'flex', justifyContent: "flex-end", marginBottom: '2rem'}}>
+                        <Button variant="outlined" onClick={leaderboardHandler}>Leaderboard</Button>
+                    </Box>
+                {
+                    challengeDetails.map(item => <ChallengeCard
+                        challengeId={item.challengeId} 
+                        title={item.title} 
+                        status={"Incomplete"} 
+                        difficulty={item.difficulty}
+                        tags={["Ballerina"]}
+                        clickHandler={clickHandler}
+                        />)
+                }
+                </> 
+            )}
         </Layout>
     )
 }

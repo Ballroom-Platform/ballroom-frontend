@@ -11,6 +11,14 @@ export const uploadSubmission = async (axiosPrivate : AxiosInstance, data : Form
     axiosPrivate({url, method, headers, data }).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
 }
 
+export const getLeaderboard = async (axiosPrivate : AxiosInstance, contestId : string, successHandler : Function, failHandler : Function) => {
+    const url = BFF_URLS.leaderboard + "/" + contestId;
+    const method = "GET";
+    const headers = {};
+    axiosPrivate({url, method, headers}).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
+}
+
+
 
 export const getTemplate = async (axiosPrivate : AxiosInstance, challengeId : string, successHandler : Function, failHandler : Function) => {
     const url = BFF_URLS.challengeService + "/challenges/template/" + challengeId;
