@@ -9,6 +9,7 @@ export const Dashboard : React.FC = () => {
     useEffect(() => {
         const URL = localStorage.getItem("redirectURL");
         if (URL && URL !== ""){
+            localStorage.removeItem("redirectURL")
             history.push(URL)
         }else{
             history.push(appState.page.redirectURL!);

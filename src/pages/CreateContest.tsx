@@ -72,7 +72,7 @@ const CreateContest = () => {
 
             {startTime && endTime && (<Button variant="contained" onClick={() => createContest(axiosIns, {title: contestName, description: contestDescription, startTime: startTime, endTime: endTime, moderator: appState.auth.userID!},(res: any) => {console.log(res); setshowNotification(true); clearAllInputs()}, (err: any) => console.log(err))}>Create</Button>)}
 
-            {!(startTime && endTime) && (<Button variant="outlined" >Disabled</Button>) }
+            {!(startTime && endTime) && (<Button variant="outlined" disabled>Create</Button>) }
 
             <Snackbar  open={showNotification} autoHideDuration={6000} onClose={() => setshowNotification(false)} message="Contest Successfully Created" action={ <IconButton size="small" aria-label="close" color="inherit" onClick={() => setshowNotification(false)}> <CloseIcon fontSize="small" /> </IconButton>} />
 

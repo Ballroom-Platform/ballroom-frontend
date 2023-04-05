@@ -8,7 +8,7 @@ import UpcomingContests from "../pages/UpcomingContests";
 import ContestControls from "../pages/ContestControls";
 import AddChallengeToContest from "../pages/AddChallengeToContest";
 
-import { Contests, Home, PageNotFound, Dashboard, Challenges } from "../pages"
+import { Contests, Home, PageNotFound, Dashboard, Challenges, Leaderboard } from "../pages"
 import { BrowserRouter } from "react-router-dom";
 import { useSignIn } from "../hooks/useSignIn";
 import CreateChallenge from "../pages/CreateChallenge";
@@ -25,10 +25,11 @@ export const DefaultRouter : React.FC = () => {
                 <Route exact path="/" component={Home} />
 
                 <SecureRoute exact path="/dashboard" component={Dashboard}   callback={signInHandler}/>
-                <SecureRoute exact path="/contests/:contestId/:challengeId"  component={Challenge}   callback={signInHandler}/>
-                <SecureRoute exact path="/previousSubmissions" component={PreviousSubmissions}   callback={signInHandler}/>
+                <SecureRoute exact path="/contests/:contestId/leaderboard" component={Leaderboard}    callback={signInHandler}/> 
+                <SecureRoute exact path="/contests/:contestId/challenge/:challengeId"  component={Challenge}   callback={signInHandler}/>
+                <SecureRoute exact path="/contests/:contestId/challenge/:challengeId/previousSubmissions"  component={PreviousSubmissions}   callback={signInHandler}/>
                 <SecureRoute exact path="/contests" component={Contests}    callback={signInHandler}/>
-                <SecureRoute exact path="/contests/:contestId" component={Challenges}    callback={signInHandler}/> 
+                <SecureRoute exact path="/contests/:contestId" component={Challenges}    callback={signInHandler}/>          
 
                 <SecureRoute exact path="/contestControls/:contestId" component={ContestControls} callback={signInHandler}/>
                 <SecureRoute exact path="/addChallengeToContest/:contestId" component={AddChallengeToContest} callback={signInHandler}/>

@@ -41,9 +41,9 @@ export interface IChallenge {
   title : string,
   description : string,
   constraints : string,
-  tags : Array<string>,
   difficulty : string;
-  status : string;
+  template : Array<number>;
+  testCase : Array<number>
 }
 
 export type Challenge = {

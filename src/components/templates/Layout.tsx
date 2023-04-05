@@ -14,7 +14,7 @@ interface IProps {
 export const Layout: React.FC<IProps> = ({ children }) => {
 
   const {appState, setAppState} = useApp();
-  const {getAccessToken, getBasicUserInfo, signOut, state} = useAuthContext();
+  const {getAccessToken, getBasicUserInfo, signIn, state} = useAuthContext();
   const [idpToken, setIdpToken] = useState<string | null>(null);
 
 
@@ -30,7 +30,7 @@ export const Layout: React.FC<IProps> = ({ children }) => {
       }
 
       if(idpToken !== null){
-        fetchAccessToken(idpToken, setAppState, () => {});
+        fetchAccessToken(idpToken, setAppState, signIn);
       }else{
         getToken();
       }

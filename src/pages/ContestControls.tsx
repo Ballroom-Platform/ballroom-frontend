@@ -38,9 +38,8 @@ const ContestControls: React.FC = () => {
         console.log("The size of response array is " + res.data.length)
         res.data.forEach((challengeId: any) => {
             console.log(challengeId)
-            getChallenge(axiosIns, challengeId,
-                (res: any) => setchallenges((prevstate) => prevstate ? [...prevstate, {challengeId: res.data.challengeId,title: res.data.title, difficulty: res.data.difficulty}] : [{challengeId: res.data.challengeId,title: res.data.title, difficulty: res.data.difficulty}]),
-                (res: any)=> console.log(res.data))
+            getChallenge(axiosIns, challengeId).then((res: any) => setchallenges((prevstate) => prevstate ? [...prevstate, {challengeId: res.data.challengeId,title: res.data.title, difficulty: res.data.difficulty}] : [{challengeId: res.data.challengeId,title: res.data.title, difficulty: res.data.difficulty}])).
+            catch((res: any)=> console.log(res.data));
             
         });
     }

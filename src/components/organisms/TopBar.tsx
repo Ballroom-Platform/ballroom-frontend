@@ -67,7 +67,7 @@ export const TopBar: React.FC = () => {
                   height: '2rem',
                   color: theme.palette.grey[600],
                 }}
-                onClick={logoutHandler}
+                onClickCapture={logoutHandler}
               />
             </IconButton>
             <IconButton>
