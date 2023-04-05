@@ -1,7 +1,8 @@
 const BFF_BASE_URLS = {
     scoreAPI : "http://localhost:9092/score",
     contestService: "http://localhost:9098/contestService",
-    challengeService: "http://localhost:9096/challengeService"
+    challengeService: "http://localhost:9096/challengeService",
+    userService: "http://localhost:9095/userService"
 }
 
 export const BFF_URLS = {
@@ -12,6 +13,7 @@ export const BFF_URLS = {
     submissionList: BFF_BASE_URLS.scoreAPI + "/submissionList",
     submissionFile: BFF_BASE_URLS.scoreAPI + "/submissionFile",
     leaderboard : BFF_BASE_URLS.scoreAPI + "/leaderboard"
+    userService: BFF_BASE_URLS.userService
 }
 
 const STS_BASE = "http://localhost:9093/sts";

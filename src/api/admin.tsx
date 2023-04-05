@@ -51,3 +51,25 @@ export const getChallangesByDifficulty = (axiosPrivate: AxiosInstance, difficult
     axiosPrivate({url, method, headers}).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
 
 }
+
+export const getUsersByRoles = (axiosPrivate: AxiosInstance, role : string, successHandler : Function, failHandler : Function)=> {
+    const url = `${BFF_URLS.userService}/users/role/${role}`
+    const method = "GET";
+    const headers = {};
+    axiosPrivate({url, method, headers}).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
+
+}
+
+export const upgradeContestantToAdmin = (axiosPrivate: AxiosInstance, userId: string, successHandler : Function, failHandler : Function) => {
+    const url = `${BFF_URLS.userService}/users/${userId}/role/admin`
+    const method = "PUT";
+    const headers = {};
+    axiosPrivate({url, method, headers}).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
+}
+
+export const removeChallengeFromContest = (axiosPrivate: AxiosInstance, contestId: string, challengeId: string, successHandler : Function, failHandler : Function) => {
+    const url = `${BFF_URLS.contestService}/contest/${contestId}/challenge/${challengeId}`
+    const method = "DELETE";
+    const headers = {};
+    axiosPrivate({url, method, headers}).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
+}
