@@ -73,6 +73,7 @@ const PreviousSubmissions = () => {
 
     const getSubmissionsSuccess = (res : AxiosResponse) => {
       const tempArr = res.data.data.map((item:ISubmission) => (createData(item.submission_id, item.submitted_time, item.score)));
+      console.log("Running timer");
       setRows([...tempArr]);
       setLoading(false);
     }
@@ -82,9 +83,16 @@ const PreviousSubmissions = () => {
     }
 
     useEffect(()=> {
+      let poll: string | number | NodeJS.Timer | undefined;
       if(loading)
       {
-        getSubmissions(axiosPrivate, userId!, contestId, challengeId, getSubmissionsSuccess, getSubmissionFail)
+        poll = setInterval(() => {
+          getSubmissions(axiosPrivate, userId!, contestId, challengeId, getSubmissionsSuccess, getSubmissionFail)
+        }, 5000);
+      }
+
+      return () => {
+        clearInterval(poll);
       }
       
     }, [])
@@ -112,7 +120,7 @@ const PreviousSubmissions = () => {
                     {row.submissionId}
                   </TableCell>
                   <TableCell align="center">{ new Date(row.submittedTime.year, row.submittedTime.month - 1, row.submittedTime.day, row.submittedTime.hour, row.submittedTime.minute, row.submittedTime.second).toLocaleString()}</TableCell>
-                  <TableCell align="center">{row.score}</TableCell>
+                  <TableCell align="center">{(row.score) ? row.score : "pending"}</TableCell>
                   <TableCell align="center">
                       <Button variant="outlined" onClick={() => downloadFunction(row.submissionId)} startIcon={<DownloadIcon />}>
                           Download
