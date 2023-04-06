@@ -1,6 +1,7 @@
 import { useAuthContext } from "@asgardeo/auth-react";
 import { useEffect } from "react"
 import { useHistory, useLocation } from "react-router";
+import { Layout } from "../components/templates";
 import { useApp } from "../hooks/useApp"
 
 export const Dashboard : React.FC = () => {
@@ -11,10 +12,10 @@ export const Dashboard : React.FC = () => {
         if (URL && URL !== ""){
             localStorage.removeItem("redirectURL")
             history.push(URL)
-        }else{
-            history.push(appState.page.redirectURL!);
         }
         
     }, [])
-    return(<></>)
+    return(<>
+        <Layout>Loading</Layout>
+    </>)
 }

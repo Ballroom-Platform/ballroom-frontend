@@ -4,10 +4,12 @@ import { SidebarSection, ProfileCard } from '../molecules'
 import { KeyboardDoubleArrowLeft } from '@mui/icons-material'
 import { ISidebarItem } from '../../helpers/interfaces'
 import { FRONTEND_PUBLIC } from '../../links'
+import { useApp } from '../../hooks/useApp'
 
 export const Sidebar: React.FC = () => {
   let links: Record<string, Array<ISidebarItem>>
-  links = SidebarLinks.staff
+  const {appState} = useApp();
+  links = SidebarLinks[appState.auth.userRole!];
 
   return (
     <Paper
