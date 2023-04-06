@@ -2,7 +2,7 @@ import { useAuthContext } from '@asgardeo/auth-react'
 import { Box } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { useHistory, useLocation } from 'react-router'
-import { fetchAccessToken } from '../../api/common'
+import { fetchAccessToken, getUserRole } from '../../api/common'
 import { useApp } from '../../hooks/useApp'
 import { URL_LIST } from '../../links/frontend'
 import { Sidebar, TopBar } from '../organisms'
@@ -16,6 +16,12 @@ export const Layout: React.FC<IProps> = ({ children }) => {
   const {appState, setAppState} = useApp();
   const {getAccessToken, getBasicUserInfo, signIn, state} = useAuthContext();
   const [idpToken, setIdpToken] = useState<string | null>(null);
+  const location = useLocation();
+  const history = useHistory();
+
+  if(location.pathname === "/dashboard" && appState.auth.status === "active"){
+    history.push(appState.page.redirectURL[appState.auth?.userRole!]);
+  }
 
 
 
@@ -24,8 +30,9 @@ export const Layout: React.FC<IProps> = ({ children }) => {
       const getToken = async () => {
         const token  = await getAccessToken();
         const userInfo = await getBasicUserInfo();
+        const userRole = await getUserRole(userInfo.sub!);
         setIdpToken(token);
-        setAppState(prev => ({...prev, auth:{...prev.auth, userID: userInfo.sub}}))
+        setAppState(prev => ({...prev, auth:{...prev.auth, userID: userInfo.sub, userRole}}))
         return;
       }
 
@@ -39,6 +46,9 @@ export const Layout: React.FC<IProps> = ({ children }) => {
 
   return (
     <>
+      {
+        appState.auth.status === "active" && (
+          <>
         <main style={{ display: 'flex', flexDirection: 'row' }}>
             <Box
                 sx={{
@@ -57,6 +67,9 @@ export const Layout: React.FC<IProps> = ({ children }) => {
                 </Box>
             </section>
         </main>
+    </>
+        )
+      }
     </>
   )
 }
