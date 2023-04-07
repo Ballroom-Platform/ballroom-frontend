@@ -25,6 +25,7 @@ const CreateChallenge = () => {
     const [challengeTitle, setchallengeTitle] = useState<string>("");
     const [challengeDescription, setchallengeDescription] = useState<string>("");
     const [challengeDifficulty, setchallengeDifficulty] = useState<string>("MEDIUM");
+    const [challengeConstraints, setchallengeConstraints] = useState<string>("");
     const [testCaseFile, settestCaseFile] = useState({} as FileList);
     const [templateFile, settemplateFile] = useState({} as FileList);
 
@@ -49,7 +50,8 @@ const CreateChallenge = () => {
         formData.append('title', challengeTitle)
         formData.append('description', challengeDescription)
         formData.append('difficulty', challengeDifficulty)
-        createChallenge(axiosIns, formData, (res: any) => {setshowNotification(true); clearAllInputs();}, (err: any) => console.log("KELA WUNANEH"))
+        formData.append('constraints', challengeConstraints)
+        createChallenge(axiosIns, formData, (res: any) => {setshowNotification(true); clearAllInputs();}, (err: any) => console.log("ERROR OCCURED"))
 
         // fetch("http://localhost:9092/challengeService/challenge", {
         //     method: "POST",
@@ -90,6 +92,10 @@ const CreateChallenge = () => {
             <br />
 
             <TextField fullWidth multiline rows={4} sx={{marginY: '1rem'}}  id="outlined-basic" label="Description" variant="outlined" value={challengeDescription} onChange={(e) => setchallengeDescription(e.target.value)}/>
+
+            <br />
+
+            <TextField fullWidth multiline rows={4} sx={{marginY: '1rem'}}  id="outlined-basic" label="Constraints" variant="outlined" value={challengeConstraints} onChange={(e) => setchallengeConstraints(e.target.value)}/>
 
             <br />
 

@@ -6,13 +6,14 @@ import CardActions from "@mui/material/CardActions";
 import Paper from "@mui/material/Paper";
 import { useParams } from "react-router"
 import { useEffect, useState } from "react";
-import { getChallenge, getContest, removeChallengeFromContest } from "../api/admin";
+import { forceStartContest, getChallenge, getContest, removeChallengeFromContest } from "../api/admin";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { Layout } from "../components/templates";
 import { Link } from "react-router-dom";
 import CreateContest from "./CreateContest";
 import { getChallengesInContest } from "../api/common";
 import { AxiosInstance } from "axios";
+import { IMinimalContest } from "../helpers/interfaces";
 
 
 
@@ -30,14 +31,12 @@ type Challenge = {
 const ContestControls: React.FC = () => {
 
     const {contestId} = useParams<ContestId>();
-    const [contestTitle, setcontestTitle] = useState();
+    const [contest, setcontest] = useState<IMinimalContest>();
     const [challenges, setchallenges] = useState<Challenge[]>([]);
     const axiosIns = useAxiosPrivate();
 
     const handleRecievedChallengeArray = (res: any) => {
-        console.log("The size of response array is " + res.data.length)
         res.data.forEach((challengeId: any) => {
-            console.log(challengeId)
             getChallenge(axiosIns, challengeId).then((res: any) => setchallenges((prevstate) => prevstate ? [...prevstate, {challengeId: res.data.challengeId,title: res.data.title, difficulty: res.data.difficulty}] : [{challengeId: res.data.challengeId,title: res.data.title, difficulty: res.data.difficulty}])).
             catch((res: any)=> console.log(res.data));
             
@@ -48,16 +47,24 @@ const ContestControls: React.FC = () => {
         setchallenges((prevstate) => prevstate ? prevstate.filter((challenge) => challenge.challengeId !== challengeId) : []);
     }
 
+    const onForceStartClick = () => {
+        const date = new Date();
+        const newStartTime = {second: date.getSeconds(), minute: date.getMinutes(), hour: date.getHours(), day: date.getDate(), month: date.getMonth() + 1, year: date.getFullYear()}
+        if(contest) {
+            forceStartContest(axiosIns, contestId, {title: contest.title, startTime: newStartTime, endTime: contest.endTime, moderator: contest.moderator}, (res: any) => console.log(res.data), (err: any) => console.log(err));
+        }
+    }
+
     useEffect(() => {
         getChallengesInContest( axiosIns, contestId, handleRecievedChallengeArray, (err: any) => console.log(err))
-        getContest(axiosIns, contestId,(res: any) => {setcontestTitle(res.data.title)}, () => console.log("ËRROR OCCURRED"));
+        getContest(axiosIns, contestId,(res: any) => {setcontest(res.data)}, () => console.log("ËRROR OCCURRED"));
     },[]);
 
 
     return ( 
         <Layout>
             <Typography variant="h3" gutterBottom>
-                    Name: {contestTitle}
+                {contest ? "Name: " + contest.title : "Loading..."}
             </Typography>
 
             <Typography sx={{color: 'gray'}}variant="h6" gutterBottom>
@@ -67,6 +74,8 @@ const ContestControls: React.FC = () => {
             <Link to={`/addChallengeToContest/${contestId}`}>
             <Button variant="contained">Add Challenge</Button>
             </Link>
+
+            {contest && <Button variant="contained" sx={{marginX: "2rem"}}onClick={onForceStartClick}>Force Start</Button>}
             
 
             <Typography sx={{marginY: '2rem'}} variant="h4" gutterBottom>

@@ -82,3 +82,10 @@ export type User = {
   fullname: string;
   role: string;
 }
+
+export type IUpdatedContest = {
+  title: string;
+  startTime: BalDateTime;
+  endTime: BalDateTime;
+  moderator: string;
+}
