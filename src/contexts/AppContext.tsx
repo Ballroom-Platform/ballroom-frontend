@@ -10,7 +10,10 @@ const initialAppState : IAppState = {
     status : "inactive"
   },
   page : {
-    redirectURL: "/contests"
+    redirectURL: {
+      contestant : "/contests",
+      admin : "/upcomingContests"
+    }
   }
 }
 

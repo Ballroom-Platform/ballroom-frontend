@@ -1,9 +1,12 @@
 import {
     DirectionsCar,
     EmojiEvents,
+    Event,
     History,
     LocalCarWash,
+    ReceiptLong,
     Settings,
+    Stadium,
   } from '@mui/icons-material'
 import { SvgIconTypeMap } from '@mui/material'
 import { OverridableComponent } from '@mui/material/OverridableComponent'
@@ -40,14 +43,17 @@ const getItem : IGetItem = (key, label, icon, parent, subSections)=> {
 }
 
 const SidbarLinks: Record<string, Record<string, Array<ISidebarItem>>> = {
-  staff: {
+  contestant: {
     General: [
       getItem("contests", "Contests", EmojiEvents, "General", ["/contests/contest"]),
       getItem("settings", "Settings", Settings, "General", [])]
   },
   admin: {
-    Administrator: [
-      getItem("contestControls", "Contest Controls", Settings, "Administrator", [])
+    General: [
+      getItem("upcomingContests", "Upcoming Contests", Event, "General", []),
+      getItem("createContest", "Create a contest", Stadium, "General", []),
+      getItem("createChallenge", "Create a challenge", ReceiptLong, "General", []),
+      getItem("createChallenge", "Create a contest", Stadium, "General", []),
     ]
   }
   

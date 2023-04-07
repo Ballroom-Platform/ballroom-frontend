@@ -1,10 +1,10 @@
 import { AxiosInstance, AxiosResponse } from "axios";
 import { IAppState } from "../helpers/interfaces";
 import { BFF_URLS, STS_URLS } from "../links/backend";
-import axios from "./axios";
+import axios, { axiosPrivate } from "./axios";
 
 
-export const fetchAccessToken = (idpToken : string, setAppState : React.Dispatch<React.SetStateAction<IAppState>>, signOut : Function) => {
+export const fetchAccessToken = (idpToken : string, setAppState : React.Dispatch<React.SetStateAction<IAppState>>, signIn : Function) => {
     axios.get(STS_URLS.accessToken, {
         headers:{
             "Content-Type" : "application/json",
@@ -15,10 +15,10 @@ export const fetchAccessToken = (idpToken : string, setAppState : React.Dispatch
             console.log("Setting App state");
             setAppState(prev => ({...prev, auth : {...(prev.auth), status: "active", accessToken: res?.data?.data?.accessToken}}));
         }else{
-            signOut();
+            signIn();
         }
     }).catch(()=> {
-        signOut();
+        signIn();
     });
 }
 
@@ -36,4 +36,16 @@ export const getUpcomingContests = (axiosPrivate: AxiosInstance, successHandler 
     const headers = {};
     axiosPrivate({url, method, headers}).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
 
+}
+
+export const getUserRole = async (userId : string) => {
+    const url = `${BFF_URLS.userService}/user/${userId}/role`
+    const method = "GET";
+    const headers = {};
+    try {
+        const res = await axios({ url, method, headers });
+        return res.data.data.role;
+    } catch {
+        return null;
+    }
 }

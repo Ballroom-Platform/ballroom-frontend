@@ -16,12 +16,16 @@ export interface IAppState {
       status : "active" | "inactive";
       accessToken? : string;
       userID? : string;
+      userRole? : "contestant" | "admin"
     },
     page : {
       section? : string,
       subsection? : string,
       selectedItem? : string,
-      redirectURL? : string,
+      redirectURL : {
+        contestant : string,
+        admin : string
+      },
     }
 }
 
