@@ -14,6 +14,8 @@ import { useSignIn } from "../hooks/useSignIn";
 import CreateChallenge from "../pages/CreateChallenge";
 import ViewChallenge from "../pages/ViewChallenge";
 import Users from "../pages/Users";
+import ListOfChallengesAdmin from "../pages/ListOfChallengesAdmin";
+import EditChallenge from "../pages/EditChallenge";
 import { useApp } from "../hooks/useApp";
 
 export const DefaultRouter : React.FC = () => {
@@ -27,6 +29,7 @@ export const DefaultRouter : React.FC = () => {
             <Switch>
                 <Route exact path="/" component={Home} />
                 <SecureRoute exact path="/dashboard" component={Dashboard}   callback={signInHandler}/>
+
 
                 {
                     appState.auth?.userRole && appState.auth.userRole === "contestant" && (
@@ -51,6 +54,8 @@ export const DefaultRouter : React.FC = () => {
                             <SecureRoute exact path="/createChallenge" component={CreateChallenge} callback={signInHandler}/>
                             <SecureRoute exact path="/viewChallenge/:challengeId" component={ViewChallenge} callback={signInHandler}/>
                             <SecureRoute exact path="/users" component={Users} callback={signInHandler}/>
+                            <Route exact path="/adminListChallenges" component={ListOfChallengesAdmin}></Route>
+                            <Route exact path="/editChallenge/:challengeId" component={EditChallenge}></Route>
                             <SecureRoute component={PageNotFound}  callback={signInHandler}/>
                         </>
                     )

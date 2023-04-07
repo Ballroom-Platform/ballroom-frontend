@@ -1,4 +1,4 @@
-import { Button, Card, CardActions, CardContent, Tab, Tabs, Typography } from "@mui/material";
+import { Button, Card, CardActions, CardContent, Tab, Tabs, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { getChallangesByDifficulty } from "../api/admin";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
@@ -9,6 +9,10 @@ type Challenge = {
     title: string;
     difficulty: string;
 };
+
+type IProps = {
+    admin?: boolean;
+}
 
 // public type Challenge record{
 //     @sql:Column {name: "challenge_id"}
@@ -24,13 +28,15 @@ type Challenge = {
 //     byte[]? template;
 // };
 
-const ChallengesByDifficulty = () => {
+const ChallengesByDifficulty = ({admin} : IProps) => {
 
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setvalue(newValue);
+        setquery("");
     };
     
     const [challenges, setchallenges] = useState<Challenge[]>([]);
+    const [query, setquery] = useState<string>("");
     const [value, setvalue] = useState(0);
     const axiosIns = useAxiosPrivate();
 
@@ -67,8 +73,12 @@ const ChallengesByDifficulty = () => {
                 <Tab label="HARD" />
             </Tabs>
 
+
+            <TextField sx={{marginY: '2rem'}} id="outlined-basic" label="Search by title.." value={query} variant="outlined" onChange={(e) => setquery(e.target.value)}/>
             
-            {challenges && challenges.map((challenge) => (
+            {challenges && challenges
+            .filter((challenge) => challenge.title.toLowerCase().includes(query.toLowerCase()))
+            .map((challenge) => (
 
                 <Card key={challenge.challengeId} sx={{marginY: '1rem', width: '75%'}} >
 
@@ -86,6 +96,7 @@ const ChallengesByDifficulty = () => {
 
                     <CardActions>
                             <Link to={`/viewChallenge/${challenge.challengeId}`}><Button size="small">View</Button></Link>
+                            {admin && <Link to={`/editChallenge/${challenge.challengeId}`}><Button size="small">Edit</Button></Link>}
                     </CardActions>
 
                 </Card>

@@ -1,6 +1,6 @@
 import {  AxiosResponse, AxiosInstance } from "axios";
 import { useEffect, useState } from "react";
-import { NewContest } from "../helpers/interfaces";
+import { IUpdatedContest, NewContest } from "../helpers/interfaces";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { BFF_URLS } from "../links/backend";
 
@@ -34,6 +34,13 @@ export const createChallenge = (axiosPrivate : AxiosInstance, data: FormData, su
     const headers = {
         "Content-Type": "multipart/form-data",
     };
+    axiosPrivate({url, method, headers, data }).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
+}
+
+export const editChallenge = (axiosPrivate : AxiosInstance, data: FormData, challengeId: string, successHandler : Function, failHandler : Function)=> {
+    const url = `${BFF_URLS.challengeService}/challenge/${challengeId}`;
+    const method = "PUT";
+    const headers = {};
     axiosPrivate({url, method, headers, data }).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
 }
 
@@ -72,4 +79,12 @@ export const removeChallengeFromContest = (axiosPrivate: AxiosInstance, contestI
     const method = "DELETE";
     const headers = {};
     axiosPrivate({url, method, headers}).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
+}
+
+export const forceStartContest = (axiosPrivate: AxiosInstance, contestId: string, updatedContest: IUpdatedContest, successHandler : Function, failHandler : Function) => {
+    const url = `${BFF_URLS.contestService}/contest/${contestId}`
+    const method = "PUT";
+    const data = updatedContest;
+    const headers = {};
+    axiosPrivate({url, method, headers, data}).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
 }
