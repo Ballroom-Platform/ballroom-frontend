@@ -23,7 +23,7 @@ export const fetchAccessToken = (idpToken : string, setAppState : React.Dispatch
 }
 
 export const getChallengesInContest = (axiosPrivate: AxiosInstance, contestId : string, successHandler : Function, failHandler : Function)=> {
-    const url = `${BFF_URLS.contestService}/contest/${contestId}/challenges`
+    const url = `${BFF_URLS.contestService}/contests/${contestId}/challenges`
     const method = "GET";
     const headers = {};
     axiosPrivate({url, method, headers}).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
@@ -31,7 +31,7 @@ export const getChallengesInContest = (axiosPrivate: AxiosInstance, contestId : 
 }
 
 export const getUpcomingContests = (axiosPrivate: AxiosInstance, successHandler : Function, failHandler : Function)=> {
-    const url = `${BFF_URLS.contestService}/contests/future`
+    const url = `${BFF_URLS.contestService}/contests/status/future`
     const method = "GET";
     const headers = {};
     axiosPrivate({url, method, headers}).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());

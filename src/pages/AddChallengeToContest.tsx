@@ -20,7 +20,18 @@ const AddChallengeToContest = () => {
     const {contestId} = useParams<ContestId>();
     const [challengeId, setchallengeId] = useState("");
     const [showNotification, setshowNotification] = useState(false);
+    const [showFailNotification, setshowFailNotification] = useState(false);
     const axiosIns = useAxiosPrivate();
+
+    const addChallengeToThisContest = (thisChallengeId: string) => {
+        addChallenge(axiosIns, contestId, thisChallengeId, (res: any) => {console.log(res); setshowNotification(true);},
+         (err: any) => {
+            console.log("ERROR...");
+            if(err.response.data === "Challenge already added to contest"){
+                setshowFailNotification(true);
+            }
+        });
+    }
 
 
     return ( 
@@ -29,14 +40,11 @@ const AddChallengeToContest = () => {
                     Add Challenge to Contest
             </Typography>
 
-            <Paper elevation={0}>
-                <TextField value={challengeId} onChange={(e) => setchallengeId(e.target.value)}id="outlined-basic" label="Challenge Id" variant="outlined" />
-            </Paper>
-            <Button sx={{marginY: '2rem'}}variant="contained" onClick={() => addChallenge(axiosIns, contestId, challengeId, (res: any) => {console.log(res); setshowNotification(true); setchallengeId("");}, (err: any) => console.log(err))}>Add Challenge</Button>
-
-            <ChallengesByDifficulty/>
+            <ChallengesByDifficulty addChallengeToContest={addChallengeToThisContest}/>
             
             <Snackbar  open={showNotification} autoHideDuration={6000} onClose={() => setshowNotification(false)} message="Added Challenge!" action={ <IconButton size="small" aria-label="close" color="inherit" onClick={() => setshowNotification(false)}> <CloseIcon fontSize="small" /> </IconButton>} />
+
+            <Snackbar  open={showFailNotification} autoHideDuration={6000} onClose={() => setshowFailNotification(false)} message="Challenge is already added!" action={ <IconButton size="small" aria-label="close" color="inherit" onClick={() => setshowFailNotification(false)}> <CloseIcon fontSize="small" /> </IconButton>} />
 
         </Layout>
     );
