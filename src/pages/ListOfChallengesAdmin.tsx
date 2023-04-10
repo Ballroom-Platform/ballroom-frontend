@@ -18,7 +18,7 @@ const ListOfChallengesAdmin = () => {
     return ( 
 
         <Layout>
-            <ChallengesByDifficulty admin />
+            <ChallengesByDifficulty adminEdit />
         </Layout>
         // <Layout>
         //     <Typography variant="h3" gutterBottom>
