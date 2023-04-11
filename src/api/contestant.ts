@@ -1,4 +1,4 @@
-import {  AxiosInstance, AxiosResponse } from "axios";
+import {  AxiosError, AxiosInstance, AxiosResponse } from "axios";
 import { BFF_URLS } from "../links/backend";
 
 
@@ -15,7 +15,7 @@ export const getLeaderboard = async (axiosPrivate : AxiosInstance, contestId : s
     const url = BFF_URLS.leaderboard + "/" + contestId;
     const method = "GET";
     const headers = {};
-    axiosPrivate({url, method, headers}).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
+    axiosPrivate({url, method, headers}).then((res: AxiosResponse) => successHandler(res)).catch((err: AxiosError) => failHandler(err));
 }
 
 

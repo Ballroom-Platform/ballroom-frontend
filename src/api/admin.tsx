@@ -88,3 +88,11 @@ export const forceStartContest = (axiosPrivate: AxiosInstance, contestId: string
     const headers = {};
     axiosPrivate({url, method, headers, data}).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
 }
+
+export const getPastContests = (axiosPrivate: AxiosInstance, successHandler : Function, failHandler : Function)=> {
+    const url = `${BFF_URLS.contestService}/contests/status/past`
+    const method = "GET";
+    const headers = {};
+    axiosPrivate({url, method, headers}).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
+
+}

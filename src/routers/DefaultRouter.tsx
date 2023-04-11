@@ -17,6 +17,8 @@ import Users from "../pages/Users";
 import ListOfChallengesAdmin from "../pages/ListOfChallengesAdmin";
 import EditChallenge from "../pages/EditChallenge";
 import { useApp } from "../hooks/useApp";
+import PastContestsAdmin from "../pages/PastContestsAdmin";
+import PastContestControls from "../pages/PastContestControls";
 
 export const DefaultRouter : React.FC = () => {
     const {signInHandler} = useSignIn();
@@ -56,6 +58,8 @@ export const DefaultRouter : React.FC = () => {
                             <SecureRoute exact path="/users" component={Users} callback={signInHandler}/>
                             <SecureRoute exact path="/adminListChallenges" component={ListOfChallengesAdmin} callback={signInHandler}></SecureRoute>
                             <SecureRoute exact path="/editChallenge/:challengeId" component={EditChallenge}callback={signInHandler}></SecureRoute>
+                            <SecureRoute exact path="/pastContests" component={PastContestsAdmin} callback={signInHandler}></SecureRoute>
+                            <SecureRoute exact path="/pastContests/:contestId" component={PastContestControls} callback={signInHandler}></SecureRoute>
                             <SecureRoute component={PageNotFound}  callback={signInHandler}/>
                         </>
                     )
