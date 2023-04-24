@@ -19,6 +19,8 @@ import EditChallenge from "../pages/EditChallenge";
 import { useApp } from "../hooks/useApp";
 import PastContestsAdmin from "../pages/PastContestsAdmin";
 import PastContestControls from "../pages/PastContestControls";
+import OngoingContestsAdmin from "../pages/OngoingContestsAdmin";
+import OngoingContestControls from "../pages/OngoingContestControls";
 
 export const DefaultRouter : React.FC = () => {
     const {signInHandler} = useSignIn();
@@ -30,6 +32,8 @@ export const DefaultRouter : React.FC = () => {
         <BrowserRouter>
             <Switch>
                 <Route exact path="/" component={Home} />
+                {/* <Route exact path="/ongoingContests/:contestId" component={OngoingContestControls} ></Route> */}
+
                 <SecureRoute exact path="/dashboard" component={Dashboard}   callback={signInHandler}/>
 
 
@@ -60,6 +64,8 @@ export const DefaultRouter : React.FC = () => {
                             <SecureRoute exact path="/editChallenge/:challengeId" component={EditChallenge}callback={signInHandler}></SecureRoute>
                             <SecureRoute exact path="/pastContests" component={PastContestsAdmin} callback={signInHandler}></SecureRoute>
                             <SecureRoute exact path="/pastContests/:contestId" component={PastContestControls} callback={signInHandler}></SecureRoute>
+                            <SecureRoute exact path="/ongoingContests/" component={OngoingContestsAdmin} callback={signInHandler}></SecureRoute>
+                            <SecureRoute exact path="/ongoingContests/:contestId" component={OngoingContestControls} callback={signInHandler}></SecureRoute>
                             <SecureRoute component={PageNotFound}  callback={signInHandler}/>
                         </>
                     )

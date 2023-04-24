@@ -6,7 +6,7 @@ import CardActions from "@mui/material/CardActions";
 import Paper from "@mui/material/Paper";
 import { useParams } from "react-router"
 import { useEffect, useState } from "react";
-import { forceStartContest, getChallenge, getContest, removeChallengeFromContest } from "../api/admin";
+import { changeContestTime, getChallenge, getContest, removeChallengeFromContest } from "../api/admin";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { Layout } from "../components/templates";
 import { Link } from "react-router-dom";
@@ -51,7 +51,7 @@ const ContestControls: React.FC = () => {
         const date = new Date();
         const newStartTime = {second: date.getSeconds(), minute: date.getMinutes(), hour: date.getHours(), day: date.getDate(), month: date.getMonth() + 1, year: date.getFullYear()}
         if(contest) {
-            forceStartContest(axiosIns, contestId, {title: contest.title, startTime: newStartTime, endTime: contest.endTime, moderator: contest.moderator}, (res: any) => console.log(res.data), (err: any) => console.log(err));
+            changeContestTime(axiosIns, contestId, {title: contest.title, startTime: newStartTime, endTime: contest.endTime, moderator: contest.moderator}, (res: any) => console.log(res.data), (err: any) => console.log(err));
         }
     }
 
