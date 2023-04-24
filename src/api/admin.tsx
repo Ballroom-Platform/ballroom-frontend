@@ -81,10 +81,26 @@ export const removeChallengeFromContest = (axiosPrivate: AxiosInstance, contestI
     axiosPrivate({url, method, headers}).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
 }
 
-export const forceStartContest = (axiosPrivate: AxiosInstance, contestId: string, updatedContest: IUpdatedContest, successHandler : Function, failHandler : Function) => {
+export const changeContestTime = (axiosPrivate: AxiosInstance, contestId: string, updatedContest: IUpdatedContest, successHandler : Function, failHandler : Function) => {
     const url = `${BFF_URLS.contestService}/contests/${contestId}`
     const method = "PUT";
     const data = updatedContest;
     const headers = {};
     axiosPrivate({url, method, headers, data}).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
+}
+
+export const getPastContests = (axiosPrivate: AxiosInstance, successHandler : Function, failHandler : Function)=> {
+    const url = `${BFF_URLS.contestService}/contests/status/past`
+    const method = "GET";
+    const headers = {};
+    axiosPrivate({url, method, headers}).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
+
+}
+
+export const getOngoingContests = (axiosPrivate: AxiosInstance, successHandler : Function, failHandler : Function)=> {
+    const url = `${BFF_URLS.contestService}/contests/status/present`
+    const method = "GET";
+    const headers = {};
+    axiosPrivate({url, method, headers}).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
+
 }
