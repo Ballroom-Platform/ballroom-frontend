@@ -172,8 +172,8 @@ const OngoingContestControls = () => {
 
                     </DemoContainer>
                 </LocalizationProvider>
-
-                <Button variant="outlined" onClick={() => confirmChangeEndTime()}>Change Time</Button>
+                
+                <Button disabled={!endTimeIsValid} variant="outlined" onClick={() => confirmChangeEndTime()}>Change Time</Button>
 
                 <Snackbar  open={showInvalidTimeNotification} autoHideDuration={6000} onClose={() => setshowInvalidTimeNotification(false)} message="The Time you entered is invalid!" action={ <IconButton size="small" aria-label="close" color="inherit" onClick={() => setshowInvalidTimeNotification(false)}> <CloseIcon fontSize="small" /> </IconButton>} />
 

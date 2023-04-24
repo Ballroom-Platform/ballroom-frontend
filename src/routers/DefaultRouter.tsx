@@ -32,7 +32,6 @@ export const DefaultRouter : React.FC = () => {
         <BrowserRouter>
             <Switch>
                 <Route exact path="/" component={Home} />
-                {/* <Route exact path="/ongoingContests/:contestId" component={OngoingContestControls} ></Route> */}
 
                 <SecureRoute exact path="/dashboard" component={Dashboard}   callback={signInHandler}/>
 
