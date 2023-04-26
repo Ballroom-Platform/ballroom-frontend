@@ -1,7 +1,7 @@
 import { Box, Button } from "@mui/material";
 import { AxiosError, AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
-import { useHistory, useLocation, useParams } from "react-router"
+import { useNavigate, useLocation, useParams } from "react-router"
 import { getChallenge } from "../api/admin";
 import { getChallengesInContest } from "../api/common";
 import { ChallengeCard } from "../components/molecules";
@@ -10,7 +10,7 @@ import { IChallenge } from "../helpers/interfaces";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
 export const Challenges : React.FC = () => {
-    const history = useHistory();
+    const navigate = useNavigate();
     const location = useLocation()
     const {contestId} = useParams<{contestId : string}>();
     const [loadingIds, setLoadingIds] = useState<boolean>(true)
@@ -22,7 +22,7 @@ export const Challenges : React.FC = () => {
 
     useEffect(() => {
         if(loadingIds){
-            getChallengesInContest(axiosPrivate, contestId, (res:AxiosResponse) => {
+            getChallengesInContest(axiosPrivate, contestId!, (res:AxiosResponse) => {
                 setChallengeIds([...res.data]);
                 setLoadingIds(false);
                 setLoadingDetails(true);
@@ -47,11 +47,11 @@ export const Challenges : React.FC = () => {
     }, [loadingDetails, loadingIds, challengeIds, challengeDetails])
 
     const clickHandler = (challengeId : string) => {
-        history.push(location.pathname + "/challenge/" + challengeId);
+        navigate(location.pathname + "/challenge/" + challengeId);
     }
 
     const leaderboardHandler = () => {
-        history.push(location.pathname + "/leaderboard");
+        navigate(location.pathname + "/leaderboard");
     }
 
 

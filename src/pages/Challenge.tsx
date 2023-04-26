@@ -5,16 +5,16 @@ import Typography from "@mui/material/Typography";
 import DownloadIcon from '@mui/icons-material/Download';
 import UploadIcon from '@mui/icons-material/Upload';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-import { useHistory, useLocation, useParams } from "react-router";
+import { useNavigate, useLocation, useParams } from "react-router";
 import { Layout } from "../components/templates";
 import axios, { AxiosResponse } from "axios";
 import { BFF_URLS } from "../links";
 import { IChallenge } from "../helpers/interfaces";
 import { useEffect, useState } from "react";
 import { getChallenge } from "../api/admin";
-import { axiosPrivate } from "../api/axios";
 import { getTemplate, uploadSubmission } from "../api/contestant";
 import { useApp } from "../hooks/useApp";
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
 type IParams = {
     challengeId: string;
@@ -31,19 +31,20 @@ interface ISuccessStates{
 }
 
 const Challenge : React.FC = () => {
-    const history = useHistory();
+    const navigate = useNavigate();
     const defaultErrorStates : IErrorStates= {emptyFields : false, uploadFailed: false}
     const defaultSuccessStates : ISuccessStates = {uploadComplete: false};
     const {challengeId, contestId} = useParams<IParams>()
     const location = useLocation();
     const [loading, setLoading] = useState<boolean>(true);
+    const axiosPrivate = useAxiosPrivate();
     const [submissionFile, setSubmissionFile] = useState({} as FileList);
     const [errorStates, setErrorStates] = useState<IErrorStates>(defaultErrorStates);
     const [sucessStates, setSuccessStates] = useState<ISuccessStates>(defaultSuccessStates)
     const [submissionId, setSubmissionId] = useState<string | null>(null);
     const {appState} = useApp();
     const handler = () => {
-        history.push(location.pathname + "/previousSubmissions");
+        navigate(location.pathname + "/previousSubmissions");
     }
 
     const [challenge, setChallenge] = useState<IChallenge>({} as IChallenge);
@@ -60,7 +61,7 @@ const Challenge : React.FC = () => {
     }
 
     const downloadFunction = async () => {
-        getTemplate(axiosPrivate, challengeId, getTemplateSucess, getTemplateFail)
+        getTemplate(axiosPrivate, challengeId!, getTemplateSucess, getTemplateFail)
     }
 
     const onSubmissionFileChange = (event : React.ChangeEvent<HTMLInputElement>) => {
@@ -79,8 +80,8 @@ const Challenge : React.FC = () => {
 
         const formData = new FormData();
         formData.set("userId", userId!);
-        formData.set("challengeId", challengeId);
-        formData.set("contestId", contestId);
+        formData.set("challengeId", challengeId!);
+        formData.set("contestId", contestId!);
         formData.set('submission', submissionFile[0], userId + "_" + contestId + "_" + challengeId + "_" + Date.now());
 
         const successHandler = (res: AxiosResponse) => {
@@ -98,7 +99,7 @@ const Challenge : React.FC = () => {
     }
 
     useEffect(() => {
-        getChallenge(axiosPrivate, challengeId).then(res => {
+        getChallenge(axiosPrivate, challengeId!).then(res => {
             setChallenge(res.data);
             setLoading(false);
         }).catch(() => console.log("Challenge fetching failed"))

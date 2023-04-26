@@ -44,8 +44,8 @@ const PastContestControls = () => {
     };
 
     useEffect(() => {
-        getChallengesInContest( axiosIns, contestId, handleRecievedChallengeArray, (err: any) => console.log(err))
-        getContest(axiosIns, contestId,(res: any) => {setcontest(res.data)}, () => console.log("ËRROR OCCURRED"));
+        getChallengesInContest( axiosIns, contestId!, handleRecievedChallengeArray, (err: any) => console.log(err))
+        getContest(axiosIns, contestId!,(res: any) => {setcontest(res.data)}, () => console.log("ËRROR OCCURRED"));
 
     },[]);
     
@@ -81,7 +81,7 @@ const PastContestControls = () => {
                         </Card>
             ))}
 
-            {selectedTab === 1 && <LeaderboardTable contestId={contestId}/>}
+            {selectedTab === 1 && <LeaderboardTable contestId={contestId!}/>}
 
 
         </Layout>

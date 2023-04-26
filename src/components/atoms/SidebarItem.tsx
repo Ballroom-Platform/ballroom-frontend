@@ -5,14 +5,14 @@ import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
 import { ISidebarItem } from '../../helpers/interfaces'
 import React from 'react'
-import { useHistory, useLocation } from 'react-router'
+import { useNavigate, useLocation } from 'react-router'
 
 export const SidebarItem: React.FC<
 ISidebarItem & { itemMeta: ISidebarItem }
 > = ({ label, icon, url, subSections }) => {
   const theme = useTheme();
   const location = useLocation()
-  const history = useHistory()
+  const navigate = useNavigate()
 
   const selected =
   location.pathname.includes(url)|| subSections.indexOf(location.pathname) > -1
@@ -20,7 +20,7 @@ ISidebarItem & { itemMeta: ISidebarItem }
       : false
 
   const handleSelectedSection = () => {
-    history.push(url);
+    navigate(url);
   }
 
   const styles = {

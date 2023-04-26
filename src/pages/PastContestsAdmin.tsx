@@ -1,6 +1,6 @@
 import { Grid, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useHistory, useLocation } from "react-router";
+import { useNavigate, useLocation } from "react-router";
 import { Link } from "react-router-dom";
 import { getPastContests } from "../api/admin";
 import { ContestCard } from "../components/molecules";
@@ -9,10 +9,10 @@ import { IMinimalContest } from "../helpers/interfaces";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
 const PastContestsAdmin = () => {
-    const history = useHistory();
+    const navigate = useNavigate();
     const location = useLocation()
     const clickHandler = (key: string) => {
-        history.push(location.pathname + `/${key}`);
+        navigate(location.pathname + `/${key}`);
     }
 
     const [contests, setcontests] = useState<IMinimalContest[]>([]);

@@ -24,7 +24,7 @@ const AddChallengeToContest = () => {
     const axiosIns = useAxiosPrivate();
 
     const addChallengeToThisContest = (thisChallengeId: string) => {
-        addChallenge(axiosIns, contestId, thisChallengeId, (res: any) => {console.log(res); setshowNotification(true);},
+        addChallenge(axiosIns, contestId!, thisChallengeId, (res: any) => {console.log(res); setshowNotification(true);},
          (err: any) => {
             console.log("ERROR...");
             if(err.response.data === "Challenge already added to contest"){
