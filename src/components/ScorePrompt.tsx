@@ -11,7 +11,7 @@ export const ScorePrompt : React.FC<IProp> = ({submissionId}) => {
     const [score, setScore] = useState<string>("pending");
     
     const pollScore = () => {
-        axios.get(BFF_URLS.score_submissionScore, {params:{submissionId}}).then(res => {
+        axios.get(BFF_URLS.submissionService + `/${submissionId}/score`).then(res => {
             console.log(res);
             setScore(res.data.data);
         }).catch(err => {
