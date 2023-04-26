@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { getChallangesByDifficulty } from "../api/admin";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { Link } from "react-router-dom";
+import { AxiosInstance } from "axios";
 
 type Challenge = {
     challengeId: string;
@@ -11,7 +12,8 @@ type Challenge = {
 };
 
 type IProps = {
-    admin?: boolean;
+    adminEdit?: boolean;
+    addChallengeToContest?: (challengeId: string) => void;
 }
 
 // public type Challenge record{
@@ -28,7 +30,7 @@ type IProps = {
 //     byte[]? template;
 // };
 
-const ChallengesByDifficulty = ({admin} : IProps) => {
+const ChallengesByDifficulty = ({adminEdit, addChallengeToContest} : IProps) => {
 
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setvalue(newValue);
@@ -96,7 +98,8 @@ const ChallengesByDifficulty = ({admin} : IProps) => {
 
                     <CardActions>
                             <Link to={`/viewChallenge/${challenge.challengeId}`}><Button size="small">View</Button></Link>
-                            {admin && <Link to={`/editChallenge/${challenge.challengeId}`}><Button size="small">Edit</Button></Link>}
+                            {adminEdit && <Link to={`/editChallenge/${challenge.challengeId}`}><Button size="small">Edit</Button></Link>}
+                            {addChallengeToContest && <Button size="small" onClick={() => addChallengeToContest(challenge.challengeId)}>Add to Contest</Button>}
                     </CardActions>
 
                 </Card>

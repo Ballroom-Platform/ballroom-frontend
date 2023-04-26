@@ -51,9 +51,9 @@ const SidbarLinks: Record<string, Record<string, Array<ISidebarItem>>> = {
   admin: {
     General: [
       getItem("upcomingContests", "Upcoming Contests", Event, "General", []),
+      getItem("ongoingContests", "Ongoing Contests", Event, "General", []),
       getItem("createContest", "Create a contest", Stadium, "General", []),
       getItem("createChallenge", "Create a challenge", ReceiptLong, "General", []),
-      getItem("createChallenge", "Create a contest", Stadium, "General", []),
     ]
   }
   
