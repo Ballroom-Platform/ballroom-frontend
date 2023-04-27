@@ -7,7 +7,6 @@ import { useApp } from "../hooks/useApp"
 export const LoginHandler : React.FC = () => {
     const {appState} = useApp();
     const navigate = useNavigate();
-    console.log("Login Handler")
     useEffect(() => {
         const URL = localStorage.getItem("redirectURL");
         if (URL && URL !== ""){

@@ -8,19 +8,14 @@ export const RequireIDPAuth : React.FC = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const {signInHandler} = useSignIn()
 
-    console.log("Require idp Auth")
-
     useEffect(() => {
-        console.log("Inside useEffect")
         if(state.isLoading){
             return;
         }
 
         if(state.isAuthenticated && loading){
-            console.log("Loading Stopped")
             setLoading(false);
         }else{
-            console.log("Sending to SignIn")
             signInHandler();
         }
         
