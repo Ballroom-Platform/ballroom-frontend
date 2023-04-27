@@ -51,13 +51,13 @@ const ContestControls: React.FC = () => {
         const date = new Date();
         const newStartTime = {second: date.getSeconds(), minute: date.getMinutes(), hour: date.getHours(), day: date.getDate(), month: date.getMonth() + 1, year: date.getFullYear()}
         if(contest) {
-            changeContestTime(axiosIns, contestId, {title: contest.title, startTime: newStartTime, endTime: contest.endTime, moderator: contest.moderator}, (res: any) => console.log(res.data), (err: any) => console.log(err));
+            changeContestTime(axiosIns, contestId!, {title: contest.title, startTime: newStartTime, endTime: contest.endTime, moderator: contest.moderator}, (res: any) => console.log(res.data), (err: any) => console.log(err));
         }
     }
 
     useEffect(() => {
-        getChallengesInContest( axiosIns, contestId, handleRecievedChallengeArray, (err: any) => console.log(err))
-        getContest(axiosIns, contestId,(res: any) => {setcontest(res.data)}, () => console.log("ËRROR OCCURRED"));
+        getChallengesInContest( axiosIns, contestId!, handleRecievedChallengeArray, (err: any) => console.log(err))
+        getContest(axiosIns, contestId!,(res: any) => {setcontest(res.data)}, () => console.log("ËRROR OCCURRED"));
     },[]);
 
 
@@ -98,7 +98,7 @@ const ContestControls: React.FC = () => {
 
                         <CardActions>
                             <Link to={`/viewChallenge/${challenge.challengeId}`}><Button size="small">View</Button></Link>
-                            <Button sx={{color: 'red'}} size="small" onClick={() => removeChallengeFromContest(axiosIns, contestId, challenge.challengeId, (res: any)=> {console.log(res.data); handleRemoval(challenge.challengeId)}, () => console.log("ERROR!"))}>Remove</Button>
+                            <Button sx={{color: 'red'}} size="small" onClick={() => removeChallengeFromContest(axiosIns, contestId!, challenge.challengeId!, (res: any)=> {console.log(res.data); handleRemoval(challenge.challengeId)}, () => console.log("ERROR!"))}>Remove</Button>
                         </CardActions>
 
                     </Card>

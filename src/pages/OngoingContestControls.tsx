@@ -1,6 +1,6 @@
 import { Button, IconButton, Snackbar, Tab, Tabs, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useHistory, useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { addChallenge, changeContestTime, getChallenge, getContest } from "../api/admin";
 import { getChallengesInContest } from "../api/common";
 import { Layout } from "../components/templates";
@@ -28,7 +28,7 @@ type Challenge = {
 };
 
 const OngoingContestControls = () => {
-    const history = useHistory();
+    const navigate = useNavigate();
     const {contestId} = useParams<ContestId>();
     const [contest, setcontest] = useState<IMinimalContest>();
     const [challenges, setchallenges] = useState<Challenge[]>([]);
@@ -62,17 +62,17 @@ const OngoingContestControls = () => {
         const date = new Date();
         const newEndTime = {second: date.getSeconds(), minute: date.getMinutes(), hour: date.getHours(), day: date.getDate(), month: date.getMonth() + 1, year: date.getFullYear()}
         if(contest) {
-            changeContestTime(axiosIns, contestId, {title: contest.title, startTime: contest.startTime, endTime: newEndTime, moderator: contest.moderator}, (res: any) => console.log(res.data), (err: any) => console.log(err));
+            changeContestTime(axiosIns, contestId!, {title: contest.title, startTime: contest.startTime, endTime: newEndTime, moderator: contest.moderator}, (res: any) => console.log(res.data), (err: any) => console.log(err));
         }
 
         // FIXME: Should redirect to past contests here.
         // The below doesnt work properly. Need to reload the page to see the changes.
-        history.push("/pastContests");
+        navigate("/pastContests");
         
     }
 
     const addChallengeToThisContest = (thisChallengeId: string) => {
-        addChallenge(axiosIns, contestId, thisChallengeId, (res: any) => {console.log(res); setshowNotification(true);},
+        addChallenge(axiosIns, contestId!, thisChallengeId, (res: any) => {console.log(res); setshowNotification(true);},
          (err: any) => {
             console.log("ERROR...");
             if(err.response.data === "Challenge already added to contest"){
@@ -103,14 +103,14 @@ const OngoingContestControls = () => {
 
     const confirmChangeEndTime = () => {
         if(endTimeIsValid && endTime && contest){
-            changeContestTime(axiosIns, contestId, {title: contest.title, startTime: contest.startTime, endTime: endTime, moderator: contest.moderator}, (res: any) => {setchangedEndTimeSuccessNotification(true); console.log(res.data);}, (err: any) => {setchangedEndTimeFailNotification(true); console.log(err);});
+            changeContestTime(axiosIns, contestId!, {title: contest.title, startTime: contest.startTime, endTime: endTime, moderator: contest.moderator}, (res: any) => {setchangedEndTimeSuccessNotification(true); console.log(res.data);}, (err: any) => {setchangedEndTimeFailNotification(true); console.log(err);});
         }
     }
 
 
     useEffect(() => {
-        getChallengesInContest( axiosIns, contestId, handleRecievedChallengeArray, (err: any) => console.log(err))
-        getContest(axiosIns, contestId,(res: any) => {setcontest(res.data)}, () => console.log("ËRROR OCCURRED"));
+        getChallengesInContest( axiosIns, contestId!, handleRecievedChallengeArray, (err: any) => console.log(err))
+        getContest(axiosIns, contestId!,(res: any) => {setcontest(res.data)}, () => console.log("ËRROR OCCURRED"));
 
     },[selectedTab]);
 
@@ -151,7 +151,7 @@ const OngoingContestControls = () => {
                         </Card>
             ))}
 
-            {selectedTab === 1 && <LeaderboardTable contestId={contestId}/>}
+            {selectedTab === 1 && <LeaderboardTable contestId={contestId!}/>}
 
             {selectedTab === 2 && 
             <>

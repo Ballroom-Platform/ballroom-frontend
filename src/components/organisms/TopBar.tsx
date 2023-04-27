@@ -19,7 +19,6 @@ import {
     KeyboardArrowLeft,
   } from '@mui/icons-material'
 import { useAuthContext } from '@asgardeo/auth-react'
-import { useHistory, useLocation } from 'react-router'
   
 export const TopBar: React.FC = () => {
   const theme = useTheme()

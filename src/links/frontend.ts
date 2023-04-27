@@ -10,7 +10,7 @@ export const FRONTEND_PUBLIC = {
 export const URL_LIST : Record<string, string> = {
     contests : "/contests",
     settings : "/settings",
-    dashboard : "/dashboard",
+    loginHandler : "/loginHandler",
     upcomingContests : "/upcomingContests",
     createContest : "/createContest",
     createChallenge : "/createChallenge",

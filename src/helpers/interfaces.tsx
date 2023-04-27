@@ -10,13 +10,15 @@ export interface ISidebarItem{
   subSections: Array<string>
 }
 
+export type TRole = "contestant" | "admin"
+
 
 export interface IAppState {
     auth : {
       status : "active" | "inactive";
       accessToken? : string;
       userID? : string;
-      userRole? : "contestant" | "admin"
+      userRole? : TRole
     },
     page : {
       section? : string,

@@ -11,7 +11,7 @@ export const Leaderboard : React.FC = () => {
 
     return ( 
         <Layout>
-            <LeaderboardTable contestId={contestId}/>
+            <LeaderboardTable contestId={contestId!}/>
       </Layout>
     );
 }

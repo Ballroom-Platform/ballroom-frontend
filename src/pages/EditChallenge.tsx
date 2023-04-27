@@ -2,9 +2,9 @@ import { Button, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, Sn
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { editChallenge, getChallenge } from "../api/admin";
-import { axiosPrivate } from "../api/axios";
 import { Layout } from "../components/templates";
 import { IChallenge } from "../helpers/interfaces";
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
 type IParams = {
     challengeId: string;
@@ -15,6 +15,7 @@ const EditChallenge = () => {
 
     const [challenge, setChallenge] = useState<IChallenge>({} as IChallenge);
     const [loading, setLoading] = useState<boolean>(true);
+    const axiosPrivate = useAxiosPrivate();
     const [showSuccessNotification, setshowSuccessNotification] = useState(false);
     const [showFailNotification, setshowFailNotification] = useState(false);
     const handleSubmit = () => {
@@ -23,13 +24,13 @@ const EditChallenge = () => {
         formData.append('description', challenge.description)
         formData.append('difficulty', challenge.difficulty)
         formData.append('constraints', challenge.constraints)
-        editChallenge(axiosPrivate, formData, challengeId, (res: any) => {setshowSuccessNotification(true);}, (err: any) => setshowFailNotification(true))
+        editChallenge(axiosPrivate, formData, challengeId!, (res: any) => {setshowSuccessNotification(true);}, (err: any) => setshowFailNotification(true))
 
     }
 
 
     useEffect(() => {
-        getChallenge(axiosPrivate, challengeId).then(res => {
+        getChallenge(axiosPrivate, challengeId!).then(res => {
             console.log(res.data);
             setChallenge(res.data);
             setLoading(false);

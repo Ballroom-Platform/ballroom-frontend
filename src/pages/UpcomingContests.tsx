@@ -2,7 +2,7 @@ import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { ContestCard } from "../components/molecules";
 import { useApp } from "../hooks/useApp";
-import { useHistory, useLocation } from "react-router"
+import { useNavigate, useLocation } from "react-router"
 import { Layout } from "../components/templates";
 import { IMinimalContest } from "../helpers/interfaces";
 import { useEffect, useState } from "react";
@@ -13,10 +13,10 @@ import { Link } from "react-router-dom";
 const UpcomingContests = () => {
 
     const {appState, setAppState} = useApp();
-    const history = useHistory();
+    const navigate = useNavigate();
     const location = useLocation()
     const clickHandler = (key: string) => {
-        history.push(location.pathname + `/${key}`);
+        navigate(location.pathname + `/${key}`);
     }
 
     const [contests, setcontests] = useState<IMinimalContest[]>([]);

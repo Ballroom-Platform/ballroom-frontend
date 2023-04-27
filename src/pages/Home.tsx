@@ -1,12 +1,23 @@
 import { useAuthContext } from "@asgardeo/auth-react"
 import { Box, Button, Card, Grid, Typography } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FRONTEND_PUBLIC } from "../links";
 import { themeColors } from "../themes/default";
+import { URL_LIST } from "../links/frontend";
 
 
 export const Home: React.FC = () => {
-    const {signIn, } = useAuthContext();
+    const {signIn, state } = useAuthContext();
+    const navigate = useNavigate()
+
+    const getStartedHandler = () => {
+        if(state.isAuthenticated){
+            navigate(URL_LIST.loginHandler);
+        }else{
+            signIn();
+        }
+    }
+
     return (
         <Box padding="2% 10%" height="100vh" maxHeight="100vh">
             {/* Top Bar */}
@@ -24,7 +35,7 @@ export const Home: React.FC = () => {
                 <Typography variant="h1" fontWeight="bold" color={themeColors.brand.secondary}>Hacker's</Typography>
                 <Typography variant="h1" fontWeight="bold" color={themeColors.brand.primary}>Playground...</Typography>
                 <Box width="100%" paddingTop="3%">
-                    <Button variant="contained" sx={{height:"3.8rem", width:"10%", borderRadius:"4rem"}} onClick={() => signIn()}>Get Started</Button>
+                    <Button variant="contained" sx={{height:"3.8rem", width:"10%", borderRadius:"4rem"}} onClick={getStartedHandler}>Get Started</Button>
                 </Box>
             </Box>
             <Box textAlign="right" marginRight="15%">

@@ -10,7 +10,6 @@ import DownloadIcon from '@mui/icons-material/Download';
 import { Layout } from "../components/templates";
 import { useEffect, useState } from "react";
 import { getSubmissionFile, getSubmissions } from "../api/contestant";
-import { axiosPrivate } from "../api/axios";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { useParams } from "react-router";
 import { useApp } from "../hooks/useApp";
@@ -87,7 +86,7 @@ const PreviousSubmissions = () => {
       if(loading)
       {
         poll = setInterval(() => {
-          getSubmissions(axiosPrivate, userId!, contestId, challengeId, getSubmissionsSuccess, getSubmissionFail)
+          getSubmissions(axiosPrivate, userId!, contestId!, challengeId!, getSubmissionsSuccess, getSubmissionFail)
         }, 5000);
       }
 
