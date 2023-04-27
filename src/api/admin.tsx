@@ -47,12 +47,12 @@ export const editChallenge = (axiosPrivate : AxiosInstance, data: FormData, chal
 export const getContest = (axiosPrivate: AxiosInstance, contestId: string, successHandler : Function, failHandler : Function) => {
     const url = `${BFF_URLS.contestService}/contests/${contestId}`
     const method = "GET";
-    const headers = {};
+    const headers = { "Accept":"application/json"};
     axiosPrivate({url, method, headers}).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
 }
 
 export const getChallangesByDifficulty = (axiosPrivate: AxiosInstance, difficulty : string, successHandler : Function, failHandler : Function)=> {
-    const url = `${BFF_URLS.challengeService}/challenges/difficulty/${difficulty}`
+    const url = `${BFF_URLS.challengeService}/challenges?difficulty=${difficulty}`
     const method = "GET";
     const headers = {};
     axiosPrivate({url, method, headers}).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
@@ -60,7 +60,7 @@ export const getChallangesByDifficulty = (axiosPrivate: AxiosInstance, difficult
 }
 
 export const getUsersByRoles = (axiosPrivate: AxiosInstance, role : string, successHandler : Function, failHandler : Function)=> {
-    const url = `${BFF_URLS.userService}/users/role/${role}`
+    const url = `${BFF_URLS.userService}/users?role=${role}`
     const method = "GET";
     const headers = {};
     axiosPrivate({url, method, headers}).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
@@ -68,7 +68,7 @@ export const getUsersByRoles = (axiosPrivate: AxiosInstance, role : string, succ
 }
 
 export const upgradeContestantToAdmin = (axiosPrivate: AxiosInstance, userId: string, successHandler : Function, failHandler : Function) => {
-    const url = `${BFF_URLS.userService}/users/${userId}/role/admin`
+    const url = `${BFF_URLS.userService}/users/${userId}/roles/admin`
     const method = "PUT";
     const headers = {};
     axiosPrivate({url, method, headers}).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());

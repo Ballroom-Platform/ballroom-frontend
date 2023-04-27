@@ -25,21 +25,22 @@ export const fetchAccessToken = (idpToken : string, setAppState : React.Dispatch
 export const getChallengesInContest = (axiosPrivate: AxiosInstance, contestId : string, successHandler : Function, failHandler : Function)=> {
     const url = `${BFF_URLS.contestService}/contests/${contestId}/challenges`
     const method = "GET";
-    const headers = {};
+    const headers = {}
+    // const headers = { "Accept":"application/json", "Authorization" : AUTH_HEADER};
     axiosPrivate({url, method, headers}).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
 
 }
 
 export const getUpcomingContests = (axiosPrivate: AxiosInstance, successHandler : Function, failHandler : Function)=> {
-    const url = `${BFF_URLS.contestService}/contests/status/future`
+    const url = `${BFF_URLS.contestService}/contests?status=future`
     const method = "GET";
-    const headers = {};
+    const headers = {}
+    // const headers = { "Accept":"application/json", "Authorization" : AUTH_HEADER};
     axiosPrivate({url, method, headers}).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
-
 }
 
 export const getUserRole = async (userId : string) => {
-    const url = `${BFF_URLS.userService}/user/${userId}/role`
+    const url = `${BFF_URLS.userService}/users/${userId}/roles`
     const method = "GET";
     const headers = {};
     try {
