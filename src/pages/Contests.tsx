@@ -10,6 +10,7 @@ import { IContest } from "../helpers/interfaces"
 import { useApp } from "../hooks/useApp"
 import { getOngoingContests } from "../api/admin"
 import useAxiosPrivate from "../hooks/useAxiosPrivate"
+import { getUpcomingContests } from "../api/common"
 
 
 export const Contests : React.FC = () => {
@@ -36,6 +37,7 @@ export const Contests : React.FC = () => {
     useEffect(() => {
         if(loading){
             getOngoingContests(axiosPrivate,getContestsSuccess, getContestsFail);
+            getUpcomingContests(axiosPrivate, getContestsSuccess, getContestsFail)
             setLoading(false);
         }
     }, [loading])

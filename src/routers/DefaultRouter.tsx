@@ -34,13 +34,12 @@ export const DefaultRouter : React.FC = () => {
                         <Route path="/contests/:contestId/leaderboard" Component={Leaderboard}/> 
                         <Route path="/contests/:contestId/challenge/:challengeId/previousSubmissions"  Component={PreviousSubmissions}/>
                         <Route path="/contests" Component={Contests}/>
-                        <Route path="/contests/:contestId" Component={Challenges}/>
-                        <Route path="/createContest" Component={CreateContest}/>         
+                        <Route path="/contests/:contestId" Component={Challenges}/>        
                     </Route>
                     <Route element={<RequireAuth allowedRoles={["admin"]} />}>
                         <Route path="/contestControls/:contestId" Component={ContestControls}/>
                         <Route path="/addChallengeToContest/:contestId" Component={AddChallengeToContest}/>
-
+                        <Route path="/createContest" Component={CreateContest}/> 
                         <Route path="/upcomingContests" Component={UpcomingContests}/>
                         <Route path="/createChallenge" Component={CreateChallenge}/>
                         <Route path="/viewChallenge/:challengeId" Component={ViewChallenge}/>

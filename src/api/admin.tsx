@@ -98,9 +98,12 @@ export const getPastContests = (axiosPrivate: AxiosInstance, successHandler : Fu
 }
 
 export const getOngoingContests = (axiosPrivate: AxiosInstance, successHandler : Function, failHandler : Function)=> {
-    const url = `${BFF_URLS.contestService}/contests/status/present`
+    const url = `${BFF_URLS.contestService}/contests`
     const method = "GET";
     const headers = {};
-    axiosPrivate({url, method, headers}).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
+    const params = {
+        status : "present"
+    }
+    axiosPrivate({url, method, headers, params}).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
 
 }

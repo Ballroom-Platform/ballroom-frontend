@@ -12,7 +12,7 @@ interface IProps {
 
 export const RequireAuth : React.FC<IProps> = ({allowedRoles}) => {
     const {appState, setAppState} = useApp();
-    const {getAccessToken, getBasicUserInfo, signIn, state} = useAuthContext();
+    const {getAccessToken, getBasicUserInfo, signOut, state} = useAuthContext();
     const [idpToken, setIdpToken] = useState<string | null>(null);
     const location = useLocation()
 
@@ -28,7 +28,7 @@ export const RequireAuth : React.FC<IProps> = ({allowedRoles}) => {
           }
     
           if(idpToken !== null){
-            fetchAccessToken(idpToken, setAppState, signIn);
+            fetchAccessToken(idpToken, setAppState, signOut);
           }else{
             getToken();
           }
