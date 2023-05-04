@@ -34,6 +34,7 @@ const CreateChallenge = () => {
     const clearAllInputs = () => {
         setchallengeTitle("");
         setchallengeDescription("");
+        setchallengeConstraints("");
         setchallengeDifficulty("MEDIUM");
         settestCaseFile({} as FileList);
         settemplateFile({} as FileList);

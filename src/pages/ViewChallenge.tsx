@@ -1,4 +1,4 @@
-import { Box, Button, Paper, Typography } from "@mui/material";
+import { Box, Button, CircularProgress, Paper, Typography } from "@mui/material";
 import { Layout } from "../components/templates";
 import DownloadIcon from '@mui/icons-material/Download';
 import { BFF_URLS } from "../links";
@@ -40,40 +40,49 @@ const ViewChallenge = () => {
 
     return ( 
         <Layout>
+            {
+                loading && <Box width="100%" textAlign="center" padding="40px"><CircularProgress /></Box>
+            }
             
-            <Paper sx={{padding: '1rem', minHeight: "600px"}}>
+            {
+                !loading && (
+                <>
+                    <Paper sx={{padding: '1rem', minHeight: "600px"}}>
                 
-                <Typography variant="h4" gutterBottom>
-                    {challenge.title}
-                </Typography>
+                        <Typography variant="h4" gutterBottom>
+                            {challenge.title}
+                        </Typography>
 
-                <Typography variant="body1" gutterBottom>
-                    Challenge ID: {challengeId}
-                </Typography>
+                        <Typography variant="body1" gutterBottom>
+                            Challenge ID: {challengeId}
+                        </Typography>
 
-                <Typography sx={{marginTop:'3rem'}} variant="h6" gutterBottom>
-                    Diffculty: {challenge.difficulty}
-                </Typography>
+                        <Typography sx={{marginTop:'3rem'}} variant="h6" gutterBottom>
+                            Diffculty: {challenge.difficulty}
+                        </Typography>
 
-                <Typography sx={{marginTop:'3rem'}} variant="h6" gutterBottom>
-                    {/* Problem Statement: */}
-                </Typography>
+                        <Typography sx={{marginTop:'3rem'}} variant="h6" gutterBottom>
+                            {/* Problem Statement: */}
+                        </Typography>
 
-                <Typography variant="body1" gutterBottom>
-                    {challenge.description}
-                </Typography>
+                        <Typography variant="body1" gutterBottom>
+                            {challenge.description}
+                        </Typography>
 
-                <Typography sx={{marginTop:'3rem', fontWeight:'bold'}} variant="body1" gutterBottom>
-                    Constraints:
-                </Typography>
+                        <Typography sx={{marginTop:'3rem', fontWeight:'bold'}} variant="body1" gutterBottom>
+                            Constraints:
+                        </Typography>
 
-                <Typography variant="body1" gutterBottom>
-                    {challenge.constraints}
-                </Typography>
-            </Paper>
-            <Box sx={{marginY: '1rem'}}>
-                <Button variant="outlined" onClick={downloadFunction}startIcon={<DownloadIcon />}>Dowload Template</Button>
-            </Box>
+                        <Typography variant="body1" gutterBottom>
+                            {challenge.constraints}
+                        </Typography>
+                    </Paper>
+                    <Box sx={{marginY: '1rem'}}>
+                        <Button variant="outlined" onClick={downloadFunction}startIcon={<DownloadIcon />}>Dowload Template</Button>
+                    </Box>
+                </>
+                )
+            }
             
         </Layout>
     );

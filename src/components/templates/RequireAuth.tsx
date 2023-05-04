@@ -5,6 +5,7 @@ import { Navigate, Outlet, useLocation } from "react-router";
 import { BasicUserInfo, useAuthContext } from "@asgardeo/auth-react";
 import { fetchAccessToken, getUserRole } from "../../api/common";
 import { Unauthorized } from "../../pages/Unauthorized";
+import { Box, CircularProgress } from "@mui/material";
 
 interface IProps {
     allowedRoles : Array<TRole>;
@@ -57,10 +58,15 @@ export const RequireAuth : React.FC<IProps> = ({allowedRoles}) => {
     return (
         <>
         {
-            appState.auth.status === "active" && (
+            appState.auth.status === "active" && appState.auth.userRole && (
                 appState.auth?.userRole && allowedRoles.includes(appState.auth?.userRole) ?
                 <Outlet /> : <Unauthorized />
             )
+        }
+        {
+          !(appState.auth.status === "active") || !(appState.auth.userRole) && (
+            <Box width="100%" textAlign="center" padding="40px"><CircularProgress /></Box>
+          )
         }
         </>
     )

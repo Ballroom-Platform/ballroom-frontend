@@ -22,8 +22,8 @@ const CreateContest = () => {
 
     const [contestName, setcontestName] = useState<string>("");
     const [contestDescription, setcontestDescription] = useState<string>("");
-    const [startTime, setstartTime] = useState<BalDateTime>();
-    const [endTime, setendTime] = useState<BalDateTime>();
+    const [startTime, setstartTime] = useState<BalDateTime | null>();
+    const [endTime, setendTime] = useState<BalDateTime | null>();
     const [showNotification, setshowNotification] = useState(false);
     const {appState} = useApp()
     console.log(appState);
@@ -33,8 +33,8 @@ const CreateContest = () => {
     const clearAllInputs = () => {
         setcontestName("");
         setcontestDescription("");
-        setstartTime(undefined);
-        setendTime(undefined);
+        setstartTime(null);
+        setendTime(null);
     }
 
     return ( 
