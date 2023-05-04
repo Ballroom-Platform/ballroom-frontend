@@ -34,8 +34,8 @@ export interface IAppState {
 export interface IContest {
   contestId : string,
   title : string,
-  startTime : string,
-  endTime : string,
+  startTime : IDateTimeObject,
+  endTime : IDateTimeObject,
   contestImageURL : string,
   problemFiles : string,
   forcedState : string,
@@ -94,4 +94,13 @@ export type IUpdatedContest = {
   startTime: BalDateTime;
   endTime: BalDateTime;
   moderator: string;
+}
+
+export interface IDateTimeObject {
+  year: number;
+  month: number;
+  day: number;
+  hour: number;
+  minute: number;
+  second: number;
 }

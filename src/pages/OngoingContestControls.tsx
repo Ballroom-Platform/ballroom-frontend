@@ -1,6 +1,6 @@
 import { Button, IconButton, Snackbar, Tab, Tabs, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router";
+import { useLocation, useNavigate, useParams } from "react-router";
 import { addChallenge, changeContestTime, getChallenge, getContest } from "../api/admin";
 import { getChallengesInContest } from "../api/common";
 import { Layout } from "../components/templates";
@@ -29,6 +29,7 @@ type Challenge = {
 
 const OngoingContestControls = () => {
     const navigate = useNavigate();
+    const location = useLocation();
     const {contestId} = useParams<ContestId>();
     const [contest, setcontest] = useState<IMinimalContest>();
     const [challenges, setchallenges] = useState<Challenge[]>([]);
@@ -43,15 +44,16 @@ const OngoingContestControls = () => {
     const [endTimeIsValid, setendTimeIsValid] = useState(false);
 
     const handleRecievedChallengeArray = (res: any) => {
-        console.log(res.data)
-        setchallenges([]);
-        res.data.forEach((challengeId: any) => {
-            getChallenge(axiosIns, challengeId).then((res: any) => setchallenges((prevstate) => prevstate ? [...prevstate, {challengeId: res.data.challengeId,title: res.data.title, difficulty: res.data.difficulty}] : [{challengeId: res.data.challengeId,title: res.data.title, difficulty: res.data.difficulty}])).
-            catch((res: any)=> console.log(res.data));
-            
-        });
-
-        
+        Promise.all(
+            res.data.map((challengeId : string) => {
+            return getChallenge(axiosIns, challengeId).then((res) => res.data);
+            })
+        ).then(
+            (results) => {
+            setchallenges([...results] as Array<Challenge>)
+            },
+            () => console.log("Failed to fetch challenge details")
+        ); 
     }
 
     const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
@@ -109,8 +111,10 @@ const OngoingContestControls = () => {
 
 
     useEffect(() => {
-        getChallengesInContest( axiosIns, contestId!, handleRecievedChallengeArray, (err: any) => console.log(err))
-        getContest(axiosIns, contestId!,(res: any) => {setcontest(res.data)}, () => console.log("ËRROR OCCURRED"));
+        if(selectedTab === 0){
+            getChallengesInContest( axiosIns, contestId!, handleRecievedChallengeArray, (err: any) => console.log(err));
+            getContest(axiosIns, contestId!,(res: any) => {setcontest(res.data)}, () => console.log("ËRROR OCCURRED"));
+        }
 
     },[selectedTab]);
 
@@ -145,7 +149,7 @@ const OngoingContestControls = () => {
                             </CardContent>  
     
                             <CardActions>
-                                <Link to={`/viewChallenge/${challenge.challengeId}`}><Button size="small">View</Button></Link>
+                                <Link to={`${location.pathname}/${challenge.challengeId}`}><Button size="small">View</Button></Link>
                             </CardActions>
     
                         </Card>
@@ -157,9 +161,9 @@ const OngoingContestControls = () => {
             <>
                 <ChallengesByDifficulty addChallengeToContest={addChallengeToThisContest}/>
             
-                <Snackbar  open={showNotification} autoHideDuration={6000} onClose={() => setshowNotification(false)} message="Added Challenge!" action={ <IconButton size="small" aria-label="close" color="inherit" onClick={() => setshowNotification(false)}> <CloseIcon fontSize="small" /> </IconButton>} />
+                <Snackbar  open={showNotification} autoHideDuration={2000} onClose={() => setshowNotification(false)} message="Added Challenge!" action={ <IconButton size="small" aria-label="close" color="inherit" onClick={() => setshowNotification(false)}> <CloseIcon fontSize="small" /> </IconButton>} />
     
-                <Snackbar  open={showFailNotification} autoHideDuration={6000} onClose={() => setshowFailNotification(false)} message="Challenge is already added!" action={ <IconButton size="small" aria-label="close" color="inherit" onClick={() => setshowFailNotification(false)}> <CloseIcon fontSize="small" /> </IconButton>} />
+                <Snackbar  open={showFailNotification} autoHideDuration={2000} onClose={() => setshowFailNotification(false)} message="Challenge is already added!" action={ <IconButton size="small" aria-label="close" color="inherit" onClick={() => setshowFailNotification(false)}> <CloseIcon fontSize="small" /> </IconButton>} />
             </>
             }
 

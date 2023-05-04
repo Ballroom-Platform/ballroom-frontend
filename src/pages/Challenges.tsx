@@ -1,4 +1,4 @@
-import { Box, Button } from "@mui/material";
+import { Box, Button, CircularProgress } from "@mui/material";
 import { AxiosError, AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation, useParams } from "react-router"
@@ -57,6 +57,9 @@ export const Challenges : React.FC = () => {
 
     return (
         <Layout>
+            {
+                loading && <Box width="100%" textAlign="center" padding="40px"><CircularProgress /></Box>
+            }
             {loading === false && (
                 <>
                     <Box sx={{display: 'flex', justifyContent: "flex-end", marginBottom: '2rem'}}>

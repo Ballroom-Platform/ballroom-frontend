@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { getUpcomingContests } from "../api/common";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { Link } from "react-router-dom";
+import { getDateString } from "../helpers/dateConverter";
 
 const UpcomingContests = () => {
 
@@ -36,7 +37,7 @@ const UpcomingContests = () => {
 
             <Grid container sx={{marginY: '2rem'}}>
 
-            {contests.map((contest) => <Link to={`/contestControls/${contest.contestId}`}><ContestCard contestImageURL={null} key={contest.contestId} contestId={contest.contestId} contestName={contest.title} startTime="" endTime="" forcedState="active" owner="" clickHandler={clickHandler}/></Link>)}
+            {contests.map((contest) => <Link to={`/upcomingContests/${contest.contestId}`}><ContestCard contestImageURL={null} key={contest.contestId} contestId={contest.contestId} contestName={contest.title} startTime={getDateString(contest.startTime)} endTime={getDateString(contest.endTime)} owner="" clickHandler={clickHandler}/></Link>)}
                 
             </Grid>
         </Layout>

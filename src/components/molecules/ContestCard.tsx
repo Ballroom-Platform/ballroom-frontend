@@ -1,4 +1,5 @@
-import { Button, ButtonBase, Card, CardContent, CardMedia, IconButton, Typography } from "@mui/material"
+import { Box, Button, ButtonBase, Card, CardContent, CardMedia, IconButton, Typography } from "@mui/material"
+import { formatUTCDate } from "../../helpers/dateConverter";
 
 interface IProps {
     contestId: string;
@@ -7,13 +8,13 @@ interface IProps {
     startTime:string;
     endTime:string;
     owner: string;
-    forcedState:TState;
+    forcedState?:TState;
     clickHandler : Function;
 }
 
 type TState = "active" | "stopped" | "inactive" |null
 
-export const ContestCard : React.FC<IProps> = ({contestId, contestName, contestImageURL, startTime, endTime, owner, forcedState, clickHandler}) => {
+export const ContestCard : React.FC<IProps> = ({contestId, contestName, contestImageURL, startTime, endTime, owner, forcedState = null, clickHandler}) => {
     contestImageURL = contestImageURL === null ? "image_placeholder.png" : contestImageURL;
     let state : TState;
     const startTimeInMilliseconds = Date.parse(startTime);
@@ -31,14 +32,19 @@ export const ContestCard : React.FC<IProps> = ({contestId, contestName, contestI
         }
     }
     return (
-        <ButtonBase disabled={state === 'active' ? false : true} sx={{width:'350px', height:'300px'}} onClick={() => clickHandler(contestId)}>
+        <ButtonBase disabled={state === 'active' ? false : true} sx={{width:'350px', height:'300px', margin:'20px'}} onClick={() => clickHandler(contestId)}>
             <Card sx={{width:'100%', height:'100%'}}>
                 <CardMedia image={contestImageURL} sx={{height:'50%'}}/>
-                <CardContent>
+                <CardContent sx={{height: '100%', display:"flex", flexDirection: "column", rowGap:"5%"}}>
                     <Typography variant="h6" >{contestName}</Typography>
-                    {
-                        (startTime)
+                    <Typography variant="caption">{formatUTCDate(startTime)}</Typography>
+                    <Box position="absolute" bottom="5%" right="5%">
+                    {state === "active" ? 
+                        <Typography color="green" variant="caption">ONGOING</Typography> : 
+                        <Typography color="blue" variant="caption">UPCOMING</Typography>
                     }
+                        
+                    </Box>
                 </CardContent>
             </Card>
         </ButtonBase>

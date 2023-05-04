@@ -37,12 +37,12 @@ export const DefaultRouter : React.FC = () => {
                         <Route path="/contests/:contestId" Component={Challenges}/>        
                     </Route>
                     <Route element={<RequireAuth allowedRoles={["admin"]} />}>
-                        <Route path="/contestControls/:contestId" Component={ContestControls}/>
+                        <Route path="/upcomingContests/:contestId" Component={ContestControls}/>
+                        <Route path="/upcomingContests/:contestId/:challengeId" Component={ViewChallenge} />
                         <Route path="/addChallengeToContest/:contestId" Component={AddChallengeToContest}/>
                         <Route path="/createContest" Component={CreateContest}/> 
                         <Route path="/upcomingContests" Component={UpcomingContests}/>
                         <Route path="/createChallenge" Component={CreateChallenge}/>
-                        <Route path="/viewChallenge/:challengeId" Component={ViewChallenge}/>
                         <Route path="/users" Component={Users}/>
                         <Route path="/adminListChallenges" Component={ListOfChallengesAdmin}/>
                         <Route path="/editChallenge/:challengeId" Component={EditChallenge}/>
@@ -50,6 +50,7 @@ export const DefaultRouter : React.FC = () => {
                         <Route path="/pastContests/:contestId" Component={PastContestControls}/>
                         <Route path="/ongoingContests/" Component={OngoingContestsAdmin}/>
                         <Route path="/ongoingContests/:contestId" Component={OngoingContestControls}/>    
+                        <Route path="/ongoingContests/:contestId/:challengeId" Component={ViewChallenge} />
                     </Route>
                 </Route>
                 <Route path="/*" Component={PageNotFound}/> 

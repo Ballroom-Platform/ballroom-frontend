@@ -45,8 +45,7 @@ const getItem : IGetItem = (key, label, icon, parent, subSections)=> {
 const SidbarLinks: Record<string, Record<string, Array<ISidebarItem>>> = {
   contestant: {
     General: [
-      getItem("contests", "Contests", EmojiEvents, "General", ["/contests/contest"]),
-      getItem("settings", "Settings", Settings, "General", [])]
+      getItem("contests", "Contests", EmojiEvents, "General", ["/contests/contest"])]
   },
   admin: {
     General: [

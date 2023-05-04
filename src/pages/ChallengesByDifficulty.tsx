@@ -2,7 +2,7 @@ import { Button, Card, CardActions, CardContent, Tab, Tabs, TextField, Typograph
 import { useEffect, useState } from "react";
 import { getChallangesByDifficulty } from "../api/admin";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { AxiosInstance } from "axios";
 
 type Challenge = {
@@ -38,6 +38,7 @@ const ChallengesByDifficulty = ({adminEdit, addChallengeToContest} : IProps) => 
     };
     
     const [challenges, setchallenges] = useState<Challenge[]>([]);
+    const location = useLocation();
     const [query, setquery] = useState<string>("");
     const [value, setvalue] = useState(0);
     const axiosIns = useAxiosPrivate();
@@ -97,7 +98,7 @@ const ChallengesByDifficulty = ({adminEdit, addChallengeToContest} : IProps) => 
                     </CardContent>  
 
                     <CardActions>
-                            <Link to={`/viewChallenge/${challenge.challengeId}`}><Button size="small">View</Button></Link>
+                            <Link to={`${location.pathname}/${challenge.challengeId}`}><Button size="small">View</Button></Link>
                             {adminEdit && <Link to={`/editChallenge/${challenge.challengeId}`}><Button size="small">Edit</Button></Link>}
                             {addChallengeToContest && <Button size="small" onClick={() => addChallengeToContest(challenge.challengeId)}>Add to Contest</Button>}
                     </CardActions>

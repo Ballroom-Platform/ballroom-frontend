@@ -15,6 +15,8 @@ import { getChallenge } from "../api/admin";
 import { getTemplate, uploadSubmission } from "../api/contestant";
 import { useApp } from "../hooks/useApp";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import { CircularProgress, IconButton, Snackbar } from "@mui/material";
+import CloseIcon from '@mui/icons-material/Close';
 
 type IParams = {
     challengeId: string;
@@ -34,6 +36,7 @@ const Challenge : React.FC = () => {
     const navigate = useNavigate();
     const defaultErrorStates : IErrorStates= {emptyFields : false, uploadFailed: false}
     const defaultSuccessStates : ISuccessStates = {uploadComplete: false};
+    const [notificationMessage, setNotificationMessage] = useState<string>("");
     const {challengeId, contestId} = useParams<IParams>()
     const location = useLocation();
     const [loading, setLoading] = useState<boolean>(true);
@@ -42,12 +45,45 @@ const Challenge : React.FC = () => {
     const [errorStates, setErrorStates] = useState<IErrorStates>(defaultErrorStates);
     const [sucessStates, setSuccessStates] = useState<ISuccessStates>(defaultSuccessStates)
     const [submissionId, setSubmissionId] = useState<string | null>(null);
+    const [showNotification, setshowNotification] = useState(false);
     const {appState} = useApp();
     const handler = () => {
         navigate(location.pathname + "/previousSubmissions");
     }
 
     const [challenge, setChallenge] = useState<IChallenge>({} as IChallenge);
+
+    useEffect(() => {
+        getChallenge(axiosPrivate, challengeId!).then(res => {
+            setChallenge(res.data);
+            setLoading(false);
+        }).catch(() => console.log("Challenge fetching failed"))
+    }, [challengeId])
+
+    useEffect(() => {
+        if(sucessStates.uploadComplete){
+            setNotificationMessage("Upload Completed");
+            setshowNotification(true);
+            setSuccessStates(defaultSuccessStates);
+            return;
+        }
+    }, [sucessStates])
+
+    useEffect(() => {
+        if(errorStates.emptyFields){
+            setNotificationMessage("Please upload the solution");
+            setshowNotification(true);
+            setErrorStates(defaultErrorStates);
+            return;
+        }
+
+        if(errorStates.uploadFailed){
+            setNotificationMessage("Upload Failed");
+            setshowNotification(true);
+            setErrorStates(defaultErrorStates);
+            return;
+        }
+    }, [errorStates])
 
     const getTemplateSucess = (res : AxiosResponse) => {
         var link = document.createElement("a");
@@ -87,6 +123,7 @@ const Challenge : React.FC = () => {
         const successHandler = (res: AxiosResponse) => {
             setSuccessStates(prev => ({...prev, uploadComplete: true}));
             setSubmissionId(res.data);
+            setSubmissionFile({} as FileList);
             console.log(res);
         }
 
@@ -96,60 +133,61 @@ const Challenge : React.FC = () => {
         }
 
         uploadSubmission(axiosPrivate, formData, successHandler, failHandler);
-    }
-
-    useEffect(() => {
-        getChallenge(axiosPrivate, challengeId!).then(res => {
-            setChallenge(res.data);
-            setLoading(false);
-        }).catch(() => console.log("Challenge fetching failed"))
-    }, [challengeId])
-
-    
+    } 
 
     return (
         <Layout>
             <Paper sx={{display: 'flex', justifyContent: "flex-end", marginBottom: '2rem'}} elevation={0}>
                 <Button variant="outlined" onClick={handler}>Previous Submissions</Button>
             </Paper>
+            {
+                loading && <Box width="100%" textAlign="center" padding="40px"><CircularProgress /></Box>
+            }
+            {
+                !loading && (
+                    <>
+                        <Paper sx={{padding: '1rem', minHeight: "600px"}}>
+                    
+                            <Typography variant="h4" gutterBottom>
+                                {challenge.title}
+                            </Typography>
+
+                            <Typography sx={{marginTop:'3rem'}} variant="h6" gutterBottom>
+                                Diffculty: {challenge.difficulty}
+                            </Typography>
+
+                            <Typography sx={{marginTop:'3rem'}} variant="body1" gutterBottom>
+                                {/* Problem Statement: */}
+                            </Typography>
+
+                            <Typography variant="body1" gutterBottom>
+                                {challenge.description}
+                            </Typography>
+
+                            <Typography sx={{marginTop:'3rem', fontWeight:'bold'}} variant="body1" gutterBottom>
+                                Constraints:
+                            </Typography>
+
+                            <Typography variant="body1" gutterBottom color={(challenge.constraints === "" || challenge.constraints === null) ? "grey" : "black"}>
+                                {challenge.constraints}
+                            </Typography>
+                        </Paper>
+                        <Box sx={{marginTop: '1rem'}}>
+                            <Button variant="outlined" sx={{width:'300px'}} onClick={downloadFunction}startIcon={<DownloadIcon />}>Dowload Template</Button>
+                        </Box>
+                        <Box>
+                            <Button variant="outlined" sx={{width:'300px'}} component="label" startIcon={<UploadIcon/>}>
+                                Upload Solution
+                                <input hidden type="file" name="submissionFile" accept=".zip" onChange={onSubmissionFileChange}/>
+                            </Button>
             
-            <Paper sx={{padding: '1rem'}}>
-                
-                <Typography variant="h4" gutterBottom>
-                    {challenge.title}
-                </Typography>
+                            <Button sx={{margin: '1rem'}}variant="contained" disabled={Object.keys(submissionFile).length > 0 ? false : true} onClick={onSubmit}>Submit</Button>
+                        </Box>
+                    </>
+                )
+            }
 
-                <Typography sx={{marginTop:'3rem'}} variant="h6" gutterBottom>
-                    Diffculty: {challenge.difficulty}
-                </Typography>
-
-                <Typography sx={{marginTop:'3rem'}} variant="h6" gutterBottom>
-                    Problem Statement:
-                </Typography>
-
-                <Typography variant="body1" gutterBottom>
-                    {challenge.description}
-                </Typography>
-
-                <Typography sx={{marginTop:'3rem'}} variant="h6" gutterBottom>
-                    Constraints:
-                </Typography>
-
-                <Typography variant="body1" gutterBottom color={(challenge.constraints === "" || challenge.constraints === null) ? "grey" : "black"}>
-                    No constraints provided
-                </Typography>
-            </Paper>
-            <Box sx={{marginTop: '1rem'}}>
-                <Button variant="outlined" onClick={downloadFunction}startIcon={<DownloadIcon />}>Dowload Template</Button>
-            </Box>
-            <Box>
-                <Button variant="outlined" component="label" startIcon={<UploadIcon/>}>
-                    Upload Solution
-                    <input hidden type="file" name="submissionFile" accept=".zip" onChange={onSubmissionFileChange}/>
-                </Button>
-
-                <Button sx={{margin: '1rem'}}variant="contained" onClick={onSubmit}>Submit</Button>
-            </Box>
+            <Snackbar  open={showNotification} autoHideDuration={6000} onClose={() => setshowNotification(false)} message={notificationMessage} action={ <IconButton size="small" aria-label="close" color="inherit" onClick={() => setshowNotification(false)}> <CloseIcon fontSize="small" /> </IconButton>} />
             
         </Layout>
     );
