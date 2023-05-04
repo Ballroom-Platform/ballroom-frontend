@@ -1,4 +1,4 @@
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import { Box, CircularProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { AxiosError, AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
 import { getLeaderboard } from "../api/contestant";
@@ -50,11 +50,16 @@ const LeaderboardTable = ({contestId} : IProps) => {
     }, [])
 
     return ( 
-        <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
-            {
-                loading === false && (
-                    <>
+        <>
+        {
+            loading && <Box width="100%" textAlign="center" padding="40px"><CircularProgress /></Box>
+        }
+        {
+            !loading && (
+                <TableContainer component={Paper}>
+
+                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                    
                         <TableHead>
                             <TableRow>
                             <TableCell >User Id</TableCell>
@@ -78,11 +83,12 @@ const LeaderboardTable = ({contestId} : IProps) => {
                             ))
                             }
                         </TableBody>
-                    </>
-                )
-            }
-            </Table>
+                    
+                    </Table>
       </TableContainer>
+            )
+        }
+        </>
     );
 }
  

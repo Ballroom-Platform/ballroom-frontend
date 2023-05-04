@@ -1,9 +1,13 @@
-import { Box, Button, Paper, Typography } from "@mui/material";
+import { Box, Button, CircularProgress, Paper, Typography } from "@mui/material";
 import { Layout } from "../components/templates";
 import DownloadIcon from '@mui/icons-material/Download';
 import { BFF_URLS } from "../links";
 import axios from "axios";
 import { useParams } from "react-router";
+import { useEffect, useState } from "react";
+import { getChallenge } from "../api/admin";
+import { IChallenge } from "../helpers/interfaces";
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
 type ChallengeId = {
     challengeId: string;
@@ -11,9 +15,12 @@ type ChallengeId = {
 
 const ViewChallenge = () => {
     const {challengeId} = useParams<ChallengeId>()
+    const [challenge, setChallenge] = useState<IChallenge>({} as IChallenge);
+    const [loading, setLoading] = useState<boolean>(true);
+    const axiosPrivate = useAxiosPrivate();
     const downloadFunction = async () => {
         let results = await axios({
-            url: `${BFF_URLS}/challenges/template/${challengeId}`,
+            url: `${BFF_URLS.challengeService}/challenges/${challengeId}/template`,
             method: 'GET',
             responseType: 'blob'
          })
@@ -24,46 +31,58 @@ const ViewChallenge = () => {
          hidden_a.click();
     }
 
+    useEffect(() => {
+        getChallenge(axiosPrivate, challengeId!).then(res => {
+            setChallenge(res.data);
+            setLoading(false);
+        }).catch(() => console.log("Challenge fetching failed"))
+    }, [challengeId])
+
     return ( 
         <Layout>
+            {
+                loading && <Box width="100%" textAlign="center" padding="40px"><CircularProgress /></Box>
+            }
             
-            <Paper sx={{padding: '1rem'}}>
+            {
+                !loading && (
+                <>
+                    <Paper sx={{padding: '1rem', minHeight: "600px"}}>
                 
-                <Typography variant="h4" gutterBottom>
-                    The Hardest Challenge in the world!
-                </Typography>
+                        <Typography variant="h4" gutterBottom>
+                            {challenge.title}
+                        </Typography>
 
-                <Typography variant="h6" gutterBottom>
-                    Challenge ID: {challengeId}
-                </Typography>
+                        <Typography variant="body1" gutterBottom>
+                            Challenge ID: {challengeId}
+                        </Typography>
 
-                <Typography sx={{marginTop:'3rem'}} variant="h6" gutterBottom>
-                    Diffculty: Hard
-                </Typography>
+                        <Typography sx={{marginTop:'3rem'}} variant="h6" gutterBottom>
+                            Diffculty: {challenge.difficulty}
+                        </Typography>
 
-                <Typography sx={{marginTop:'3rem'}} variant="h6" gutterBottom>
-                    Problem Statement:
-                </Typography>
+                        <Typography sx={{marginTop:'3rem'}} variant="h6" gutterBottom>
+                            {/* Problem Statement: */}
+                        </Typography>
 
-                <Typography variant="body1" gutterBottom>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Provident ducimus odit magni neque quibusdam dignissimos quis nulla, sequi culpa, magnam, quod minus ratione beatae qui nam officiis tempora. Suscipit, possimus?
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Dignissimos id neque voluptatem blanditiis aliquam, nam at, magni quidem adipisci pariatur quis commodi quod nemo rem eaque? Iure eum molestiae saepe.
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate ut deserunt, quidem provident sequi porro omnis aut quo officiis. Facilis quibusdam odit, omnis deserunt atque repellat tenetur doloribus et reiciendis?
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Veniam ex soluta possimus ab officia obcaecati atque voluptate recusandae. Blanditiis vel possimus ad accusamus quibusdam consequatur nihil? Eveniet facere fuga atque?
-                </Typography>
+                        <Typography variant="body1" gutterBottom>
+                            {challenge.description}
+                        </Typography>
 
-                <Typography sx={{marginTop:'3rem'}} variant="h6" gutterBottom>
-                    Constraints:
-                </Typography>
+                        <Typography sx={{marginTop:'3rem', fontWeight:'bold'}} variant="body1" gutterBottom>
+                            Constraints:
+                        </Typography>
 
-                <Typography variant="body1" gutterBottom>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Provident ducimus odit magni neque quibusdam dignissimos quis nulla, sequi culpa, magnam, quod minus ratione beatae qui nam officiis tempora. Suscipit, possimus?
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Dignissimos id neque voluptatem blanditiis aliquam, nam at, magni quidem adipisci pariatur quis commodi quod nemo rem eaque? Iure eum molestiae saepe.
-                </Typography>
-            </Paper>
-            <Box sx={{marginY: '1rem'}}>
-                <Button variant="outlined" onClick={downloadFunction}startIcon={<DownloadIcon />}>Dowload Template</Button>
-            </Box>
+                        <Typography variant="body1" gutterBottom>
+                            {challenge.constraints}
+                        </Typography>
+                    </Paper>
+                    <Box sx={{marginY: '1rem'}}>
+                        <Button variant="outlined" onClick={downloadFunction}startIcon={<DownloadIcon />}>Dowload Template</Button>
+                    </Box>
+                </>
+                )
+            }
             
         </Layout>
     );

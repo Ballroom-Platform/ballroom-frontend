@@ -34,6 +34,7 @@ const CreateChallenge = () => {
     const clearAllInputs = () => {
         setchallengeTitle("");
         setchallengeDescription("");
+        setchallengeConstraints("");
         setchallengeDifficulty("MEDIUM");
         settestCaseFile({} as FileList);
         settemplateFile({} as FileList);
@@ -44,7 +45,8 @@ const CreateChallenge = () => {
     const handleSubmit = () => {
         const formData = new FormData();
         formData.append('testCase', testCaseFile[0], "test001 "+ "_" + Date.now());
-        if(templateFile.length > 0){
+        console.log("Hello",templateFile)
+        if(Object.keys(templateFile).length > 0){
             formData.append('template', templateFile[0], "template001 "+ "_" + Date.now())
         }
         formData.append('title', challengeTitle)

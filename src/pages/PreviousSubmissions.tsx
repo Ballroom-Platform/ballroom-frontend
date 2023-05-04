@@ -14,6 +14,7 @@ import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { useParams } from "react-router";
 import { useApp } from "../hooks/useApp";
 import { AxiosError, AxiosResponse } from "axios";
+import { Box, CircularProgress } from "@mui/material";
 
 
 interface IRow {
@@ -98,39 +99,49 @@ const PreviousSubmissions = () => {
 
     return ( 
         <Layout>
-            <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              <TableCell >SubmissionId</TableCell>
-              <TableCell align="center">Submitted Time</TableCell>
-              <TableCell align="center">Score</TableCell>
-              <TableCell align="center">Solution File</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {loading === false && (
-              rows.map((row) => (
-                <TableRow
-                  key={row.submissionId}
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                >
-                  <TableCell component="th" scope="row" >
-                    {row.submissionId}
-                  </TableCell>
-                  <TableCell align="center">{ new Date(row.submittedTime.year, row.submittedTime.month - 1, row.submittedTime.day, row.submittedTime.hour, row.submittedTime.minute, row.submittedTime.second).toLocaleString()}</TableCell>
-                  <TableCell align="center">{(row.score) ? row.score : "pending"}</TableCell>
-                  <TableCell align="center">
-                      <Button variant="outlined" onClick={() => downloadFunction(row.submissionId)} startIcon={<DownloadIcon />}>
-                          Download
-                      </Button>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            
+            {
+                loading && <Box width="100%" textAlign="center" padding="40px"><CircularProgress /></Box>
+            }
+            {
+              !loading && (
+                <TableContainer component={Paper}>
+                  <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell >SubmissionId</TableCell>
+                        <TableCell align="center">Submitted Time</TableCell>
+                        <TableCell align="center">Score</TableCell>
+                        <TableCell align="center">Solution File</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {
+                        rows.map((row) => (
+                          <TableRow
+                            key={row.submissionId}
+                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                          >
+                            <TableCell component="th" scope="row" >
+                              {row.submissionId}
+                            </TableCell>
+                            <TableCell align="center">{ new Date(row.submittedTime.year, row.submittedTime.month - 1, row.submittedTime.day, row.submittedTime.hour, row.submittedTime.minute, row.submittedTime.second).toLocaleString()}</TableCell>
+                            <TableCell align="center">{(row.score) ? row.score : "pending"}</TableCell>
+                            <TableCell align="center">
+                                <Button variant="outlined" onClick={() => downloadFunction(row.submissionId)} startIcon={<DownloadIcon />}>
+                                    Download
+                                </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      }
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              )
+            }
+        
+      
         </Layout>
     );
 }

@@ -7,6 +7,7 @@ import { ContestCard } from "../components/molecules";
 import { Layout } from "../components/templates";
 import { IMinimalContest } from "../helpers/interfaces";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import { getDateString } from "../helpers/dateConverter";
 
 const OngoingContestsAdmin = () => {
     const navigate = useNavigate();
@@ -31,7 +32,7 @@ const OngoingContestsAdmin = () => {
 
             <Grid container sx={{marginY: '2rem'}}>
 
-            {contests.map((contest) => <Link to={`/ongoingContests/${contest.contestId}`}><ContestCard contestImageURL={null} key={contest.contestId} contestId={contest.contestId} contestName={contest.title} startTime="" endTime="" forcedState="active" owner="" clickHandler={clickHandler}/></Link>)}
+            {contests.map((contest) => <Link to={`/ongoingContests/${contest.contestId}`}><ContestCard contestImageURL={null} key={contest.contestId} contestId={contest.contestId} contestName={contest.title} startTime={getDateString(contest.startTime)} endTime={getDateString(contest.endTime)} forcedState="active" owner="" clickHandler={clickHandler}/></Link>)}
                 
             </Grid>
         </Layout>
