@@ -17,9 +17,11 @@ type TState = "active" | "stopped" | "inactive" |null
 export const ContestCard : React.FC<IProps> = ({contestId, contestName, contestImageURL, startTime, endTime, owner, forcedState = null, clickHandler}) => {
     contestImageURL = contestImageURL === null ? "image_placeholder.png" : contestImageURL;
     let state : TState;
+    const utcTimestamp = Date.now();
+    const istTimestamp = new Date(utcTimestamp + (5.5 * 60 * 60 * 1000));
     const startTimeInMilliseconds = Date.parse(startTime);
     const endTimeInMilliseconds = Date.parse(endTime)
-    const currTimeInMilliseconds = Date.now()
+    const currTimeInMilliseconds = istTimestamp.getTime();
     if(forcedState){
         state = forcedState;
     }else{
@@ -31,6 +33,7 @@ export const ContestCard : React.FC<IProps> = ({contestId, contestName, contestI
             state = "stopped"
         }
     }
+    console.log(contestName, state, startTimeInMilliseconds, endTimeInMilliseconds, currTimeInMilliseconds);
     return (
         <ButtonBase disabled={state === 'active' ? false : true} sx={{width:'350px', height:'300px', margin:'20px'}} onClick={() => clickHandler(contestId)}>
             <Card sx={{width:'100%', height:'100%'}}>

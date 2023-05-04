@@ -21,7 +21,8 @@ export const ChallengeCard : React.FC<IProps> = ({clickHandler, title, status, d
                             <Typography>Tags : </Typography>
                             {tags.map(tag => <Chip variant="outlined" label={tag}/>)}
                         </Box>
-                        <Typography>Status : <span>{status}</span></Typography>
+                        {/* <Typography>Status : <span>{status}</span></Typography> */}
+                        <Typography></Typography>
                     </Box>
                 </Card>
             </ButtonBase>
