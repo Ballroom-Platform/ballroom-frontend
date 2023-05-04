@@ -6,7 +6,7 @@ import CardActions from "@mui/material/CardActions";
 import Paper from "@mui/material/Paper";
 import { useParams } from "react-router"
 import { useEffect, useState } from "react";
-import { changeContestTime, getChallenge, getContest, removeChallengeFromContest } from "../api/admin";
+import { addChallenge, changeContestTime, getChallenge, getContest, removeChallengeFromContest } from "../api/admin";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { Layout } from "../components/templates";
 import { Link } from "react-router-dom";
@@ -14,8 +14,10 @@ import CreateContest from "./CreateContest";
 import { getChallengesInContest } from "../api/common";
 import { AxiosInstance } from "axios";
 import { IMinimalContest } from "../helpers/interfaces";
-
-
+import { Snackbar, Tab, Tabs } from "@mui/material";
+import ChallengesByDifficulty from "./ChallengesByDifficulty";
+import CloseIcon from '@mui/icons-material/Close';
+import IconButton from '@mui/material/IconButton';
 
 type ContestId = {
     contestId: string;
@@ -34,6 +36,25 @@ const ContestControls: React.FC = () => {
     const [contest, setcontest] = useState<IMinimalContest>();
     const [challenges, setchallenges] = useState<Challenge[]>([]);
     const axiosIns = useAxiosPrivate();
+
+    const [selectedTab, setselectedTab] = useState(0);
+    const [showNotification, setshowNotification] = useState(false);
+    const [showFailNotification, setshowFailNotification] = useState(false);
+
+    const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
+        setselectedTab(newValue);
+    };
+
+    const addChallengeToThisContest = (thisChallengeId: string) => {
+        addChallenge(axiosIns, contestId!, thisChallengeId, (res: any) => {console.log(res); setshowNotification(true);},
+         (err: any) => {
+            console.log("ERROR...");
+            if(err.response.data === "Challenge already added to contest"){
+                setshowFailNotification(true);
+            }
+        });
+
+    }
 
     const handleRecievedChallengeArray = (res: any) => {
         res.data.forEach((challengeId: any) => {
@@ -71,38 +92,55 @@ const ContestControls: React.FC = () => {
                 Contest ID: {contestId}<br></br> 
             </Typography>
 
-            <Link to={`/addChallengeToContest/${contestId}`}>
+            {/* <Link to={`/addChallengeToContest/${contestId}`}>
             <Button variant="contained">Add Challenge</Button>
-            </Link>
+            </Link> */}
 
             {contest && <Button variant="contained" sx={{marginX: "2rem"}}onClick={onForceStartClick}>Force Start</Button>}
             
+
+            <Tabs value={selectedTab} onChange={handleChangeTab} centered>
+                <Tab label="CHALLENGES" />
+                <Tab label="ADD CHALLENGE" />
+            </Tabs>
 
             <Typography sx={{marginY: '2rem'}} variant="h4" gutterBottom>
                     Challenges in Contest
             </Typography>
             
 
-            {challenges && challenges.map((challenge) => (
+            {selectedTab === 0 && 
+                challenges && challenges.map((challenge) => (
 
-                    <Card key={challenge.challengeId} sx={{marginY: '1rem', width: '75%'}} >
+                        <Card key={challenge.challengeId} sx={{marginY: '1rem', width: '75%'}} >
 
-                        <CardContent>
-                            <Typography variant="h5" component="div">
-                            {challenge.title}
-                            </Typography>
-                            <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                            {challenge.difficulty}
-                            </Typography>
-                        </CardContent>  
+                            <CardContent>
+                                <Typography variant="h5" component="div">
+                                {challenge.title}
+                                </Typography>
+                                <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                                {challenge.difficulty}
+                                </Typography>
+                            </CardContent>  
 
-                        <CardActions>
-                            <Link to={`/viewChallenge/${challenge.challengeId}`}><Button size="small">View</Button></Link>
-                            <Button sx={{color: 'red'}} size="small" onClick={() => removeChallengeFromContest(axiosIns, contestId!, challenge.challengeId!, (res: any)=> {console.log(res.data); handleRemoval(challenge.challengeId)}, () => console.log("ERROR!"))}>Remove</Button>
-                        </CardActions>
+                            <CardActions>
+                                <Link to={`/viewChallenge/${challenge.challengeId}`}><Button size="small">View</Button></Link>
+                                <Button sx={{color: 'red'}} size="small" onClick={() => removeChallengeFromContest(axiosIns, contestId!, challenge.challengeId!, (res: any)=> {console.log(res.data); handleRemoval(challenge.challengeId)}, () => console.log("ERROR!"))}>Remove</Button>
+                            </CardActions>
 
-                    </Card>
+                        </Card>
             ))}
+
+            
+            {selectedTab === 1 && 
+                <>
+                    <ChallengesByDifficulty addChallengeToContest={addChallengeToThisContest}/>
+                
+                    <Snackbar  open={showNotification} autoHideDuration={6000} onClose={() => setshowNotification(false)} message="Added Challenge!" action={ <IconButton size="small" aria-label="close" color="inherit" onClick={() => setshowNotification(false)}> <CloseIcon fontSize="small" /> </IconButton>} />
+        
+                    <Snackbar  open={showFailNotification} autoHideDuration={6000} onClose={() => setshowFailNotification(false)} message="Challenge is already added!" action={ <IconButton size="small" aria-label="close" color="inherit" onClick={() => setshowFailNotification(false)}> <CloseIcon fontSize="small" /> </IconButton>} />
+                        </>
+            }
             
             <Paper sx={{marginY: '2rem'}}>
  
