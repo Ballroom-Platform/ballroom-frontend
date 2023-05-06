@@ -16,6 +16,7 @@ import PastContestsAdmin from "../pages/PastContestsAdmin";
 import PastContestControls from "../pages/PastContestControls";
 import OngoingContestsAdmin from "../pages/OngoingContestsAdmin";
 import OngoingContestControls from "../pages/OngoingContestControls";
+import ViewAddedChallenges from "../pages/ViewAddedChallenges";
 import { RequireAuth } from "../components/templates/RequireAuth";
 import { RequireIDPAuth } from "../components/templates/RequireIDPAuth";
 
@@ -51,6 +52,8 @@ export const DefaultRouter : React.FC = () => {
                         <Route path="/ongoingContests/" Component={OngoingContestsAdmin}/>
                         <Route path="/ongoingContests/:contestId" Component={OngoingContestControls}/>    
                         <Route path="/ongoingContests/:contestId/:challengeId" Component={ViewChallenge} />
+                        <Route path="/viewChallenges" Component={ViewAddedChallenges}/>
+                        <Route path="/challenges/:challengeId" Component={ViewChallenge}/>
                     </Route>
                 </Route>
                 <Route path="/*" Component={PageNotFound}/> 
