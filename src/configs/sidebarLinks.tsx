@@ -51,6 +51,7 @@ const SidbarLinks: Record<string, Record<string, Array<ISidebarItem>>> = {
     General: [
       getItem("upcomingContests", "Upcoming Contests", Event, "General", []),
       getItem("ongoingContests", "Ongoing Contests", Event, "General", []),
+      getItem("pastContests", "Past Contests", Event, "General", []),
       getItem("createContest", "Create a contest", Stadium, "General", []),
       getItem("createChallenge", "Create a challenge", ReceiptLong, "General", []),
       getItem("viewChallenges", "View challenges", ReceiptLong, "General", []),

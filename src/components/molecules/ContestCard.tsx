@@ -40,11 +40,13 @@ export const ContestCard : React.FC<IProps> = ({contestId, contestName, contestI
                 <CardMedia image={contestImageURL} sx={{height:'50%'}}/>
                 <CardContent sx={{height: '100%', display:"flex", flexDirection: "column", rowGap:"5%"}}>
                     <Typography variant="h6" >{contestName}</Typography>
-                    <Typography variant="caption">{formatUTCDate(startTime)}</Typography>
+                    <Typography variant="caption">{"From : "+formatUTCDate(startTime)}</Typography>
+                    <Typography variant="caption">{"To : "+formatUTCDate(endTime)}</Typography>
                     <Box position="absolute" bottom="5%" right="5%">
-                    {state === "active" ? 
-                        <Typography color="green" variant="caption">ONGOING</Typography> : 
-                        <Typography color="blue" variant="caption">UPCOMING</Typography>
+                    {
+                    state === "active" ? <Typography color="green" variant="caption">ONGOING</Typography>
+                    : state === "inactive" ? <Typography color="blue" variant="caption">UPCOMING</Typography>
+                    : <Typography color="red" variant="caption">ENDED</Typography>
                     }
                         
                     </Box>

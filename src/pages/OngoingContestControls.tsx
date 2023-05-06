@@ -1,7 +1,7 @@
 import { Button, IconButton, Snackbar, Tab, Tabs, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router";
-import { addChallenge, changeContestTime, getChallenge, getContest } from "../api/admin";
+import { addChallenge, changeContestTime, getChallenge, getContest, removeChallengeFromContest } from "../api/admin";
 import { getChallengesInContest } from "../api/common";
 import { Layout } from "../components/templates";
 import { BalDateTime, IMinimalContest } from "../helpers/interfaces";
@@ -55,6 +55,11 @@ const OngoingContestControls = () => {
             () => console.log("Failed to fetch challenge details")
         ); 
     }
+
+    const handleRemoval = (challengeId: string) => {
+        setchallenges((prevstate) => prevstate ? prevstate.filter((challenge) => challenge.challengeId !== challengeId) : []);
+    }
+
 
     const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
         setselectedTab(newValue);
@@ -122,7 +127,12 @@ const OngoingContestControls = () => {
     return ( 
         <Layout>
             <Typography variant="h3" gutterBottom>
-                    Name: {contest ? contest.title : "Loading..."}
+                {contest ? contest.title : "Loading..."}
+            </Typography>
+
+
+            <Typography sx={{color: 'gray'}}variant="h6" gutterBottom>
+                {contest ? contest.description: "Loading..."}<br></br>
             </Typography>
 
             <Button variant="contained" sx={{marginX: "2rem", backgroundColor: "darkred"}}onClick={onForceStopClick}>Force Stop</Button>
@@ -150,6 +160,7 @@ const OngoingContestControls = () => {
     
                             <CardActions>
                                 <Link to={`${location.pathname}/${challenge.challengeId}`}><Button size="small">View</Button></Link>
+                                <Button sx={{color: 'red'}} size="small" onClick={() => removeChallengeFromContest(axiosIns, contestId!, challenge.challengeId!, (res: any)=> {console.log(res.data); handleRemoval(challenge.challengeId)}, () => console.log("ERROR!"))}>Remove</Button>
                             </CardActions>
     
                         </Card>

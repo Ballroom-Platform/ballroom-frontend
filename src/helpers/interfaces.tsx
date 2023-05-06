@@ -77,6 +77,7 @@ export type NewContest = {
 export type IMinimalContest = {
   contestId: string;
   title: string;
+  description: string;
   startTime: BalDateTime;
   endTime: BalDateTime;
   moderator: string;

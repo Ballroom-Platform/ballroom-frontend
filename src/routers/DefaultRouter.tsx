@@ -49,6 +49,7 @@ export const DefaultRouter : React.FC = () => {
                         <Route path="/editChallenge/:challengeId" Component={EditChallenge}/>
                         <Route path="/pastContests" Component={PastContestsAdmin}/>
                         <Route path="/pastContests/:contestId" Component={PastContestControls}/>
+                        <Route path="/pastContests/:contestId/:challengeId" Component={ViewChallenge} />
                         <Route path="/ongoingContests/" Component={OngoingContestsAdmin}/>
                         <Route path="/ongoingContests/:contestId" Component={OngoingContestControls}/>    
                         <Route path="/ongoingContests/:contestId/:challengeId" Component={ViewChallenge} />
