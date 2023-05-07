@@ -15,6 +15,7 @@ export const URL_LIST : Record<string, string> = {
     createContest : "/createContest",
     createChallenge : "/createChallenge",
     ongoingContests : "/ongoingContests",
-    
+    viewChallenges : "/viewChallenges",
+    pastContests : "/pastContests",
 }
 

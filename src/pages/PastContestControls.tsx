@@ -1,6 +1,6 @@
 import { Button, Tab, Tabs, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { useLocation, useParams } from "react-router";
 import { getChallenge, getContest } from "../api/admin";
 import { getChallengesInContest } from "../api/common";
 import { Layout } from "../components/templates";
@@ -25,6 +25,7 @@ type Challenge = {
 const PastContestControls = () => {
 
     const {contestId} = useParams<ContestId>();
+    const location = useLocation();
     const [contest, setcontest] = useState<IMinimalContest>();
     const [challenges, setchallenges] = useState<Challenge[]>([]);
     const [selectedTab, setselectedTab] = useState(0);
@@ -52,7 +53,12 @@ const PastContestControls = () => {
     return ( 
         <Layout>
             <Typography variant="h3" gutterBottom>
-                    Name: {contest ? contest.title : "Loading..."}
+                {contest ? contest.title : "Loading..."}
+            </Typography>
+
+
+            <Typography sx={{color: 'gray'}}variant="h6" gutterBottom>
+                {contest ? contest.description: "Loading..."}<br></br>
             </Typography>
 
             <Tabs value={selectedTab} onChange={handleChangeTab} centered>
@@ -75,7 +81,7 @@ const PastContestControls = () => {
                             </CardContent>  
     
                             <CardActions>
-                                <Link to={`/viewChallenge/${challenge.challengeId}`}><Button size="small">View</Button></Link>
+                                <Link to={`${location.pathname}/${challenge.challengeId}`}><Button size="small">View</Button></Link>
                             </CardActions>
     
                         </Card>

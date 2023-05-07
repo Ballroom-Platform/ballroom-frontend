@@ -93,11 +93,12 @@ const ContestControls: React.FC = () => {
     return ( 
         <Layout>
             <Typography variant="h3" gutterBottom>
-                {contest ? "Name: " + contest.title : "Loading..."}
+                {contest ? contest.title : "Loading..."}
             </Typography>
 
+
             <Typography sx={{color: 'gray'}}variant="h6" gutterBottom>
-                Contest ID: {contestId}<br></br> 
+                {contest ? contest.description: "Loading..."}<br></br>
             </Typography>
 
             {/* <Link to={`/addChallengeToContest/${contestId}`}>
