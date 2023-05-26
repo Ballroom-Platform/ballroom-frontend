@@ -4,9 +4,9 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
 import Paper from "@mui/material/Paper";
-import { useLocation, useParams } from "react-router"
+import { useLocation, useNavigate, useParams } from "react-router"
 import { useEffect, useState } from "react";
-import { addChallenge, changeContestTime, getChallenge, getContest, removeChallengeFromContest } from "../api/admin";
+import { addChallenge, changeContestTime, getChallenge, getContest, removeChallengeFromContest, giveAccessToContest, deleteContest } from "../api/admin";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { Layout } from "../components/templates";
 import { Link } from "react-router-dom";
@@ -18,6 +18,8 @@ import { Snackbar, Tab, Tabs } from "@mui/material";
 import ChallengesByDifficulty from "./ChallengesByDifficulty";
 import CloseIcon from '@mui/icons-material/Close';
 import IconButton from '@mui/material/IconButton';
+import ShareContest from "./ShareContest";
+import { useApp } from "../hooks/useApp";
 
 type ContestId = {
     contestId: string;
@@ -37,10 +39,12 @@ const ContestControls: React.FC = () => {
     const [contest, setcontest] = useState<IMinimalContest>();
     const [challenges, setchallenges] = useState<Challenge[]>([]);
     const axiosIns = useAxiosPrivate();
-
+    const navigate = useNavigate();
     const [selectedTab, setselectedTab] = useState(0);
     const [showNotification, setshowNotification] = useState(false);
     const [showFailNotification, setshowFailNotification] = useState(false);
+    const {appState} = useApp();
+    const userID = appState.auth.userID;
 
     const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
         setselectedTab(newValue);
@@ -80,6 +84,22 @@ const ContestControls: React.FC = () => {
         if(contest) {
             changeContestTime(axiosIns, contestId!, {title: contest.title, startTime: newStartTime, endTime: contest.endTime, moderator: contest.moderator}, (res: any) => console.log(res.data), (err: any) => console.log(err));
         }
+        navigate("/ongoingContests");
+    }
+
+    const giveAccessToThisContest = (thisUserId: string, accessType: string) => {
+        giveAccessToContest(axiosIns, contestId!, thisUserId, accessType,(res: any) => {console.log(res); setshowNotification(true);},
+         (err: any) => {
+            console.log("ERROR...");
+        });
+
+    }
+    const deleteClick = () => {
+        if(contest) {
+            deleteContest(axiosIns, contestId!, (res: any) => console.log(res.data), (err: any) => console.log(err));
+        }
+        navigate("/upcomingContests");
+        window.location.reload();
     }
 
     useEffect(() => {
@@ -96,21 +116,24 @@ const ContestControls: React.FC = () => {
                 {contest ? contest.title : "Loading..."}
             </Typography>
 
-
             <Typography sx={{color: 'gray'}}variant="h6" gutterBottom>
-                {contest ? contest.description: "Loading..."}<br></br>
+                {contest ? contest.description: "Loading..."}<br></br> 
             </Typography>
 
             {/* <Link to={`/addChallengeToContest/${contestId}`}>
             <Button variant="contained">Add Challenge</Button>
             </Link> */}
 
-            {contest && <Button variant="contained" sx={{marginX: "2rem"}}onClick={onForceStartClick}>Force Start</Button>}
+            {contest && <Button variant="contained" sx={{backgroundColor: "darkblue"}}onClick={onForceStartClick}>Force Start</Button>}
+            {contest && contest.moderator === userID ?
+                <Button variant="contained" sx={{marginX: "2rem", backgroundColor: "darkred"}}onClick={deleteClick}>Delete Contest</Button>: null
+            }
             
 
             <Tabs value={selectedTab} onChange={handleChangeTab} centered>
                 <Tab label="CHALLENGES" />
                 <Tab label="ADD CHALLENGE" />
+                <Tab label="SHARE" />
             </Tabs>
             
 
@@ -122,7 +145,7 @@ const ContestControls: React.FC = () => {
                 {
                     challenges && challenges.map((challenge) => (
 
-                        <Card key={challenge.challengeId} sx={{marginY: '1rem', width: '75%'}} >
+                        <Card key={challenge.challengeId} sx={{marginY: '1rem', width: '100%'}} >
 
                             <CardContent>
                                 <Typography variant="h5" component="div">
@@ -153,6 +176,14 @@ const ContestControls: React.FC = () => {
         
                     <Snackbar  open={showFailNotification} autoHideDuration={2000} onClose={() => setshowFailNotification(false)} message="Challenge is already added!" action={ <IconButton size="small" aria-label="close" color="inherit" onClick={() => setshowFailNotification(false)}> <CloseIcon fontSize="small" /> </IconButton>} />
                         </>
+            }
+
+            {selectedTab === 2 &&
+            <>
+                <ShareContest ownerID ={contest!.moderator} giveAccessToContest={giveAccessToThisContest}/>
+            
+                <Snackbar  open={showNotification} autoHideDuration={2000} onClose={() => setshowNotification(false)} message="Added Admin!" action={ <IconButton size="small" aria-label="close" color="inherit" onClick={() => setshowNotification(false)}> <CloseIcon fontSize="small" /> </IconButton>} />
+            </>
             }
             
             <Paper sx={{marginY: '2rem'}}>

@@ -1,7 +1,7 @@
 import { Button, IconButton, Snackbar, Tab, Tabs, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router";
-import { addChallenge, changeContestTime, getChallenge, getContest, removeChallengeFromContest } from "../api/admin";
+import { addChallenge, changeContestTime, getChallenge, getContest, removeChallengeFromContest, giveAccessToContest, deleteContest } from "../api/admin";
 import { getChallengesInContest } from "../api/common";
 import { Layout } from "../components/templates";
 import { BalDateTime, IMinimalContest } from "../helpers/interfaces";
@@ -12,10 +12,12 @@ import CardActions from "@mui/material/CardActions";
 import { Link } from "react-router-dom";
 import LeaderboardTable from "../components/LeaderboardTable";
 import ChallengesByDifficulty from "./ChallengesByDifficulty";
+import ShareContest from "./ShareContest";
 import CloseIcon from '@mui/icons-material/Close';
 import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { useApp } from "../hooks/useApp";
 
 type ContestId = {
     contestId: string;
@@ -42,6 +44,8 @@ const OngoingContestControls = () => {
     const [changedEndTimeFailNotification, setchangedEndTimeFailNotification] = useState(false);
     const [endTime, setendTime] = useState<BalDateTime>();
     const [endTimeIsValid, setendTimeIsValid] = useState(false);
+    const {appState} = useApp();
+    const userID = appState.auth.userID;
 
     const handleRecievedChallengeArray = (res: any) => {
         Promise.all(
@@ -56,11 +60,6 @@ const OngoingContestControls = () => {
         ); 
     }
 
-    const handleRemoval = (challengeId: string) => {
-        setchallenges((prevstate) => prevstate ? prevstate.filter((challenge) => challenge.challengeId !== challengeId) : []);
-    }
-
-
     const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
         setselectedTab(newValue);
     };
@@ -71,22 +70,36 @@ const OngoingContestControls = () => {
         if(contest) {
             changeContestTime(axiosIns, contestId!, {title: contest.title, startTime: contest.startTime, endTime: newEndTime, moderator: contest.moderator}, (res: any) => console.log(res.data), (err: any) => console.log(err));
         }
-
-        // FIXME: Should redirect to past contests here.
-        // The below doesnt work properly. Need to reload the page to see the changes.
         navigate("/pastContests");
-        
     }
 
     const addChallengeToThisContest = (thisChallengeId: string) => {
-        addChallenge(axiosIns, contestId!, thisChallengeId, (res: any) => {console.log(res); setshowNotification(true);},
+        addChallenge(axiosIns, contestId!, thisChallengeId, 
+            (res: any) => {
+                console.log(res); 
+                setshowNotification(true);},
+            (err: any) => {
+                console.log("ERROR...");
+                if(err.response.data === "Challenge already added to contest"){
+                    setshowFailNotification(true);
+                }
+        });
+
+    }
+
+    const giveAccessToThisContest = (thisUserId: string, accessType: string) => {
+        giveAccessToContest(axiosIns, contestId!, thisUserId, accessType,(res: any) => {console.log(res); setshowNotification(true);},
          (err: any) => {
             console.log("ERROR...");
-            if(err.response.data === "Challenge already added to contest"){
+            if(err.response.data === "Already added to admin"){
                 setshowFailNotification(true);
             }
         });
 
+    }
+
+    const handleRemoval = (challengeId: string) => {
+        setchallenges((prevstate) => prevstate ? prevstate.filter((challenge) => challenge.challengeId !== challengeId) : []);
     }
 
     const handleChangeEndTime = (value: any) => {
@@ -114,40 +127,46 @@ const OngoingContestControls = () => {
         }
     }
 
+    const deleteClick = () => {
+        if(contest) {
+            deleteContest(axiosIns, contestId!, (res: any) => console.log(res.data), (err: any) => console.log(err));
+        }
+        navigate("/ongoingContests");
+        window.location.reload();
+    }
 
     useEffect(() => {
-        if(selectedTab === 0){
             getChallengesInContest( axiosIns, contestId!, handleRecievedChallengeArray, (err: any) => console.log(err));
             getContest(axiosIns, contestId!,(res: any) => {setcontest(res.data)}, () => console.log("ËRROR OCCURRED"));
-        }
-
     },[selectedTab]);
 
-    
     return ( 
         <Layout>
             <Typography variant="h3" gutterBottom>
                 {contest ? contest.title : "Loading..."}
             </Typography>
 
-
             <Typography sx={{color: 'gray'}}variant="h6" gutterBottom>
-                {contest ? contest.description: "Loading..."}<br></br>
+                {contest ? contest.description: "Loading..."}<br></br> 
             </Typography>
 
-            <Button variant="contained" sx={{marginX: "2rem", backgroundColor: "darkred"}}onClick={onForceStopClick}>Force Stop</Button>
+            <Button variant="contained" sx={{ backgroundColor: "darkblue"}}onClick={onForceStopClick}>Force Stop</Button>
+            {contest && contest.moderator === userID ?
+                <Button variant="contained" sx={{marginX: "2rem", backgroundColor: "darkred"}}onClick={deleteClick}>Delete Contest</Button>: null
+            }
 
             <Tabs value={selectedTab} onChange={handleChangeTab} centered>
                 <Tab label="CHALLENGES" />
                 <Tab label="LEADERBOARD" />
                 <Tab label="ADD CHALLENGE" />
                 <Tab label="CHANGE END TIME" />
+                <Tab label="SHARE" />
             </Tabs>
 
             {selectedTab === 0 && 
                     challenges && challenges.map((challenge) => (
 
-                        <Card key={challenge.challengeId} sx={{marginY: '1rem', width: '75%'}} >
+                        <Card key={challenge.challengeId} sx={{marginY: '1rem', width: '100%'}} >
     
                             <CardContent>
                                 <Typography variant="h5" component="div">
@@ -195,11 +214,19 @@ const OngoingContestControls = () => {
                 <Snackbar  open={changedEndTimeSuccessNotification} autoHideDuration={6000} onClose={() => setchangedEndTimeSuccessNotification(false)} message="End time successfully changed!" action={ <IconButton size="small" aria-label="close" color="inherit" onClick={() => setchangedEndTimeSuccessNotification(false)}> <CloseIcon fontSize="small" /> </IconButton>} />
 
                 <Snackbar  open={changedEndTimeFailNotification} autoHideDuration={6000} onClose={() => setchangedEndTimeFailNotification(false)} message="End time change fail!" action={ <IconButton size="small" aria-label="close" color="inherit" onClick={() => setchangedEndTimeFailNotification(false)}> <CloseIcon fontSize="small" /> </IconButton>} />
-
+                
             </>
             }
 
-
+            {selectedTab === 4 &&
+            <>
+                <ShareContest ownerID ={contest!.moderator} giveAccessToContest={giveAccessToThisContest}/>
+            
+                <Snackbar  open={showNotification} autoHideDuration={2000} onClose={() => setshowNotification(false)} message="Added Admin!" action={ <IconButton size="small" aria-label="close" color="inherit" onClick={() => setshowNotification(false)}> <CloseIcon fontSize="small" /> </IconButton>} />
+    
+                <Snackbar  open={showFailNotification} autoHideDuration={2000} onClose={() => setshowFailNotification(false)} message="Already added Admin!" action={ <IconButton size="small" aria-label="close" color="inherit" onClick={() => setshowFailNotification(false)}> <CloseIcon fontSize="small" /> </IconButton>} />
+            </>
+            }
         </Layout>
     );
 }

@@ -64,7 +64,7 @@ const Users = () => {
 
             {users && users.map((user) => (
 
-                <Card key={user.userId} sx={{marginY: '1rem', width: '75%'}} >
+                <Card key={user.userId} sx={{marginY: '1rem', width: '100%'}} >
 
                     <CardContent>
                         <Typography variant="h5" component="div">

@@ -1,6 +1,6 @@
 import { Button, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, Snackbar, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { editChallenge, getChallenge } from "../api/admin";
 import { Layout } from "../components/templates";
 import { IChallenge } from "../helpers/interfaces";
@@ -18,6 +18,8 @@ const EditChallenge = () => {
     const axiosPrivate = useAxiosPrivate();
     const [showSuccessNotification, setshowSuccessNotification] = useState(false);
     const [showFailNotification, setshowFailNotification] = useState(false);
+    const navigate = useNavigate();
+
     const handleSubmit = () => {
         const formData = new FormData();
         formData.append('title', challenge.title)
@@ -25,7 +27,7 @@ const EditChallenge = () => {
         formData.append('difficulty', challenge.difficulty)
         formData.append('constraints', challenge.constraints)
         editChallenge(axiosPrivate, formData, challengeId!, (res: any) => {setshowSuccessNotification(true);}, (err: any) => setshowFailNotification(true))
-
+        navigate(-1);
     }
 
 

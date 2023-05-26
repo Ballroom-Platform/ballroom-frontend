@@ -8,9 +8,8 @@ import { ContestCard } from "../components/molecules"
 import { Layout } from "../components/templates"
 import { IContest } from "../helpers/interfaces"
 import { useApp } from "../hooks/useApp"
-import { getOngoingContests } from "../api/admin"
 import useAxiosPrivate from "../hooks/useAxiosPrivate"
-import { getUpcomingContests } from "../api/common"
+import { getUpcomingContests, getOngoingContests } from "../api/common"
 import { getDateString } from "../helpers/dateConverter"
 
 
@@ -61,7 +60,7 @@ export const Contests : React.FC = () => {
             {!loading && (
                 <>
                     <Grid>
-                        {contests.map((item) => <ContestCard contestImageURL={null} key={item.contestId} contestId={item.contestId} contestName={item.title} startTime={getDateString(item.startTime)} endTime={getDateString(item.endTime)} owner="" clickHandler={clickHandler}/>)}
+                        {contests.map((item) => <ContestCard contestImageURL={null} key={item.contestId} contestId={item.contestId} contestName={item.title} startTime={getDateString(item.startTime)} endTime={getDateString(item.endTime)} owner="" accessType="" clickHandler={clickHandler}/>)}
                     </Grid>
                 </>
             )}

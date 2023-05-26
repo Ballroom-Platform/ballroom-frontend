@@ -16,9 +16,14 @@ import PastContestsAdmin from "../pages/PastContestsAdmin";
 import PastContestControls from "../pages/PastContestControls";
 import OngoingContestsAdmin from "../pages/OngoingContestsAdmin";
 import OngoingContestControls from "../pages/OngoingContestControls";
-import ViewAddedChallenges from "../pages/ViewAddedChallenges";
+import ViewAllChallenges from "../pages/ViewAllChallenges";
 import { RequireAuth } from "../components/templates/RequireAuth";
 import { RequireIDPAuth } from "../components/templates/RequireIDPAuth";
+import OngoingContestControlView from "../pages/OngoingContestControlView";
+import PastContestControlView from "../pages/PastContestControlView";
+import ContestControlView from "../pages/ContestControlView";
+import ViewOwnedChallenges from "../pages/ViewOwnedChallenges";
+import ViewSharedChallenges from "../pages/ViewSharedChallenges";
 
 export const DefaultRouter : React.FC = () => {
 
@@ -39,7 +44,9 @@ export const DefaultRouter : React.FC = () => {
                     </Route>
                     <Route element={<RequireAuth allowedRoles={["admin"]} />}>
                         <Route path="/upcomingContests/:contestId" Component={ContestControls}/>
+                        <Route path="/upcomingContests/view/:contestId" Component={ContestControlView}/>
                         <Route path="/upcomingContests/:contestId/:challengeId" Component={ViewChallenge} />
+                        <Route path="/upcomingContests/view/:contestId/:challengeId" Component={ViewChallenge}/>
                         <Route path="/addChallengeToContest/:contestId" Component={AddChallengeToContest}/>
                         <Route path="/createContest" Component={CreateContest}/> 
                         <Route path="/upcomingContests" Component={UpcomingContests}/>
@@ -49,11 +56,17 @@ export const DefaultRouter : React.FC = () => {
                         <Route path="/editChallenge/:challengeId" Component={EditChallenge}/>
                         <Route path="/pastContests" Component={PastContestsAdmin}/>
                         <Route path="/pastContests/:contestId" Component={PastContestControls}/>
+                        <Route path="/pastContests/view/:contestId" Component={PastContestControlView}/>
                         <Route path="/pastContests/:contestId/:challengeId" Component={ViewChallenge} />
-                        <Route path="/ongoingContests/" Component={OngoingContestsAdmin}/>
-                        <Route path="/ongoingContests/:contestId" Component={OngoingContestControls}/>    
+                        <Route path="/pastContests/view/:contestId/:challengeId" Component={ViewChallenge}/>
+                        <Route path="/ongoingContests" Component={OngoingContestsAdmin}/>
+                        <Route path="/ongoingContests/:contestId" Component={OngoingContestControls}/> 
+                        <Route path="/ongoingContests/view/:contestId" Component={OngoingContestControlView}/>    
                         <Route path="/ongoingContests/:contestId/:challengeId" Component={ViewChallenge} />
-                        <Route path="/viewChallenges" Component={ViewAddedChallenges}/>
+                        <Route path="/ongoingContests/view/:contestId/:challengeId" Component={ViewChallenge}/>
+                        <Route path="/allChallenges" Component={ViewAllChallenges}/>
+                        <Route path="/myChallenges" Component={ViewOwnedChallenges}/>
+                        <Route path="/sharedChallenges" Component={ViewSharedChallenges}/>
                         <Route path="/challenges/:challengeId" Component={ViewChallenge}/>
                     </Route>
                 </Route>

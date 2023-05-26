@@ -8,7 +8,7 @@ import Button from "@mui/material/Button";
 import { Layout } from "../components/templates";
 import { useEffect, useState } from "react";
 import UploadIcon from '@mui/icons-material/Upload';
-
+import { useApp } from "../hooks/useApp";
 import internal from "stream";
 import { valueToPercent } from "@mui/base";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
@@ -28,6 +28,8 @@ const CreateChallenge = () => {
     const [challengeConstraints, setchallengeConstraints] = useState<string>("");
     const [testCaseFile, settestCaseFile] = useState({} as FileList);
     const [templateFile, settemplateFile] = useState({} as FileList);
+    const {appState} = useApp();
+    const userId = appState.auth.userID;
 
     const [showNotification, setshowNotification] = useState(false);
 
@@ -53,6 +55,7 @@ const CreateChallenge = () => {
         formData.append('description', challengeDescription)
         formData.append('difficulty', challengeDifficulty)
         formData.append('constraints', challengeConstraints)
+        formData.append('authorId', userId!)
         createChallenge(axiosIns, formData, (res: any) => {setshowNotification(true); clearAllInputs();}, (err: any) => console.log("ERROR OCCURED"))
 
         // fetch("http://localhost:9092/challengeService/challenge", {

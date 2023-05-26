@@ -52,6 +52,17 @@ export interface IChallenge {
   testCase : Array<number>
 }
 
+export interface OwnChallenge {
+  challengeId : string,
+  title : string,
+  description : string,
+  constraints : string,
+  difficulty : string;
+  template : Array<number>;
+  testCase : Array<number>
+  authorId : string;
+}
+
 export type Challenge = {
   title: string;
   difficulty: string;
@@ -80,6 +91,16 @@ export type IMinimalContest = {
   description: string;
   startTime: BalDateTime;
   endTime: BalDateTime;
+  moderator: string;
+}
+
+export type AccessContest = {
+  contestId: string;
+  title: string;
+  description: string;
+  startTime: BalDateTime;
+  endTime: BalDateTime;
+  accessType: string;
   moderator: string;
 }
 

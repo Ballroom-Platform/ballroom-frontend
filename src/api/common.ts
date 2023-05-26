@@ -27,8 +27,21 @@ export const getUpcomingContests = (axiosPrivate: AxiosInstance, successHandler:
     const url = `${BFF_URLS.contestService}/contests?status=future`
     const method = "GET";
     const headers = {}
-    // const headers = { "Accept":"application/json", "Authorization" : AUTH_HEADER};
     axiosPrivate({ url, method, headers }).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
+}
+
+export const getPastContests = (axiosPrivate: AxiosInstance, successHandler : Function, failHandler : Function)=> {
+    const url = `${BFF_URLS.contestService}/contests?status=past`
+    const method = "GET";
+    const headers = {};
+    axiosPrivate({url, method, headers}).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
+}
+
+export const getOngoingContests = (axiosPrivate: AxiosInstance, successHandler : Function, failHandler : Function)=> {
+    const url = `${BFF_URLS.contestService}/contests?status=present`
+    const method = "GET";
+    const headers = {};
+    axiosPrivate({url, method, headers}).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
 }
 
 export const getUserRole = async (userId: string) => {

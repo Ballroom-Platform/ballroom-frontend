@@ -1,27 +1,41 @@
-import { Grid, Typography } from "@mui/material";
+import { Grid, Typography, Tab, Tabs } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router";
+import { useApp } from "../hooks/useApp";
 import { Link } from "react-router-dom";
-import { getOngoingContests, getPastContests } from "../api/admin";
+import { getOwnerContests,  getSharedContests } from "../api/admin";
 import { ContestCard } from "../components/molecules";
 import { Layout } from "../components/templates";
-import { IMinimalContest } from "../helpers/interfaces";
+import { IMinimalContest, AccessContest } from "../helpers/interfaces";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { getDateString } from "../helpers/dateConverter";
 
 const OngoingContestsAdmin = () => {
     const navigate = useNavigate();
-    const location = useLocation()
-    const clickHandler = (key: string) => {
-        navigate(location.pathname + `/${key}`);
-    }
-
+    const {appState} = useApp();
+    const userId = appState.auth.userID;
+    const [selectedTab, setselectedTab] = useState(0);
     const [contests, setcontests] = useState<IMinimalContest[]>([]);
+    const [contestsshared, setcontestsshared] = useState<AccessContest[]>([]);
     const axiosIns = useAxiosPrivate();
 
-    useEffect(() => {
-        getOngoingContests(axiosIns, (res: any) => setcontests((prevstate) => prevstate ? [...prevstate, ...res.data] : [{}]),(err: any) => console.log(err))
+    const clickHandler = (key: string, accessType: string) => {
+        if(accessType === "VIEW")
+        {
+            navigate("/ongoingContests/view" + `/${key}`);
+        } else {
+            navigate("/ongoingContests" + `/${key}`);
+        }  
+    }
 
+    const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
+        setselectedTab(newValue);
+    };
+
+    useEffect(() => {
+        
+        getOwnerContests(axiosIns, userId!, "present", (res: any) => setcontests((prevstate) => prevstate ? [...prevstate, ...res.data] : [{}]),(err: any) => console.log(err));
+        getSharedContests(axiosIns, userId!, "present", (res: any) => setcontestsshared((prevstate) => prevstate ? [...prevstate, ...res.data] : [{}]),(err: any) => console.log(err))
     }, []);
     
     return ( 
@@ -30,11 +44,38 @@ const OngoingContestsAdmin = () => {
                     Ongoing Contests
             </Typography>
 
-            <Grid container sx={{marginY: '2rem'}}>
+            <Tabs value={selectedTab} onChange={handleChangeTab} centered>
+                <Tab label="OWNED" />
+                <Tab label="SHARED" />
+            </Tabs>
 
-            {contests.map((contest) => <Link to={`/ongoingContests/${contest.contestId}`}><ContestCard contestImageURL={null} key={contest.contestId} contestId={contest.contestId} contestName={contest.title} startTime={getDateString(contest.startTime)} endTime={getDateString(contest.endTime)} forcedState="active" owner="" clickHandler={clickHandler}/></Link>)}
+            {selectedTab === 0 &&
+            <>
+                <Grid container sx={{marginY: '2rem'}}>
+
+                {contests.map((contest) => 
+                        <ContestCard contestImageURL={null} key={contest.contestId} contestId={contest.contestId} contestName={contest.title} startTime={getDateString(contest.startTime)} endTime={getDateString(contest.endTime)} owner="" accessType="" clickHandler={clickHandler}/>
+                )}
+                    
+                </Grid>
+            </>
+            }
+
+            {selectedTab === 1 &&
+            <>
+                <Grid container sx={{marginY: '2rem'}}>
+            
+                {contestsshared.filter((contest) => contest.accessType === "EDIT").map((contest) => 
+                        <ContestCard contestImageURL={null} key={contest.contestId} contestId={contest.contestId} contestName={contest.title} startTime={getDateString(contest.startTime)} endTime={getDateString(contest.endTime)} owner="" accessType={contest.accessType} clickHandler={clickHandler}/>        
+                )} 
                 
-            </Grid>
+                {contestsshared.filter((contest) => contest.accessType === "VIEW").map((contest) => 
+                        <ContestCard contestImageURL={null} key={contest.contestId} contestId={contest.contestId} contestName={contest.title} startTime={getDateString(contest.startTime)} endTime={getDateString(contest.endTime)} owner="" accessType={contest.accessType} clickHandler={clickHandler}/>        
+                )}
+
+                </Grid>
+            </>
+            }
         </Layout>
      );
 }

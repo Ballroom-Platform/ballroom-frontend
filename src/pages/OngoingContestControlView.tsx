@@ -1,7 +1,7 @@
-import { Button, IconButton, Snackbar, Tab, Tabs, Typography } from "@mui/material";
+import { Button, Tab, Tabs, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router";
-import { deleteContest, getChallenge, getContest, giveAccessToContest } from "../api/admin";
+import { useLocation, useParams } from "react-router";
+import { getChallenge, getContest } from "../api/admin";
 import { getChallengesInContest } from "../api/common";
 import { Layout } from "../components/templates";
 import { IMinimalContest } from "../helpers/interfaces";
@@ -11,9 +11,6 @@ import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
 import { Link } from "react-router-dom";
 import LeaderboardTable from "../components/LeaderboardTable";
-import ShareContest from "./ShareContest";
-import CloseIcon from '@mui/icons-material/Close';
-import { useApp } from "../hooks/useApp";
 
 type ContestId = {
     contestId: string;
@@ -25,7 +22,7 @@ type Challenge = {
     difficulty: string;
 };
 
-const PastContestControls = () => {
+const OngoingContestControlView = () => {
 
     const {contestId} = useParams<ContestId>();
     const location = useLocation();
@@ -33,18 +30,12 @@ const PastContestControls = () => {
     const [challenges, setchallenges] = useState<Challenge[]>([]);
     const [selectedTab, setselectedTab] = useState(0);
     const axiosIns = useAxiosPrivate();
-    const [showNotification, setshowNotification] = useState(false);
-    const [showFailNotification, setshowFailNotification] = useState(false);
-    const {appState} = useApp();
-    const userID = appState.auth.userID;
-    const navigate = useNavigate();
 
     const handleRecievedChallengeArray = (res: any) => {
         console.log(res.data)
         res.data.forEach((challengeId: any) => {
             getChallenge(axiosIns, challengeId).then((res: any) => setchallenges((prevstate) => prevstate ? [...prevstate, {challengeId: res.data.challengeId,title: res.data.title, difficulty: res.data.difficulty}] : [{challengeId: res.data.challengeId,title: res.data.title, difficulty: res.data.difficulty}])).
             catch((res: any)=> console.log(res.data));
-            
         });
     }
 
@@ -52,29 +43,9 @@ const PastContestControls = () => {
         setselectedTab(newValue);
     };
 
-    const giveAccessToThisContest = (thisUserId: string, accessType: string) => {
-        giveAccessToContest(axiosIns, contestId!, thisUserId, accessType,(res: any) => {console.log(res); setshowNotification(true);},
-         (err: any) => {
-            console.log("ERROR...");
-            if(err.response.data === "Already added to admin"){
-                setshowFailNotification(true);
-            }
-        });
-
-    }
-
-    const deleteClick = () => {
-        if(contest) {
-            deleteContest(axiosIns, contestId!, (res: any) => console.log(res.data), (err: any) => console.log(err));
-        }
-        navigate("/pastContests");
-        window.location.reload();
-    }
-
     useEffect(() => {
         getChallengesInContest( axiosIns, contestId!, handleRecievedChallengeArray, (err: any) => console.log(err))
         getContest(axiosIns, contestId!,(res: any) => {setcontest(res.data)}, () => console.log("ËRROR OCCURRED"));
-
     },[]);
     
     return ( 
@@ -87,14 +58,9 @@ const PastContestControls = () => {
                 {contest ? contest.description: "Loading..."}<br></br> 
             </Typography>
 
-            {contest && contest.moderator === userID ?
-                <Button variant="contained" sx={{marginX: "2rem",alignItems: "center", backgroundColor: "darkred" }} onClick={deleteClick}>Delete Contest</Button>: null
-            }
-
             <Tabs value={selectedTab} onChange={handleChangeTab} centered>
                 <Tab label="CHALLENGES" />
                 <Tab label="LEADERBOARD" />
-                <Tab label="SHARE" />
             </Tabs>
 
             {selectedTab === 0 && 
@@ -120,18 +86,8 @@ const PastContestControls = () => {
 
             {selectedTab === 1 && <LeaderboardTable contestId={contestId!}/>}
 
-            {selectedTab === 2 &&
-            <>
-                <ShareContest ownerID ={contest!.moderator} giveAccessToContest={giveAccessToThisContest}/>
-            
-                <Snackbar  open={showNotification} autoHideDuration={2000} onClose={() => setshowNotification(false)} message="Added Admin!" action={ <IconButton size="small" aria-label="close" color="inherit" onClick={() => setshowNotification(false)}> <CloseIcon fontSize="small" /> </IconButton>} />
-    
-                <Snackbar  open={showFailNotification} autoHideDuration={2000} onClose={() => setshowFailNotification(false)} message="Already added Admin!" action={ <IconButton size="small" aria-label="close" color="inherit" onClick={() => setshowFailNotification(false)}> <CloseIcon fontSize="small" /> </IconButton>} />
-            </>
-            }
-
         </Layout>
     );
 }
  
-export default PastContestControls;
+export default OngoingContestControlView;
