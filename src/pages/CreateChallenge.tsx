@@ -17,7 +17,7 @@ import { FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, Snackbar, 
 import { InputWrapper } from "../components";
 import { createChallenge } from "../api/admin";
 import axios from "../api/axios";
-
+import { useNavigate } from "react-router"
 
 // data_model:Challenge newChallenge = {title: "", challengeId: "", description: "", difficulty: "HARD", testCase: []};
 const CreateChallenge = () => {
@@ -30,6 +30,7 @@ const CreateChallenge = () => {
     const [templateFile, settemplateFile] = useState({} as FileList);
     const {appState} = useApp();
     const userId = appState.auth.userID;
+    const navigate = useNavigate();
 
     const [showNotification, setshowNotification] = useState(false);
 
@@ -44,6 +45,10 @@ const CreateChallenge = () => {
 
     const axiosIns = useAxiosPrivate();
 
+    const navigateToChallenges = () => {
+        navigate("/myChallenges");
+    }
+
     const handleSubmit = () => {
         const formData = new FormData();
         formData.append('testCase', testCaseFile[0], "test001 "+ "_" + Date.now());
@@ -56,7 +61,7 @@ const CreateChallenge = () => {
         formData.append('difficulty', challengeDifficulty)
         formData.append('constraints', challengeConstraints)
         formData.append('authorId', userId!)
-        createChallenge(axiosIns, formData, (res: any) => {setshowNotification(true); clearAllInputs();}, (err: any) => console.log("ERROR OCCURED"))
+        createChallenge(axiosIns, formData, (res: any) => {setshowNotification(true); clearAllInputs(); navigateToChallenges();}, (err: any) => console.log("ERROR OCCURED"))
 
         // fetch("http://localhost:9092/challengeService/challenge", {
         //     method: "POST",

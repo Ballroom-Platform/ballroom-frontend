@@ -36,7 +36,7 @@ const UpcomingContests = () => {
     useEffect(() => {
         getOwnerContests(axiosIns, userId!, "future" ,(res: any) => setcontests((prevstate) => prevstate ? [...prevstate, ...res.data] : [{}]),(err: any) => console.log(err))
         getSharedContests(axiosIns, userId! , "future", (res: any) => setcontestsshared((prevstate) => prevstate ? [...prevstate, ...res.data] : [{}]),(err: any) => console.log(err))
-    }, []);
+    }, [selectedTab]);
 
     return ( 
         

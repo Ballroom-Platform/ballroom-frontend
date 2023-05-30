@@ -17,6 +17,8 @@ import { useAuthContext } from "@asgardeo/auth-react";
 import { IconButton, Snackbar } from "@mui/material";
 import React from "react";
 import CloseIcon from '@mui/icons-material/Close';
+import { useNavigate } from "react-router"
+import { getDateString } from "../helpers/dateConverter";
 
 const CreateContest = () => {
 
@@ -26,9 +28,25 @@ const CreateContest = () => {
     const [endTime, setendTime] = useState<BalDateTime | null>();
     const [showNotification, setshowNotification] = useState(false);
     const {appState} = useApp()
-    console.log(appState);
+    const utcTimestamp = Date.now();
+    const istTimestamp = new Date(utcTimestamp + (5.5 * 60 * 60 * 1000));;
+    const navigate = useNavigate();
 
     const axiosIns = useAxiosPrivate();
+
+    const navigateContest = () => {
+        const startTimeInMilliseconds = Date.parse(getDateString(startTime!));
+        const endTimeInMilliseconds = Date.parse(getDateString(endTime!))
+        const nowTimeInMilliseconds = istTimestamp.getTime();
+
+        if (startTimeInMilliseconds < endTimeInMilliseconds && endTimeInMilliseconds < nowTimeInMilliseconds) {
+            navigate("/pastContests");
+        } else if (startTimeInMilliseconds > nowTimeInMilliseconds && endTimeInMilliseconds > nowTimeInMilliseconds) {
+            navigate("/upcomingContests");
+        } else {
+            navigate("/ongoingContests");
+        }
+    }
 
     const clearAllInputs = () => {
         setcontestName("");
@@ -70,7 +88,10 @@ const CreateContest = () => {
                 </DemoContainer>
             </LocalizationProvider>
 
-            {startTime && endTime && (<Button variant="contained" onClick={() => createContest(axiosIns, {title: contestName, description: contestDescription, startTime: startTime, endTime: endTime, moderator: appState.auth.userID!},(res: any) => {console.log(res); setshowNotification(true); clearAllInputs()}, (err: any) => console.log(err))}>Create</Button>)}
+            {startTime && endTime && ((Date.parse(getDateString(startTime)) > Date.parse(getDateString(endTime))) && 
+            (<>
+                <Typography variant="body1" color="error">Start Time cannot be greater than End Time</Typography><Button variant="outlined" disabled>Create</Button>
+            </>) || (<Button variant="contained" onClick={() => createContest(axiosIns, {title: contestName, description: contestDescription, startTime: startTime, endTime: endTime, moderator: appState.auth.userID!},(res: any) => {console.log(res); setshowNotification(true); clearAllInputs(); navigateContest();}, (err: any) => console.log(err))}>Create</Button>))}
 
             {!(startTime && endTime) && (<Button variant="outlined" disabled>Create</Button>) }
 

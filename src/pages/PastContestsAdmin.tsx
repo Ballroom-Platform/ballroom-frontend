@@ -36,7 +36,7 @@ const PastContestsAdmin = () => {
     useEffect(() => {
         getOwnerContests(axiosIns, userId!, "past", (res: any) => setcontests((prevstate) => prevstate ? [...prevstate, ...res.data] : [{}]),(err: any) => console.log(err));
         getSharedContests(axiosIns, userId!, "past",(res: any) => setcontestsshared((prevstate) => prevstate ? [...prevstate, ...res.data] : [{}]),(err: any) => console.log(err));
-    }, []);
+    }, [selectedTab]);
     
     return ( 
         <Layout>
