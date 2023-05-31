@@ -36,7 +36,7 @@ const OngoingContestsAdmin = () => {
         
         getOwnerContests(axiosIns, userId!, "present", (res: any) => setcontests((prevstate) => prevstate ? [...prevstate, ...res.data] : [{}]),(err: any) => console.log(err));
         getSharedContests(axiosIns, userId!, "present", (res: any) => setcontestsshared((prevstate) => prevstate ? [...prevstate, ...res.data] : [{}]),(err: any) => console.log(err))
-    }, [selectedTab]);
+    }, []);
     
     return ( 
         <Layout>
