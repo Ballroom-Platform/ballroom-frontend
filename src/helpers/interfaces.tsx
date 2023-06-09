@@ -126,3 +126,11 @@ export interface IDateTimeObject {
   minute: number;
   second: number;
 }
+
+export type regitrants = {
+  id: string;
+  registeredTime: BalDateTime;
+  userId: string;
+  fullname: string;
+  contestId: string;
+}

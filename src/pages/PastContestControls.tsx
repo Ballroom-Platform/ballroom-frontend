@@ -1,7 +1,7 @@
 import { Button, IconButton, Snackbar, Tab, Tabs, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router";
-import { deleteContest, getChallenge, getContest, giveAccessToContest } from "../api/admin";
+import { deleteContest, getChallenge, getContest, getOwnedChallengeIds, getSharedChallengeIds, giveAccessToContest } from "../api/admin";
 import { getChallengesInContest } from "../api/common";
 import { Layout } from "../components/templates";
 import { IMinimalContest } from "../helpers/interfaces";
@@ -38,6 +38,8 @@ const PastContestControls = () => {
     const {appState} = useApp();
     const userID = appState.auth.userID;
     const navigate = useNavigate();
+    const [ownedchallengeIds, setownedchallengeids] = useState<string[]>([]);
+    const [sharedchallengeIds, setsharedchallengeids] = useState<string[]>([]);
 
     const handleRecievedChallengeArray = (res: any) => {
         console.log(res.data)
@@ -74,6 +76,8 @@ const PastContestControls = () => {
     useEffect(() => {
         getChallengesInContest( axiosIns, contestId!, handleRecievedChallengeArray, (err: any) => console.log(err))
         getContest(axiosIns, contestId!,(res: any) => {setcontest(res.data)}, () => console.log("ËRROR OCCURRED"));
+        getSharedChallengeIds(axiosIns, userID!,(res: any) => {setsharedchallengeids(res.data)}, () => console.log("ËRROR OCCURRED"));
+        getOwnedChallengeIds(axiosIns, userID!,(res: any) => {setownedchallengeids(res.data)}, () => console.log("ËRROR OCCURRED")); 
 
     },[]);
     
@@ -88,7 +92,7 @@ const PastContestControls = () => {
             </Typography>
 
             {contest && contest.moderator === userID ?
-                <Button variant="contained" sx={{marginX: "2rem",alignItems: "center", backgroundColor: "darkred" }} onClick={deleteClick}>Delete Contest</Button>: null
+                <Button variant="contained" sx={{alignItems: "center", backgroundColor: "darkred" }} onClick={deleteClick}>Delete Contest</Button>: null
             }
 
             <Tabs value={selectedTab} onChange={handleChangeTab} centered>
@@ -112,7 +116,9 @@ const PastContestControls = () => {
                             </CardContent>  
     
                             <CardActions>
-                                <Link to={`${location.pathname}/${challenge.challengeId}`}><Button size="small">View</Button></Link>
+                                {(sharedchallengeIds.includes(challenge.challengeId) || ownedchallengeIds.includes(challenge.challengeId) )&& <Link to={`${location.pathname}/${challenge.challengeId}`}><Button size="small">View</Button></Link>}
+
+                                {(!ownedchallengeIds.includes(challenge.challengeId) && !sharedchallengeIds.includes(challenge.challengeId)) && <Typography variant="body2" color="darkorange" sx={{marginX: 2}}>You Don't Have Access</Typography>}
                             </CardActions>
     
                         </Card>

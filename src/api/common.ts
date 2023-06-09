@@ -44,6 +44,20 @@ export const getOngoingContests = (axiosPrivate: AxiosInstance, successHandler :
     axiosPrivate({url, method, headers}).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
 }
 
+export const getUser = (axiosPrivate: AxiosInstance, userId: string, successHandler : Function, failHandler : Function)=> {
+    const url = `${BFF_URLS.userService}/users/${userId}`
+    const method = "GET";
+    const headers = {};
+    axiosPrivate({url, method, headers}).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
+}
+
+export const getAllUsers = (axiosPrivate: AxiosInstance, successHandler : Function, failHandler : Function)=> {
+    const url = `${BFF_URLS.userService}/users/all`
+    const method = "GET";
+    const headers = {};
+    axiosPrivate({url, method, headers}).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
+}
+
 export const getUserRole = async (userId: string) => {
     const url = `${BFF_URLS.userService}/users/${userId}/roles`
     const method = "GET";

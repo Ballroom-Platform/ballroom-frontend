@@ -83,8 +83,8 @@ export const getUsersByRoles = (axiosPrivate: AxiosInstance, role : string, succ
 
 }
 
-export const upgradeContestantToAdmin = (axiosPrivate: AxiosInstance, userId: string, successHandler : Function, failHandler : Function) => {
-    const url = `${BFF_URLS.userService}/users/${userId}/roles/admin`
+export const changeRole = (axiosPrivate: AxiosInstance, userId: string, newRole: string, successHandler : Function, failHandler : Function) => {
+    const url = `${BFF_URLS.userService}/users/${userId}/roles/${newRole}`
     const method = "PUT";
     const headers = {};
     axiosPrivate({url, method, headers}).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
@@ -187,4 +187,18 @@ export const deleteChallenge = (axiosPrivate: AxiosInstance, challengeId: string
     const method = "DELETE";
     const headers = {};
     axiosPrivate({url, method, headers}).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
+}
+
+export const getOwnedChallengeIds = (axiosPrivate: AxiosInstance, userId : string, successHandler: Function, failHandler: Function) => {
+    const url = `${BFF_URLS.challengeService}/challenges/owned/${userId}`
+    const method = "GET";
+    const headers = {};
+    axiosPrivate({ url, method, headers }).then((res: AxiosResponse) => successHandler(res)).catch((err: AxiosError) => failHandler(err));   
+}
+
+export const getSharedChallengeIds = (axiosPrivate: AxiosInstance, userId : string, successHandler: Function, failHandler: Function) => {
+    const url = `${BFF_URLS.challengeService}/challenges/shared/${userId}`
+    const method = "GET";
+    const headers = {};
+    axiosPrivate({ url, method, headers }).then((res: AxiosResponse) => successHandler(res)).catch((err: AxiosError) => failHandler(err));   
 }

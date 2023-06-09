@@ -1,7 +1,7 @@
 import { Button, IconButton, Snackbar, Tab, Tabs, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router";
-import { addChallenge, changeContestTime, getChallenge, getContest, removeChallengeFromContest, giveAccessToContest, deleteContest } from "../api/admin";
+import { addChallenge, changeContestTime, getChallenge, getContest, removeChallengeFromContest, giveAccessToContest, deleteContest, getOwnedChallangesByDifficulty, getSharedChallangesByDifficulty, getSharedChallengeIds, getOwnedChallengeIds } from "../api/admin";
 import { getChallengesInContest } from "../api/common";
 import { Layout } from "../components/templates";
 import { BalDateTime, IMinimalContest } from "../helpers/interfaces";
@@ -45,7 +45,9 @@ const OngoingContestControls = () => {
     const [endTime, setendTime] = useState<BalDateTime>();
     const [endTimeIsValid, setendTimeIsValid] = useState(false);
     const {appState} = useApp();
-    const userID = appState.auth.userID;
+    const userId = appState.auth.userID;
+    const [ownedchallengeIds, setownedchallengeids] = useState<string[]>([]);
+    const [sharedchallengeIds, setsharedchallengeids] = useState<string[]>([]);
 
     const handleRecievedChallengeArray = (res: any) => {
         Promise.all(
@@ -71,6 +73,7 @@ const OngoingContestControls = () => {
             changeContestTime(axiosIns, contestId!, {title: contest.title, startTime: contest.startTime, endTime: newEndTime, moderator: contest.moderator}, (res: any) => console.log(res.data), (err: any) => console.log(err));
         }
         navigate("/pastContests");
+        window.location.reload();
     }
 
     const addChallengeToThisContest = (thisChallengeId: string) => {
@@ -136,8 +139,10 @@ const OngoingContestControls = () => {
     }
 
     useEffect(() => {
-            getChallengesInContest( axiosIns, contestId!, handleRecievedChallengeArray, (err: any) => console.log(err));
+            getChallengesInContest( axiosIns, contestId!, handleRecievedChallengeArray, (err: any) => console.log(err));         
             getContest(axiosIns, contestId!,(res: any) => {setcontest(res.data)}, () => console.log("ËRROR OCCURRED"));
+            getSharedChallengeIds(axiosIns, userId!,(res: any) => {setsharedchallengeids(res.data)}, () => console.log("ËRROR OCCURRED"));
+            getOwnedChallengeIds(axiosIns, userId!,(res: any) => {setownedchallengeids(res.data)}, () => console.log("ËRROR OCCURRED"));        
     },[selectedTab]);
 
     return ( 
@@ -151,7 +156,7 @@ const OngoingContestControls = () => {
             </Typography>
 
             <Button variant="contained" sx={{ backgroundColor: "darkblue"}}onClick={onForceStopClick}>Force Stop</Button>
-            {contest && contest.moderator === userID ?
+            {contest && contest.moderator === userId ?
                 <Button variant="contained" sx={{marginX: "2rem", backgroundColor: "darkred"}}onClick={deleteClick}>Delete Contest</Button>: null
             }
 
@@ -178,8 +183,11 @@ const OngoingContestControls = () => {
                             </CardContent>  
     
                             <CardActions>
-                                <Link to={`${location.pathname}/${challenge.challengeId}`}><Button size="small">View</Button></Link>
-                                <Button sx={{color: 'red'}} size="small" onClick={() => removeChallengeFromContest(axiosIns, contestId!, challenge.challengeId!, (res: any)=> {console.log(res.data); handleRemoval(challenge.challengeId)}, () => console.log("ERROR!"))}>Remove</Button>
+                                {(sharedchallengeIds.includes(challenge.challengeId) || ownedchallengeIds.includes(challenge.challengeId) )&& <Link to={`${location.pathname}/${challenge.challengeId}`}><Button size="small">View</Button></Link>}
+                                {(sharedchallengeIds.includes(challenge.challengeId) || ownedchallengeIds.includes(challenge.challengeId) )&&  <Button sx={{color: 'red'}} size="small" onClick={() => removeChallengeFromContest(axiosIns, contestId!, challenge.challengeId!, (res: any)=> {console.log(res.data); handleRemoval(challenge.challengeId)}, () => console.log("ERROR!"))}>Remove</Button>}
+
+                                {(!ownedchallengeIds.includes(challenge.challengeId) && !sharedchallengeIds.includes(challenge.challengeId)) && <Typography variant="body2" color="darkorange" sx={{marginX: 2}}>You Don't Have Access</Typography>}
+                                
                             </CardActions>
     
                         </Card>

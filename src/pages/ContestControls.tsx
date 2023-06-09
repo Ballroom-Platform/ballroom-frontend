@@ -6,7 +6,7 @@ import CardActions from "@mui/material/CardActions";
 import Paper from "@mui/material/Paper";
 import { useLocation, useNavigate, useParams } from "react-router"
 import { useEffect, useState } from "react";
-import { addChallenge, changeContestTime, getChallenge, getContest, removeChallengeFromContest, giveAccessToContest, deleteContest } from "../api/admin";
+import { addChallenge, changeContestTime, getChallenge, getContest, removeChallengeFromContest, giveAccessToContest, deleteContest, getSharedChallengeIds, getOwnedChallengeIds } from "../api/admin";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { Layout } from "../components/templates";
 import { Link } from "react-router-dom";
@@ -45,6 +45,8 @@ const ContestControls: React.FC = () => {
     const [showFailNotification, setshowFailNotification] = useState(false);
     const {appState} = useApp();
     const userID = appState.auth.userID;
+    const [ownedchallengeIds, setownedchallengeids] = useState<string[]>([]);
+    const [sharedchallengeIds, setsharedchallengeids] = useState<string[]>([]);
 
     const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
         setselectedTab(newValue);
@@ -85,6 +87,7 @@ const ContestControls: React.FC = () => {
             changeContestTime(axiosIns, contestId!, {title: contest.title, startTime: newStartTime, endTime: contest.endTime, moderator: contest.moderator}, (res: any) => console.log(res.data), (err: any) => console.log(err));
         }
         navigate("/ongoingContests");
+        window.location.reload();
     }
 
     const giveAccessToThisContest = (thisUserId: string, accessType: string) => {
@@ -106,6 +109,8 @@ const ContestControls: React.FC = () => {
         if(selectedTab === 0){
             getChallengesInContest( axiosIns, contestId!, handleRecievedChallengeArray, (err: any) => console.log(err))
             getContest(axiosIns, contestId!,(res: any) => {setcontest(res.data)}, () => console.log("ËRROR OCCURRED"));
+            getSharedChallengeIds(axiosIns, userID!,(res: any) => {setsharedchallengeids(res.data)}, () => console.log("ËRROR OCCURRED"));
+            getOwnedChallengeIds(axiosIns, userID!,(res: any) => {setownedchallengeids(res.data)}, () => console.log("ËRROR OCCURRED"));     
         }
     },[selectedTab]);
 
@@ -139,9 +144,6 @@ const ContestControls: React.FC = () => {
 
             {selectedTab === 0 && 
                 <>
-                <Typography sx={{marginY: '2rem'}} variant="h4" gutterBottom>
-                    Challenges in Contest
-                </Typography>
                 {
                     challenges && challenges.map((challenge) => (
 
@@ -157,8 +159,10 @@ const ContestControls: React.FC = () => {
                             </CardContent>  
 
                             <CardActions>
-                                <Link to={`${location.pathname}/${challenge.challengeId}`}><Button size="small">View</Button></Link>
-                                <Button sx={{color: 'red'}} size="small" onClick={() => removeChallengeFromContest(axiosIns, contestId!, challenge.challengeId!, (res: any)=> {console.log(res.data); handleRemoval(challenge.challengeId)}, () => console.log("ERROR!"))}>Remove</Button>
+                                {(sharedchallengeIds.includes(challenge.challengeId) || ownedchallengeIds.includes(challenge.challengeId) )&& <Link to={`${location.pathname}/${challenge.challengeId}`}><Button size="small">View</Button></Link>}
+                                {(sharedchallengeIds.includes(challenge.challengeId) || ownedchallengeIds.includes(challenge.challengeId) )&&  <Button sx={{color: 'red'}} size="small" onClick={() => removeChallengeFromContest(axiosIns, contestId!, challenge.challengeId!, (res: any)=> {console.log(res.data); handleRemoval(challenge.challengeId)}, () => console.log("ERROR!"))}>Remove</Button>}
+
+                                {(!ownedchallengeIds.includes(challenge.challengeId) && !sharedchallengeIds.includes(challenge.challengeId)) && <Typography variant="body2" color="darkorange" sx={{marginX: 2}}>You Don't Have Access</Typography>}
                             </CardActions>
 
                         </Card>

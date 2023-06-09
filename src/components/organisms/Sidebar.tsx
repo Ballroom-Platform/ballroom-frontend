@@ -32,7 +32,7 @@ export const Sidebar: React.FC = () => {
           height="93px"
         />
       </Paper>
-      <div style={{ paddingTop: '2rem' }}>
+      <div style={{ paddingTop: '4rem' }}>
         {Object.keys(links).map((key, index) => (
           <SidebarSection section={key} key={index} itemsArray={links[key]} />
         ))}

@@ -1,7 +1,7 @@
 import { Button, Tab, Tabs, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router";
-import { getChallenge, getContest } from "../api/admin";
+import { getChallenge, getContest, getOwnedChallengeIds, getSharedChallengeIds } from "../api/admin";
 import { getChallengesInContest } from "../api/common";
 import { Layout } from "../components/templates";
 import { IMinimalContest } from "../helpers/interfaces";
@@ -11,6 +11,7 @@ import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
 import { Link } from "react-router-dom";
 import LeaderboardTable from "../components/LeaderboardTable";
+import { useApp } from "../hooks/useApp";
 
 type ContestId = {
     contestId: string;
@@ -30,6 +31,10 @@ const OngoingContestControlView = () => {
     const [challenges, setchallenges] = useState<Challenge[]>([]);
     const [selectedTab, setselectedTab] = useState(0);
     const axiosIns = useAxiosPrivate();
+    const {appState} = useApp();
+    const userId = appState.auth.userID;
+    const [ownedchallengeIds, setownedchallengeids] = useState<string[]>([]);
+    const [sharedchallengeIds, setsharedchallengeids] = useState<string[]>([]);
 
     const handleRecievedChallengeArray = (res: any) => {
         console.log(res.data)
@@ -46,6 +51,8 @@ const OngoingContestControlView = () => {
     useEffect(() => {
         getChallengesInContest( axiosIns, contestId!, handleRecievedChallengeArray, (err: any) => console.log(err))
         getContest(axiosIns, contestId!,(res: any) => {setcontest(res.data)}, () => console.log("ËRROR OCCURRED"));
+        getSharedChallengeIds(axiosIns, userId!,(res: any) => {setsharedchallengeids(res.data)}, () => console.log("ËRROR OCCURRED"));
+        getOwnedChallengeIds(axiosIns, userId!,(res: any) => {setownedchallengeids(res.data)}, () => console.log("ËRROR OCCURRED"));      
     },[]);
     
     return ( 
@@ -78,7 +85,8 @@ const OngoingContestControlView = () => {
                             </CardContent>  
     
                             <CardActions>
-                                <Link to={`${location.pathname}/${challenge.challengeId}`}><Button size="small">View</Button></Link>
+                                {(sharedchallengeIds.includes(challenge.challengeId) || ownedchallengeIds.includes(challenge.challengeId) )&&<Link to={`${location.pathname}/${challenge.challengeId}`}><Button size="small">View</Button></Link>}
+                                {(!ownedchallengeIds.includes(challenge.challengeId) && !sharedchallengeIds.includes(challenge.challengeId)) && <Typography variant="body2" color="darkorange" sx={{marginX: 2}}>You Don't Have Access</Typography>}
                             </CardActions>
     
                         </Card>

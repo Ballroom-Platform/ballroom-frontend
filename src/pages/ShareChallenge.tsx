@@ -1,10 +1,11 @@
 import { Button, Card, CardActions, CardContent, Tab, Tabs, TextField, Typography } from "@mui/material";
 import { useParams } from "react-router";
 import { useEffect, useState } from "react";
-import { getUsersByRoles, getChallengeAccessGrantedUsers } from "../api/admin";
+import {  getChallengeAccessGrantedUsers } from "../api/admin";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { useApp } from '../hooks/useApp';
 import AdminAccessChallengeTable from "../components/AdminAccessChallengeTable";
+import { getAllUsers } from "../api/common";
 
 type ChallengeId = {
     challengeId: string;
@@ -37,7 +38,7 @@ const ShareChallenge = ({ownerID, giveAccessToChallenge} : IProps) => {
     
     useEffect(() => {
         getChallengeAccessGrantedUsers(axiosIns, challengeId!, (res: any) => setuserids(res.data), (err: any) => console.log(err));
-        getUsersByRoles(axiosIns, "admin", (res: any) => {const listOfUsers: any[] = res.data;
+        getAllUsers(axiosIns, (res: any) => {const listOfUsers: any[] = res.data;
             setusers(listOfUsers.map((user) : User => ({userId: user.user_id, username: user.username, fullname: user.fullname, role: user.role})));
         }, () => {});
     }, [selectedTab,giveAccessToChallenge]);
@@ -57,7 +58,7 @@ const ShareChallenge = ({ownerID, giveAccessToChallenge} : IProps) => {
 
             {selectedTab === 1 &&
             <> 
-                <TextField sx={{marginY: '2rem'}} id="outlined-basic" label="Search by email" value={query} variant="outlined" onChange={(e) => setquery(e.target.value)}/>
+                <TextField sx={{marginY: '2rem'}} id="outlined-basic" label="Search by user name" value={query} variant="outlined" onChange={(e) => setquery(e.target.value)}/>
                     
                 {users && users
                 .filter((user) => user.username.toLowerCase().includes(query.toLowerCase()))
@@ -69,10 +70,10 @@ const ShareChallenge = ({ownerID, giveAccessToChallenge} : IProps) => {
                     
                         <CardContent>
                             <Typography variant="h5" component="div">
-                            User Name : {user.fullname}
+                            Full Name : {user.fullname}
                             </Typography>
                             <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                            Email : {user.username}
+                            User Name : {user.username}
                             </Typography>
                         </CardContent> 
                         {

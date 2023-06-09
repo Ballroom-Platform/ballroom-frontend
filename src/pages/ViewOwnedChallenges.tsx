@@ -53,6 +53,10 @@ const ViewOwnedChallenges : React.FC = () => {
 
     return (
         <Layout>
+            <Typography variant="h3" gutterBottom>
+                    My Challenges
+            </Typography>
+            
             <Tabs value={value} onChange={handleChange} centered>
                 <Tab label="EASY" />
                 <Tab label="MEDIUM" />

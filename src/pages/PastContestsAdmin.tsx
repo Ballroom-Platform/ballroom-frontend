@@ -1,4 +1,4 @@
-import { Grid, Typography, Tab, Tabs } from "@mui/material";
+import { Grid, Typography, Tab, Tabs, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router";
 import { useApp } from "../hooks/useApp";
@@ -19,6 +19,7 @@ const PastContestsAdmin = () => {
     const [contests, setcontests] = useState<IMinimalContest[]>([]);
     const [contestsshared, setcontestsshared] = useState<AccessContest[]>([]);
     const axiosIns = useAxiosPrivate();
+    const [query, setquery] = useState<string>("");
 
     const clickHandler = (key: string, accessType: string) => {
         if(accessType === "VIEW")
@@ -51,10 +52,12 @@ const PastContestsAdmin = () => {
 
             {selectedTab === 0 &&
             <>
-
+                <TextField sx={{ marginY: '1rem' }} id="outlined-basic" label="Search by title" value={query} variant="outlined" onChange={(e) => setquery(e.target.value)} />
                 <Grid container sx={{marginY: '2rem'}}>
 
-                {contests.map((contest) => 
+                {contests
+                .filter((item) => item.title.toLowerCase().includes(query.toLowerCase()))
+                .map((contest) => 
                         <ContestCard contestImageURL={null} key={contest.contestId} contestId={contest.contestId} contestName={contest.title} startTime={getDateString(contest.startTime)} endTime={getDateString(contest.endTime)} owner="" accessType="" clickHandler={clickHandler}/>
                 )}
                     
@@ -63,13 +66,19 @@ const PastContestsAdmin = () => {
             }
             {selectedTab === 1 &&
                 <>
+                    <TextField sx={{ marginY: '1rem' }} id="outlined-basic" label="Search by title" value={query} variant="outlined" onChange={(e) => setquery(e.target.value)} />
+
                     <Grid container sx={{marginY: '2rem'}}>
                 
-                    {contestsshared.filter((contest) => contest.accessType === "EDIT").map((contest) => 
+                    {contestsshared
+                    .filter((item) => item.title.toLowerCase().includes(query.toLowerCase()))
+                    .filter((contest) => contest.accessType === "EDIT").map((contest) => 
                             <ContestCard contestImageURL={null} key={contest.contestId} contestId={contest.contestId} contestName={contest.title} startTime={getDateString(contest.startTime)} endTime={getDateString(contest.endTime)} owner="" accessType={contest.accessType} clickHandler={clickHandler}/>        
                     )} 
                     
-                    {contestsshared.filter((contest) => contest.accessType === "VIEW").map((contest) => 
+                    {contestsshared
+                    .filter((item) => item.title.toLowerCase().includes(query.toLowerCase()))
+                    .filter((contest) => contest.accessType === "VIEW").map((contest) => 
                             <ContestCard contestImageURL={null} key={contest.contestId} contestId={contest.contestId} contestName={contest.title} startTime={getDateString(contest.startTime)} endTime={getDateString(contest.endTime)} owner="" accessType={contest.accessType} clickHandler={clickHandler}/>         
                     )}
     

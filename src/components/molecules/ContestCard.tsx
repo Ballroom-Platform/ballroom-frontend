@@ -49,11 +49,11 @@ export const ContestCard : React.FC<IProps> = ({contestId, contestName, contestI
                     }
                     <Typography variant="caption">{"From : "+formatUTCDate(startTime)}</Typography>
                     <Typography variant="caption">{"To : "+formatUTCDate(endTime)}</Typography>
-                    <Box position="absolute" bottom="5%" right="5%">
+                    <Box position="absolute" bottom="1%" right="5%">
                     {
                     state === "active" ? <Typography color="green" variant="caption">ONGOING</Typography> 
-                    : state === "inactive" ? <Typography color="blue" variant="caption">UPCOMING</Typography>
-                    : <Typography color="red" variant="caption">ENDED</Typography>
+                    : state === "inactive" ? <Typography color="brown" variant="caption">UPCOMING</Typography>
+                    : <Typography color="purple" variant="caption">ENDED</Typography>
                     }
                         
                     </Box>
