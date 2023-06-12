@@ -23,9 +23,7 @@ const EditChallenge = () => {
     const handleSubmit = () => {
         const formData = new FormData();
         formData.append('title', challenge.title)
-        formData.append('description', challenge.description)
         formData.append('difficulty', challenge.difficulty)
-        formData.append('constraints', challenge.constraints)
         editChallenge(axiosPrivate, formData, challengeId!, (res: any) => {setshowSuccessNotification(true);}, (err: any) => setshowFailNotification(true))
         navigate(-1);
     }
@@ -50,14 +48,6 @@ const EditChallenge = () => {
                     </Typography>
 
                     <TextField sx={{marginY: '2rem'}} id="outlined-basic" label="Title" variant="outlined" defaultValue={challenge.title} onChange={(e) => setChallenge({...challenge, title: e.target.value})}/>
-
-                    <br />
-
-                    <TextField fullWidth multiline rows={4} sx={{marginY: '1rem'}}  id="outlined-basic" label="Description" variant="outlined" value={challenge.description} onChange={(e) => setChallenge({...challenge, description: e.target.value})}/>
-
-                    <br />
-
-                    <TextField fullWidth multiline rows={4} sx={{marginY: '1rem'}}  id="outlined-basic" label="Constraints" variant="outlined" value={challenge.constraints} onChange={(e) => setChallenge({...challenge, constraints: e.target.value})}/>
 
                     <br />
 

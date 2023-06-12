@@ -27,6 +27,20 @@ export const getTemplate = async (axiosPrivate: AxiosInstance, challengeId: stri
     axiosPrivate({ url, method, headers, responseType: "blob" }).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
 }
 
+export const getReadmeChallenge = async (axiosPrivate: AxiosInstance, challengeId: string, successHandler: Function, failHandler: Function) => {
+    const url = BFF_URLS.challengeService + `/challenges/${challengeId}/readme/`;
+    const method = "GET";
+    const headers = {};
+    axiosPrivate({ url, method, headers, responseType: "blob" }).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
+}
+
+export const getReadmeContest = async (axiosPrivate: AxiosInstance, contestId: string, successHandler: Function, failHandler: Function) => {
+    const url = BFF_URLS.contestService+`/contests/${contestId}/readme/`;
+    const method = "GET";
+    const headers = {};
+    axiosPrivate({ url, method, headers, responseType: "blob" }).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
+}
+
 export const getSubmissionFile = async (axiosPrivate: AxiosInstance, submissionId: string, successHandler: Function, failHandler: Function) => {
     const url = BFF_URLS.submissionService + "/submissions/" + submissionId + "/solution";
     const method = "GET";

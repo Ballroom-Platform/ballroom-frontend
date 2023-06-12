@@ -1,32 +1,22 @@
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import Button from "@mui/material/Button";
 import { Layout } from "../components/templates";
-import { useEffect, useState } from "react";
-import UploadIcon from '@mui/icons-material/Upload';
+import { useState } from "react";
 import { useApp } from "../hooks/useApp";
-import internal from "stream";
-import { valueToPercent } from "@mui/base";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
-import { BalDateTime } from "../helpers/interfaces";
 import { FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, Snackbar, useFormControl } from "@mui/material";
 import { InputWrapper } from "../components";
 import { createChallenge } from "../api/admin";
-import axios from "../api/axios";
 import { useNavigate } from "react-router"
 
 // data_model:Challenge newChallenge = {title: "", challengeId: "", description: "", difficulty: "HARD", testCase: []};
 const CreateChallenge = () => {
 
     const [challengeTitle, setchallengeTitle] = useState<string>("");
-    const [challengeDescription, setchallengeDescription] = useState<string>("");
     const [challengeDifficulty, setchallengeDifficulty] = useState<string>("MEDIUM");
-    const [challengeConstraints, setchallengeConstraints] = useState<string>("");
     const [testCaseFile, settestCaseFile] = useState({} as FileList);
+    const [readmeFile, setReadmeFile] = useState({} as FileList);
     const [templateFile, settemplateFile] = useState({} as FileList);
     const {appState} = useApp();
     const userId = appState.auth.userID;
@@ -36,10 +26,9 @@ const CreateChallenge = () => {
 
     const clearAllInputs = () => {
         setchallengeTitle("");
-        setchallengeDescription("");
-        setchallengeConstraints("");
         setchallengeDifficulty("MEDIUM");
         settestCaseFile({} as FileList);
+        setReadmeFile({} as FileList);
         settemplateFile({} as FileList);
     }
 
@@ -52,38 +41,22 @@ const CreateChallenge = () => {
     const handleSubmit = () => {
         const formData = new FormData();
         formData.append('testCase', testCaseFile[0], "test001 "+ "_" + Date.now());
-        console.log("Hello",templateFile)
+        formData.append('readme', readmeFile[0], "readme001 "+ "_" + Date.now());
         if(Object.keys(templateFile).length > 0){
             formData.append('template', templateFile[0], "template001 "+ "_" + Date.now())
         }
         formData.append('title', challengeTitle)
-        formData.append('description', challengeDescription)
         formData.append('difficulty', challengeDifficulty)
-        formData.append('constraints', challengeConstraints)
         formData.append('authorId', userId!)
         createChallenge(axiosIns, formData, (res: any) => {setshowNotification(true); clearAllInputs(); navigateToChallenges();}, (err: any) => console.log("ERROR OCCURED"))
-
-        // fetch("http://localhost:9092/challengeService/challenge", {
-        //     method: "POST",
-        //     mode: 'no-cors',
-        //     // headers: {
-        //     //     "Content-Type": "multipart/form-data",
-        //     // },
-        //     body: formData
-        //     }).then(function (res) {
-        //     if (res.ok) {
-        //         alert("Perfect! ");
-        //     } else if (res.status == 401) {
-        //         alert("Oops! ");
-        //     }
-        //     }, function (e) {
-        //     alert("Error submitting form!");
-        // });
-
     }
 
     const onTestCaseFileChange = (e : any) => {
         settestCaseFile(prev => ({...prev, ...e.target.files}));
+    }
+
+    const onReadmeFileChange = (e : any) => {
+        setReadmeFile(prev => ({...prev, ...e.target.files}));
     }
 
     const onTemplateFileChange = (e : any) => {
@@ -99,15 +72,7 @@ const CreateChallenge = () => {
 
             <TextField sx={{marginY: '2rem'}} id="outlined-basic" label="Title" variant="outlined" value={challengeTitle} onChange={(e) => setchallengeTitle(e.target.value)}/>
 
-            <br />
-
-            <TextField fullWidth multiline rows={4} sx={{marginY: '1rem'}}  id="outlined-basic" label="Description" variant="outlined" value={challengeDescription} onChange={(e) => setchallengeDescription(e.target.value)}/>
-
-            <br />
-
-            <TextField fullWidth multiline rows={4} sx={{marginY: '1rem'}}  id="outlined-basic" label="Constraints" variant="outlined" value={challengeConstraints} onChange={(e) => setchallengeConstraints(e.target.value)}/>
-
-            <br />
+            <br />      
 
             <FormControl sx={{marginY: '1rem'}} >
                 <FormLabel id="demo-controlled-radio-buttons-group">Difficulty</FormLabel>
@@ -124,6 +89,7 @@ const CreateChallenge = () => {
             </FormControl>
             <br />
 
+            <InputWrapper  label="Upload Readme .md File: "><input onChange={onReadmeFileChange} id="readmeInput" type="file" name="readmeFile" accept=".md"  style={{flex:6}}/></InputWrapper>
 
             <InputWrapper  label="Upload Test Case .zip File: "><input onChange={onTestCaseFileChange} id="testFileInput" type="file" name="submissionFile" accept=".zip"  style={{flex:6}}/></InputWrapper>
 

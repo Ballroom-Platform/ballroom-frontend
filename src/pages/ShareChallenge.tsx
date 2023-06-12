@@ -46,19 +46,17 @@ const ShareChallenge = ({ownerID, giveAccessToChallenge} : IProps) => {
     return ( 
         <>
             <Tabs value={selectedTab} onChange={handleChangeTab} centered>
-                <Tab label="ADD-ADMINS" />
-                <Tab label="SHARED" />
+                <Tab label="USERS" />
+                <Tab label="SHARED-LIST" />
             </Tabs>
 
-            <Typography variant="h6" gutterBottom>
-                Share this challenge with others.
-            </Typography>
-
-            {selectedTab === 0 && <AdminAccessChallengeTable  challengeId={challengeId!} userID={appState.auth.userID!}/>}
-
-            {selectedTab === 1 &&
+            {selectedTab === 0 &&
             <> 
-                <TextField sx={{marginY: '2rem'}} id="outlined-basic" label="Search by user name" value={query} variant="outlined" onChange={(e) => setquery(e.target.value)}/>
+                <Typography variant="h6" gutterBottom>
+                    Share this challenge with others
+                </Typography> 
+
+                <TextField sx={{marginY: '1rem'}} id="outlined-basic" label="Search by user name" value={query} variant="outlined" onChange={(e) => setquery(e.target.value)}/>
                     
                 {users && users
                 .filter((user) => user.username.toLowerCase().includes(query.toLowerCase()))
@@ -86,7 +84,17 @@ const ShareChallenge = ({ownerID, giveAccessToChallenge} : IProps) => {
                     </Card>
                     ))}
                 </>
-            }     
+            }
+
+            {selectedTab === 1 && 
+                <div>
+                    <Typography variant="h6" sx={{marginY:"1rem"}} gutterBottom>
+                        Users with access to this challenge
+                    </Typography>
+                    <AdminAccessChallengeTable  challengeId={challengeId!} userID={appState.auth.userID!}/>
+                    </div>
+            }
+
         </>
     );
 }

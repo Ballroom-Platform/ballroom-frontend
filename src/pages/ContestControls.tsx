@@ -12,7 +12,7 @@ import { Layout } from "../components/templates";
 import { Link } from "react-router-dom";
 import CreateContest from "./CreateContest";
 import { getChallengesInContest } from "../api/common";
-import { AxiosInstance } from "axios";
+import { AxiosInstance, AxiosResponse } from "axios";
 import { IMinimalContest } from "../helpers/interfaces";
 import { Snackbar, Tab, Tabs } from "@mui/material";
 import ChallengesByDifficulty from "./ChallengesByDifficulty";
@@ -20,6 +20,9 @@ import CloseIcon from '@mui/icons-material/Close';
 import IconButton from '@mui/material/IconButton';
 import ShareContest from "./ShareContest";
 import { useApp } from "../hooks/useApp";
+import { getReadmeContest } from "../api/contestant";
+import { axiosPrivate } from "../api/axios";
+import MarkdownRenderer from "../helpers/MarkdownRenderer";
 
 type ContestId = {
     contestId: string;
@@ -47,6 +50,7 @@ const ContestControls: React.FC = () => {
     const userID = appState.auth.userID;
     const [ownedchallengeIds, setownedchallengeids] = useState<string[]>([]);
     const [sharedchallengeIds, setsharedchallengeids] = useState<string[]>([]);
+    const [post, setPost] = useState('');
 
     const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
         setselectedTab(newValue);
@@ -80,6 +84,17 @@ const ContestControls: React.FC = () => {
         setchallenges((prevstate) => prevstate ? prevstate.filter((challenge) => challenge.challengeId !== challengeId) : []);
     }
 
+    const getReadmeFail = () => {
+        console.log("Getting readme failed")
+    }
+
+    const getReadmeSucess = (res : AxiosResponse) => {
+        var link = document.createElement("a");
+        link.href = window.URL.createObjectURL(new Blob([res.data], { type: 'text/markdown' }));
+        fetch(link.href).then((res) => res.text()).then((res) => setPost(res));
+    }
+
+
     const onForceStartClick = () => {
         const date = new Date();
         const newStartTime = {second: date.getSeconds(), minute: date.getMinutes(), hour: date.getHours(), day: date.getDate(), month: date.getMonth() + 1, year: date.getFullYear()}
@@ -110,39 +125,41 @@ const ContestControls: React.FC = () => {
             getChallengesInContest( axiosIns, contestId!, handleRecievedChallengeArray, (err: any) => console.log(err))
             getContest(axiosIns, contestId!,(res: any) => {setcontest(res.data)}, () => console.log("ËRROR OCCURRED"));
             getSharedChallengeIds(axiosIns, userID!,(res: any) => {setsharedchallengeids(res.data)}, () => console.log("ËRROR OCCURRED"));
-            getOwnedChallengeIds(axiosIns, userID!,(res: any) => {setownedchallengeids(res.data)}, () => console.log("ËRROR OCCURRED"));     
+            getOwnedChallengeIds(axiosIns, userID!,(res: any) => {setownedchallengeids(res.data)}, () => console.log("ËRROR OCCURRED"));  
+            getReadmeContest(axiosPrivate, contestId!, getReadmeSucess, getReadmeFail);    
         }
     },[selectedTab]);
 
 
     return ( 
         <Layout>
-            <Typography variant="h3" gutterBottom>
+            <Typography variant="h4" textAlign="center" fontWeight={"bold"} gutterBottom>
                 {contest ? contest.title : "Loading..."}
             </Typography>
 
-            <Typography sx={{color: 'gray'}}variant="h6" gutterBottom>
-                {contest ? contest.description: "Loading..."}<br></br> 
-            </Typography>
-
-            {/* <Link to={`/addChallengeToContest/${contestId}`}>
-            <Button variant="contained">Add Challenge</Button>
-            </Link> */}
-
-            {contest && <Button variant="contained" sx={{backgroundColor: "darkblue"}}onClick={onForceStartClick}>Force Start</Button>}
-            {contest && contest.moderator === userID ?
-                <Button variant="contained" sx={{marginX: "2rem", backgroundColor: "darkred"}}onClick={deleteClick}>Delete Contest</Button>: null
-            }
+            <div style={{display:"flex" ,width:"100%",justifyContent:"space-between"}}>
+                {contest && <Button variant="outlined" sx={{color: "darkblue"}}onClick={onForceStartClick}>Force Start</Button>}
+                {contest && contest.moderator === userID ?
+                    <Button variant="outlined" sx={{marginX: "2rem", color: "darkred"}}onClick={deleteClick}>Delete Contest</Button>: null
+                }
+            </div>
             
-
             <Tabs value={selectedTab} onChange={handleChangeTab} centered>
+                <Tab label="ABOUT" />
                 <Tab label="CHALLENGES" />
                 <Tab label="ADD CHALLENGE" />
                 <Tab label="SHARE" />
             </Tabs>
-            
 
             {selectedTab === 0 && 
+            <>
+                <div>
+                    <MarkdownRenderer source={post} />
+                </div>
+            </>
+            }
+            
+            {selectedTab === 1 && 
                 <>
                 {
                     challenges && challenges.map((challenge) => (
@@ -172,7 +189,7 @@ const ContestControls: React.FC = () => {
             }
 
             
-            {selectedTab === 1 && 
+            {selectedTab === 2 && 
                 <>
                     <ChallengesByDifficulty addChallengeToContest={addChallengeToThisContest}/>
                 
@@ -182,7 +199,7 @@ const ContestControls: React.FC = () => {
                         </>
             }
 
-            {selectedTab === 2 &&
+            {selectedTab === 3 &&
             <>
                 <ShareContest ownerID ={contest!.moderator} giveAccessToContest={giveAccessToThisContest}/>
             

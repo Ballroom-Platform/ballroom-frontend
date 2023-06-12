@@ -48,19 +48,17 @@ const ShareContest = ({ ownerID, giveAccessToContest }: IProps) => {
     return (
         <>
             <Tabs value={selectedTab} onChange={handleChangeTab} centered>
-                <Tab label="SHARED" />
-                <Tab label="ADD-ADMINS" />
+                <Tab label="USERS" />
+                <Tab label="SHARED-LIST" />
             </Tabs>
 
-            <Typography variant="h6" gutterBottom>
-                Share this contest with others.
-            </Typography>
-
-            {selectedTab === 0 && <AdminAccessContestTable contestId={contestId!} userID={appState.auth.userID!} />}
-
-            {selectedTab === 1 &&
+            {selectedTab === 0 &&
                 <>
-                    <TextField sx={{ marginY: '2rem' }} id="outlined-basic" label="Search by user name" value={query} variant="outlined" onChange={(e) => setquery(e.target.value)} />
+                    <Typography variant="h6" gutterBottom>
+                        Share this contest with others
+                    </Typography>
+
+                    <TextField sx={{ marginY: '1rem' }} id="outlined-basic" label="Search by user name" value={query} variant="outlined" onChange={(e) => setquery(e.target.value)} />
 
                     {users && userIds && users
                         .filter((user) => user.username.toLowerCase().includes(query.toLowerCase()))
@@ -95,6 +93,15 @@ const ShareContest = ({ ownerID, giveAccessToContest }: IProps) => {
                             </Card>
                         ))}
                 </>
+            }
+
+            {selectedTab === 1 && 
+                <div>
+                    <Typography variant="h6" sx={{marginY:"1rem"}} gutterBottom>
+                        Users with access to this contest
+                    </Typography>
+                    <AdminAccessContestTable contestId={contestId!} userID={appState.auth.userID!} />
+                </div>
             }
             
         </>

@@ -12,11 +12,12 @@ import { BFF_URLS } from "../links";
 import { IChallenge } from "../helpers/interfaces";
 import { useEffect, useState } from "react";
 import { getChallenge } from "../api/admin";
-import { getTemplate, uploadSubmission } from "../api/contestant";
+import { getTemplate, uploadSubmission, getReadmeChallenge } from "../api/contestant";
 import { useApp } from "../hooks/useApp";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { CircularProgress, IconButton, Snackbar } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
+import MarkdownRenderer from '../helpers/MarkdownRenderer';
 
 type IParams = {
     challengeId: string;
@@ -47,6 +48,8 @@ const Challenge : React.FC = () => {
     const [submissionId, setSubmissionId] = useState<string | null>(null);
     const [showNotification, setshowNotification] = useState(false);
     const {appState} = useApp();
+    const [post, setPost] = useState('');
+    
     const handler = () => {
         navigate(location.pathname + "/previousSubmissions");
     }
@@ -67,6 +70,7 @@ const Challenge : React.FC = () => {
             setSuccessStates(defaultSuccessStates);
             return;
         }
+        getReadmeChallenge(axiosPrivate, challengeId!, getReadmeSucess, getReadmeFail);
     }, [sucessStates])
 
     useEffect(() => {
@@ -94,6 +98,16 @@ const Challenge : React.FC = () => {
 
     const getTemplateFail = () => {
         console.log("Getting template failed")
+    }
+
+    const getReadmeFail = () => {
+        console.log("Getting readme failed")
+    }
+
+    const getReadmeSucess = (res : AxiosResponse) => {
+        var link = document.createElement("a");
+        link.href = window.URL.createObjectURL(new Blob([res.data], { type: 'text/markdown' }));
+        fetch(link.href).then((res) => res.text()).then((res) => setPost(res));
     }
 
     const downloadFunction = async () => {
@@ -146,43 +160,38 @@ const Challenge : React.FC = () => {
             {
                 !loading && (
                     <>
+                        <Typography variant="h4" textAlign="center" fontWeight={"bold"} gutterBottom>
+                            {challenge.title}
+                        </Typography>
+
+                        <Typography sx={{marginTop:1, marginBottom: 2, color:"gray"}} variant="h6" textAlign="center" gutterBottom>
+                            Diffculty: {challenge.difficulty}
+                        </Typography>
+
                         <Paper sx={{padding: '1rem', minHeight: "600px"}}>
-                    
-                            <Typography variant="h4" gutterBottom>
-                                {challenge.title}
-                            </Typography>
+                            <div>
+                                <MarkdownRenderer source={post} />
+                            </div>
 
-                            <Typography sx={{marginTop:'3rem'}} variant="h6" gutterBottom>
-                                Diffculty: {challenge.difficulty}
-                            </Typography>
-
-                            <Typography sx={{marginTop:'3rem'}} variant="body1" gutterBottom>
-                                {/* Problem Statement: */}
-                            </Typography>
-
-                            <Typography variant="body1" gutterBottom>
-                                {challenge.description}
-                            </Typography>
-
-                            <Typography sx={{marginTop:'3rem', fontWeight:'bold'}} variant="body1" gutterBottom>
-                                Constraints:
-                            </Typography>
-
-                            <Typography variant="body1" gutterBottom color={(challenge.constraints === "" || challenge.constraints === null) ? "grey" : "black"}>
-                                {challenge.constraints}
-                            </Typography>
+                            <Box sx={{marginleft: 2, marginTop:6, marginBottom:2}}>
+                                <Button variant="outlined" sx={{width:'100%', color:"darkblue"}} onClick={downloadFunction}startIcon={<DownloadIcon />}>Dowload Template</Button>
+                            </Box>
                         </Paper>
-                        <Box sx={{marginTop: '1rem'}}>
-                            <Button variant="outlined" sx={{width:'300px'}} onClick={downloadFunction}startIcon={<DownloadIcon />}>Dowload Template</Button>
-                        </Box>
-                        <Box>
-                            <Button variant="outlined" sx={{width:'300px'}} component="label" startIcon={<UploadIcon/>}>
-                                Upload Solution
-                                <input hidden type="file" name="submissionFile" accept=".zip" onChange={onSubmissionFileChange}/>
-                            </Button>
-            
-                            <Button sx={{margin: '1rem'}}variant="contained" disabled={Object.keys(submissionFile).length > 0 ? false : true} onClick={onSubmit}>Submit</Button>
-                        </Box>
+
+                        <Typography sx={{marginTop:6, marginBottom: 2, color:"darkred"}} fontSize={16} gutterBottom>
+                            Upload your solution and submit : 
+                        </Typography>
+                        
+                        <Paper sx={{padding: '1rem', marginBottom:6}}>
+                            <Box>
+                                <Button variant="outlined" sx={{width:"50%"}} component="label" startIcon={<UploadIcon/>}>
+                                    Upload Solution
+                                    <input hidden type="file" name="submissionFile" accept=".zip" onChange={onSubmissionFileChange}/>
+                                </Button>
+                                
+                                <Button sx={{margin: '1rem'}}variant="contained" disabled={Object.keys(submissionFile).length > 0 ? false : true} onClick={onSubmit}>Submit</Button>
+                            </Box>
+                        </Paper>
                     </>
                 )
             }

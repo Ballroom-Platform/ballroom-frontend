@@ -2,7 +2,7 @@ import { Box, Button, CircularProgress, Paper, Typography, Snackbar, IconButton,
 import { Layout } from "../components/templates";
 import DownloadIcon from '@mui/icons-material/Download';
 import { BFF_URLS } from "../links";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { useNavigate, useParams } from "react-router";
 import { useEffect, useState } from "react";
 import { getChallenge, giveAccessToChallenge, getChallengeAccessGrantedUsers, deleteChallenge } from "../api/admin";
@@ -11,6 +11,8 @@ import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { useApp } from "../hooks/useApp";
 import ShareChallenge from "./ShareChallenge";
 import CloseIcon from '@mui/icons-material/Close';
+import { getReadmeChallenge } from "../api/contestant";
+import MarkdownRenderer from "../helpers/MarkdownRenderer";
 
 type ChallengeId = {
     challengeId: string;
@@ -28,6 +30,7 @@ const ViewChallenge = () => {
     const [showNotification, setshowNotification] = useState(false);
     const [selectedTab, setselectedTab] = useState(0);
     const [userIds, setuserids] = useState<string[]>([]);
+    const [post, setPost] = useState('');	
 
     const downloadFunction = async () => {
         let results = await axios({
@@ -61,12 +64,23 @@ const ViewChallenge = () => {
         setselectedTab(newValue);
     };
 
+    const getReadmeFail = () => {
+        console.log("Getting readme failed")
+    }
+
+    const getReadmeSucess = (res : AxiosResponse) => {
+        var link = document.createElement("a");
+        link.href = window.URL.createObjectURL(new Blob([res.data], { type: 'text/markdown' }));
+        fetch(link.href).then((res) => res.text()).then((res) => setPost(res));
+    }
+
     useEffect(() => {
         getChallengeAccessGrantedUsers(axiosIns, challengeId!, (res: any) => setuserids(res.data), (err: any) => console.log(err));
         getChallenge(axiosPrivate, challengeId!).then(res => {
             setChallenge(res.data);
             setLoading(false);
         }).catch(() => console.log("Challenge fetching failed"))
+        getReadmeChallenge(axiosPrivate, challengeId!, getReadmeSucess, getReadmeFail);
     }, [challengeId])
 
     return ( 
@@ -78,6 +92,22 @@ const ViewChallenge = () => {
             {
                 !loading && (
                 <>
+                    <div style={{display:"flex" ,width:"100%",justifyContent:"space-between"}}>
+                        {challenge.authorId === userId ? 
+                            <Button variant="outlined" sx={{ color: "darkblue"}} onClick={() => editChallenge()}>Edit Challenge</Button> : null} 
+                        {userIds.includes(userId!) ? 
+                            <Button variant="outlined" sx={{ color: "darkblue"}} onClick={() => editChallenge()}>Edit Challenge</Button> : null}
+                        {challenge.authorId === userId ? 
+                            <Button variant="outlined" sx={{ color: "darkred" }} onClick={() => deleteThisChallenge()}>Delete Challenge</Button> : null}
+                    </div>
+                        <Typography variant="h4" textAlign="center" fontWeight={"bold"} gutterBottom>
+                            {challenge.title}
+                        </Typography>
+
+                        <Typography sx={{marginTop:1, marginBottom: 2, color:"gray"}} variant="h6" textAlign="center" gutterBottom>
+                            Diffculty: {challenge.difficulty}
+                        </Typography>
+
                     {challenge.authorId === userId ? 
                     <Tabs value={selectedTab} onChange={handleChangeTab} centered>
                         <Tab label="VIEW" />
@@ -87,46 +117,16 @@ const ViewChallenge = () => {
 
                     {selectedTab === 0  &&
                         <>
-                        {challenge.authorId === userId ? 
-                            <Button variant="contained" sx={{marginY: "2rem", backgroundColor: "darkblue"}} onClick={() => editChallenge()}>Edit Challenge</Button> : null} 
-                        {userIds.includes(userId!) ? 
-                            <Button variant="contained" sx={{marginY: "2rem", backgroundColor: "darkblue"}} onClick={() => editChallenge()}>Edit Challenge</Button> : null}
-                        {challenge.authorId === userId ? 
-                            <Button variant="contained" sx={{marginY: "2rem", marginX: "2rem", backgroundColor: "darkred" }} onClick={() => deleteThisChallenge()}>Delete Challenge</Button> : null}
 
-                            <Paper sx={{padding: '1rem', minHeight: "600px"}}>
-                        
-                                <Typography variant="h4" gutterBottom>
-                                    {challenge.title}
-                                </Typography>
+                        <Paper sx={{padding: '1rem', minHeight: "600px" , marginBottom:6}}>
+                            <div>
+                                <MarkdownRenderer source={post} />
+                            </div>
 
-                                <Typography variant="body1" gutterBottom>
-                                    Challenge ID: {challengeId}
-                                </Typography>
-
-                                <Typography sx={{marginTop:'3rem'}} variant="h6" gutterBottom>
-                                    Diffculty: {challenge.difficulty}
-                                </Typography>
-
-                                <Typography sx={{marginTop:'3rem'}} variant="h6" gutterBottom>
-                                    {/* Problem Statement: */}
-                                </Typography>
-
-                                <Typography variant="body1" gutterBottom>
-                                    {challenge.description}
-                                </Typography>
-
-                                <Typography sx={{marginTop:'3rem', fontWeight:'bold'}} variant="body1" gutterBottom>
-                                    Constraints:
-                                </Typography>
-
-                                <Typography variant="body1" gutterBottom>
-                                    {challenge.constraints}
-                                </Typography>
-                            </Paper>
-                            <Box sx={{marginY: '1rem'}}>
-                                <Button variant="outlined" onClick={downloadFunction}startIcon={<DownloadIcon />}>Dowload Template</Button>
+                            <Box sx={{marginleft: 2, marginTop:6, marginBottom:2}}>
+                                <Button variant="outlined" sx={{width:'100%', color:"darkblue"}} onClick={downloadFunction}startIcon={<DownloadIcon />}>Dowload Template</Button>
                             </Box>
+                        </Paper>
                         </>
                     }
                     {selectedTab === 1 && 

@@ -14,6 +14,10 @@ import { getChallengesInContest } from "../api/common";
 import { IMinimalContest } from "../helpers/interfaces";
 import { Tab, Tabs } from "@mui/material";
 import { useApp } from "../hooks/useApp";
+import MarkdownRenderer from "../helpers/MarkdownRenderer";
+import { getReadmeContest } from "../api/contestant";
+import { axiosPrivate } from "../api/axios";
+import { AxiosResponse } from "axios";
 
 type ContestId = {
     contestId: string;
@@ -37,6 +41,7 @@ const ContestControlView: React.FC = () => {
     const userId = appState.auth.userID;
     const [ownedchallengeIds, setownedchallengeids] = useState<string[]>([]);
     const [sharedchallengeIds, setsharedchallengeids] = useState<string[]>([]);
+    const [post, setPost] = useState('');
 
     const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
         setselectedTab(newValue);
@@ -59,32 +64,47 @@ const ContestControlView: React.FC = () => {
         setchallenges((prevstate) => prevstate ? prevstate.filter((challenge) => challenge.challengeId !== challengeId) : []);
     }
 
+    const getReadmeFail = () => {
+        console.log("Getting readme failed")
+    }
+
+    const getReadmeSucess = (res : AxiosResponse) => {
+        var link = document.createElement("a");
+        link.href = window.URL.createObjectURL(new Blob([res.data], { type: 'text/markdown' }));
+        fetch(link.href).then((res) => res.text()).then((res) => setPost(res));
+    }
+
     useEffect(() => {
         if(selectedTab === 0){
             getChallengesInContest( axiosIns, contestId!, handleRecievedChallengeArray, (err: any) => console.log(err))
             getContest(axiosIns, contestId!,(res: any) => {setcontest(res.data)}, () => console.log("ËRROR OCCURRED"));
             getSharedChallengeIds(axiosIns, userId!,(res: any) => {setsharedchallengeids(res.data)}, () => console.log("ËRROR OCCURRED"));
-            getOwnedChallengeIds(axiosIns, userId!,(res: any) => {setownedchallengeids(res.data)}, () => console.log("ËRROR OCCURRED"));      
+            getOwnedChallengeIds(axiosIns, userId!,(res: any) => {setownedchallengeids(res.data)}, () => console.log("ËRROR OCCURRED")); 
+            getReadmeContest(axiosPrivate, contestId!, getReadmeSucess, getReadmeFail);     
         }
     },[selectedTab]);
 
 
     return ( 
         <Layout>
-            <Typography variant="h3" gutterBottom>
+            <Typography variant="h4" textAlign="center" fontWeight={"bold"} gutterBottom>
                 {contest ? contest.title : "Loading..."}
             </Typography>
 
-            <Typography sx={{color: 'gray'}}variant="h6" gutterBottom>
-                {contest ? contest.description: "Loading..."}<br></br> 
-            </Typography>
-            
             <Tabs value={selectedTab} onChange={handleChangeTab} centered>
+                <Tab label="ABOUT" />
                 <Tab label="CHALLENGES" />
             </Tabs>
             
-
             {selectedTab === 0 && 
+            <>
+                <div>
+                    <MarkdownRenderer source={post} />
+                </div>
+            </>
+            }
+
+            {selectedTab === 1 && 
                 <>
                 {
                     challenges && challenges.map((challenge) => (

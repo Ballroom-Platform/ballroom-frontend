@@ -1,6 +1,6 @@
 import { AxiosError, AxiosResponse, AxiosInstance } from "axios";
 import { useEffect, useState } from "react";
-import { IUpdatedContest, NewContest } from "../helpers/interfaces";
+import { BalDateTime, IUpdatedContest, NewContest } from "../helpers/interfaces";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { BFF_URLS } from "../links/backend";
 
@@ -12,12 +12,12 @@ export const getChallenge = (axiosPrivate: AxiosInstance, challengeId : string) 
 
 }
 
-export const createContest = (axiosPrivate : AxiosInstance, contest: NewContest, successHandler : Function, failHandler : Function)=> {
-    console.log(contest)
+export const createContest = (axiosPrivate : AxiosInstance, data: FormData, successHandler : Function, failHandler : Function)=> {
     const url = `${BFF_URLS.contestService}/contests`;
     const method = "POST";
-    const headers = {};
-    const data = contest;
+    const headers = {
+        "Content-Type": "multipart/form-data",
+    };
     axiosPrivate({url, method, headers, data }).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
 }
 

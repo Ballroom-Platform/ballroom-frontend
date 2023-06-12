@@ -18,6 +18,10 @@ import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useApp } from "../hooks/useApp";
+import MarkdownRenderer from "../helpers/MarkdownRenderer";
+import { getReadmeContest } from "../api/contestant";
+import { axiosPrivate } from "../api/axios";
+import { AxiosResponse } from "axios";
 
 type ContestId = {
     contestId: string;
@@ -48,6 +52,7 @@ const OngoingContestControls = () => {
     const userId = appState.auth.userID;
     const [ownedchallengeIds, setownedchallengeids] = useState<string[]>([]);
     const [sharedchallengeIds, setsharedchallengeids] = useState<string[]>([]);
+    const [post, setPost] = useState('');	
 
     const handleRecievedChallengeArray = (res: any) => {
         Promise.all(
@@ -138,29 +143,39 @@ const OngoingContestControls = () => {
         window.location.reload();
     }
 
+    const getReadmeFail = () => {
+        console.log("Getting readme failed")
+    }
+
+    const getReadmeSucess = (res : AxiosResponse) => {
+        var link = document.createElement("a");
+        link.href = window.URL.createObjectURL(new Blob([res.data], { type: 'text/markdown' }));
+        fetch(link.href).then((res) => res.text()).then((res) => setPost(res));
+    }
+
     useEffect(() => {
             getChallengesInContest( axiosIns, contestId!, handleRecievedChallengeArray, (err: any) => console.log(err));         
             getContest(axiosIns, contestId!,(res: any) => {setcontest(res.data)}, () => console.log("ËRROR OCCURRED"));
             getSharedChallengeIds(axiosIns, userId!,(res: any) => {setsharedchallengeids(res.data)}, () => console.log("ËRROR OCCURRED"));
-            getOwnedChallengeIds(axiosIns, userId!,(res: any) => {setownedchallengeids(res.data)}, () => console.log("ËRROR OCCURRED"));        
+            getOwnedChallengeIds(axiosIns, userId!,(res: any) => {setownedchallengeids(res.data)}, () => console.log("ËRROR OCCURRED"));
+            getReadmeContest(axiosPrivate, contestId!, getReadmeSucess, getReadmeFail);        
     },[selectedTab]);
 
     return ( 
         <Layout>
-            <Typography variant="h3" gutterBottom>
+            <Typography variant="h4" textAlign="center" fontWeight={"bold"} gutterBottom>
                 {contest ? contest.title : "Loading..."}
             </Typography>
 
-            <Typography sx={{color: 'gray'}}variant="h6" gutterBottom>
-                {contest ? contest.description: "Loading..."}<br></br> 
-            </Typography>
-
-            <Button variant="contained" sx={{ backgroundColor: "darkblue"}}onClick={onForceStopClick}>Force Stop</Button>
-            {contest && contest.moderator === userId ?
-                <Button variant="contained" sx={{marginX: "2rem", backgroundColor: "darkred"}}onClick={deleteClick}>Delete Contest</Button>: null
-            }
+            <div style={{display:"flex" ,width:"100%",justifyContent:"space-between"}}>
+                {contest && <Button variant="outlined" sx={{ color: "darkblue"}}onClick={onForceStopClick}>Force Stop</Button>}
+                {contest && contest.moderator === userId ?
+                    <Button variant="outlined" sx={{marginX: "2rem", color: "darkred"}}onClick={deleteClick}>Delete Contest</Button>: null
+                }
+            </div>
 
             <Tabs value={selectedTab} onChange={handleChangeTab} centered>
+                <Tab label="ABOUT" />
                 <Tab label="CHALLENGES" />
                 <Tab label="LEADERBOARD" />
                 <Tab label="ADD CHALLENGE" />
@@ -169,6 +184,13 @@ const OngoingContestControls = () => {
             </Tabs>
 
             {selectedTab === 0 && 
+            <>
+                <div>
+                    <MarkdownRenderer source={post} />
+                </div>
+            </>
+            }
+            {selectedTab === 1 && 
                     challenges && challenges.map((challenge) => (
 
                         <Card key={challenge.challengeId} sx={{marginY: '1rem', width: '100%'}} >
@@ -193,9 +215,9 @@ const OngoingContestControls = () => {
                         </Card>
             ))}
 
-            {selectedTab === 1 && <LeaderboardTable contestId={contestId!}/>}
+            {selectedTab === 2 && <LeaderboardTable contestId={contestId!}/>}
 
-            {selectedTab === 2 && 
+            {selectedTab === 3 && 
             <>
                 <ChallengesByDifficulty addChallengeToContest={addChallengeToThisContest}/>
             
@@ -205,7 +227,7 @@ const OngoingContestControls = () => {
             </>
             }
 
-            {selectedTab === 3 &&
+            {selectedTab === 4 &&
             <>
                 <LocalizationProvider sx={{border: '1px solid red'}} dateAdapter={AdapterDayjs}>
                     <DemoContainer sx={{marginY: '1rem', width: '30%'}} components={['DateTimePicker']}>
@@ -226,7 +248,7 @@ const OngoingContestControls = () => {
             </>
             }
 
-            {selectedTab === 4 &&
+            {selectedTab === 5 &&
             <>
                 <ShareContest ownerID ={contest!.moderator} giveAccessToContest={giveAccessToThisContest}/>
             
