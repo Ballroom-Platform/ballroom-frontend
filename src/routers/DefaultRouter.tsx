@@ -6,7 +6,7 @@ import CreateContest from "../pages/CreateContest";
 import UpcomingContests from "../pages/UpcomingContests";
 import ContestControls from "../pages/ContestControls";
 import AddChallengeToContest from "../pages/AddChallengeToContest";
-import { Contests, Home, PageNotFound, LoginHandler, Challenges, Leaderboard } from "../pages"
+import { Contests, Home, PageNotFound, LoginHandler, Challenges, Leaderboard, Scoreboard } from "../pages"
 import CreateChallenge from "../pages/CreateChallenge";
 import ViewChallenge from "../pages/ViewChallenge";
 import Users from "../pages/Users";
@@ -40,6 +40,7 @@ export const DefaultRouter : React.FC = () => {
                     <Route element={<RequireAuth allowedRoles={["contestant"]} />}>
                         <Route path="/contests/:contestId/challenge/:challengeId"  Component={Challenge}/>
                         <Route path="/contests/:contestId/leaderboard" Component={Leaderboard}/> 
+                        <Route path="/contests/:contestId/scoreboard" Component={Scoreboard}/> 
                         <Route path="/contests/:contestId/challenge/:challengeId/previousSubmissions"  Component={PreviousSubmissions}/>
                         <Route path="/contests" Component={Contests}/>
                         <Route path="/contests/:contestId" Component={Challenges}/>

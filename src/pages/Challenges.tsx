@@ -54,6 +54,10 @@ export const Challenges : React.FC = () => {
         navigate(location.pathname + "/leaderboard");
     }
 
+    
+    const scoreboardHandler = () => {
+        navigate(location.pathname + "/scoreboard");
+    }
 
     return (
         <Layout>
@@ -62,9 +66,14 @@ export const Challenges : React.FC = () => {
             }
             {loading === false && (
                 <>
-                    <Box sx={{display: 'flex', justifyContent: "flex-end", marginBottom: '2rem'}}>
-                        <Button variant="outlined" onClick={leaderboardHandler}>Leaderboard</Button>
+                <div style={{display:"flex" ,width:"100%", justifyContent:"space-between",marginBottom: '2rem' }}>
+                    <Box>
+                        <Button variant="outlined" style={{color:"darkgreen"}} onClick={leaderboardHandler}>Leaderboard</Button>
+                    </Box> 
+                    <Box>
+                        <Button variant="outlined" style={{color:"darkblue"}} onClick={scoreboardHandler}>My SCORES</Button>
                     </Box>
+                </div>
                 {
                     challengeDetails.map(item => <ChallengeCard
                         challengeId={item.challengeId} 
