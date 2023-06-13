@@ -1,7 +1,7 @@
-import { Button, IconButton, Snackbar, Tab, Tabs, Typography } from "@mui/material";
+import { Button, IconButton, Paper, Snackbar, Tab, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tabs, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router";
-import { deleteContest, getChallenge, getContest, getOwnedChallengeIds, getSharedChallengeIds, giveAccessToContest } from "../api/admin";
+import { deleteContest, getChallenge, getContest, getOwnedChallengeIds, getReport, getSharedChallengeIds, giveAccessToContest } from "../api/admin";
 import { getChallengesInContest } from "../api/common";
 import { Layout } from "../components/templates";
 import { IMinimalContest } from "../helpers/interfaces";
@@ -45,6 +45,8 @@ const PastContestControls = () => {
     const [ownedchallengeIds, setownedchallengeids] = useState<string[]>([]);
     const [sharedchallengeIds, setsharedchallengeids] = useState<string[]>([]);
     const [post, setPost] = useState('');
+    const [report, setReport] = useState<string[][]>([]);
+    let csv = '';
 
     const handleRecievedChallengeArray = (res: any) => {
         console.log(res.data)
@@ -88,12 +90,36 @@ const PastContestControls = () => {
         fetch(link.href).then((res) => res.text()).then((res) => setPost(res));
     }
 
+    const convertToCSV = (report: string[][]) => {
+        var csv = '';
+        report.forEach((row) => {
+            csv += row.join(',');
+            csv += '\n';
+        });
+        return csv;
+    }
+    
+    const download =( filename: any) => {
+        var element = document.createElement('a');
+        element.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(convertToCSV(report)));
+        element.setAttribute('download', filename);
+          
+        element.style.display = 'none';
+        document.body.appendChild(element);
+          
+        element.click();
+          
+        document.body.removeChild(element);
+    }
+
     useEffect(() => {
         getChallengesInContest( axiosIns, contestId!, handleRecievedChallengeArray, (err: any) => console.log(err))
         getContest(axiosIns, contestId!,(res: any) => {setcontest(res.data)}, () => console.log("ËRROR OCCURRED"));
         getSharedChallengeIds(axiosIns, userID!,(res: any) => {setsharedchallengeids(res.data)}, () => console.log("ËRROR OCCURRED"));
         getOwnedChallengeIds(axiosIns, userID!,(res: any) => {setownedchallengeids(res.data)}, () => console.log("ËRROR OCCURRED")); 
         getReadmeContest(axiosPrivate, contestId!, getReadmeSucess, getReadmeFail);
+        getReport(axiosPrivate, contestId!, (res: any) => setReport(res.data), () => console.log("Error occured"));
+        csv = convertToCSV(report);
     },[]);
     
     return ( 
@@ -111,6 +137,7 @@ const PastContestControls = () => {
                 <Tab label="CHALLENGES" />
                 <Tab label="LEADERBOARD" />
                 <Tab label="SHARE" />
+                <Tab label="REPORT" />
             </Tabs>
 
             {selectedTab === 0 && 
@@ -153,6 +180,58 @@ const PastContestControls = () => {
                 <Snackbar  open={showNotification} autoHideDuration={2000} onClose={() => setshowNotification(false)} message="Added Admin!" action={ <IconButton size="small" aria-label="close" color="inherit" onClick={() => setshowNotification(false)}> <CloseIcon fontSize="small" /> </IconButton>} />
     
                 <Snackbar  open={showFailNotification} autoHideDuration={2000} onClose={() => setshowFailNotification(false)} message="Already added Admin!" action={ <IconButton size="small" aria-label="close" color="inherit" onClick={() => setshowFailNotification(false)}> <CloseIcon fontSize="small" /> </IconButton>} />
+            </>
+            }
+
+            {selectedTab === 4 &&
+            <>
+                <Typography sx={{marginTop:2, marginBottom: 2, color:"darkblue"}} fontSize={16} gutterBottom>
+                    Download full report as CSV file
+                </Typography>
+
+                <Button variant="contained" color="primary" style={{marginBottom:6}} onClick={() => download(csv)}>Download</Button>
+
+                <Typography variant="h5" fontWeight={"bold"} marginTop={6} marginBottom={3} gutterBottom>
+                    COMPETITION FINAL REPORT
+                </Typography>
+
+                <TableContainer component={Paper}>
+                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                        <TableHead>
+                        <TableRow>
+                            <TableCell>Submission Id</TableCell>
+                            <TableCell>Challenge Id</TableCell>
+                            <TableCell>Challenge Title</TableCell>
+                            <TableCell>User Id</TableCell>
+                            <TableCell>User Name</TableCell>
+                            <TableCell>Full Name</TableCell>
+                            <TableCell>Submitted Time</TableCell>
+                            <TableCell>Score</TableCell>
+                        </TableRow>
+                        </TableHead>
+                        <TableBody>
+                        {report
+                        .filter((row) => row[0] !== "submissionId")
+                        .map((row) => (
+                            <TableRow
+                            key={row[0]}
+                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                            >
+                            <TableCell component="th" scope="row">
+                                {row[0]}
+                            </TableCell>
+                            <TableCell>{row[1]}</TableCell>
+                            <TableCell>{row[2]}</TableCell>
+                            <TableCell>{row[3]}</TableCell>
+                            <TableCell>{row[4]}</TableCell>
+                            <TableCell>{row[5]}</TableCell>
+                            <TableCell>{row[6]}</TableCell>
+                            <TableCell>{row[7]}</TableCell>
+                            </TableRow>
+                        ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
             </>
             }
 

@@ -202,3 +202,10 @@ export const getSharedChallengeIds = (axiosPrivate: AxiosInstance, userId : stri
     const headers = {};
     axiosPrivate({ url, method, headers }).then((res: AxiosResponse) => successHandler(res)).catch((err: AxiosError) => failHandler(err));   
 }
+
+export const getReport = (axiosPrivate: AxiosInstance, contestId : string, successHandler: Function, failHandler: Function) => {
+    const url = `${BFF_URLS.contestService}/contests/${contestId}/report`
+    const method = "GET";
+    const headers = {};
+    axiosPrivate({ url, method, headers }).then((res: AxiosResponse) => successHandler(res)).catch((err: AxiosError) => failHandler(err));   
+}
