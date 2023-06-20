@@ -52,7 +52,7 @@ export const getUser = (axiosPrivate: AxiosInstance, userId: string, successHand
 }
 
 export const getAllUsers = (axiosPrivate: AxiosInstance, successHandler : Function, failHandler : Function)=> {
-    const url = `${BFF_URLS.userService}/users/all`
+    const url = `${BFF_URLS.userService}/users`
     const method = "GET";
     const headers = {};
     axiosPrivate({url, method, headers}).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
