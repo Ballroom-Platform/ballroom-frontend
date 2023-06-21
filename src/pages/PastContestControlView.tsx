@@ -1,7 +1,7 @@
 import { Button, Tab, Tabs, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router";
-import { getChallenge, getContest, getOwnedChallengeIds, getReport, getSharedChallengeIds } from "../api/admin";
+import { getChallenge, getContest, getOwnedChallangesIds, getReport, getSharedChallangesIds } from "../api/admin";
 import { getChallengesInContest } from "../api/common";
 import { Layout } from "../components/templates";
 import { IMinimalContest } from "../helpers/interfaces";
@@ -91,8 +91,8 @@ const PastContestControlView = () => {
     useEffect(() => {
         getChallengesInContest( axiosIns, contestId!, handleRecievedChallengeArray, (err: any) => console.log(err))
         getContest(axiosIns, contestId!,(res: any) => {setcontest(res.data)}, () => console.log("ËRROR OCCURRED"));
-        getSharedChallengeIds(axiosIns, userId!,(res: any) => {setsharedchallengeids(res.data)}, () => console.log("ËRROR OCCURRED"));
-        getOwnedChallengeIds(axiosIns, userId!,(res: any) => {setownedchallengeids(res.data)}, () => console.log("ËRROR OCCURRED")); 
+        getSharedChallangesIds(axiosIns, userId!,(res: any) => {setsharedchallengeids(res.data.map((challenge: any) => challenge.challengeId))},() => {});
+        getOwnedChallangesIds(axiosIns, userId!,(res: any) => {setownedchallengeids(res.data.map((challenge: any) => challenge.challengeId))},() => {})
         getReadmeContest(axiosPrivate, contestId!, getReadmeSucess, getReadmeFail);
         getReport(axiosPrivate, contestId!, (res: any) => setReport(res.data), () => console.log("Error occured"));
         csv = convertToCSV(report);

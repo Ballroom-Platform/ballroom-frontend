@@ -1,7 +1,7 @@
 import { Button, IconButton, Paper, Snackbar, Tab, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tabs, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router";
-import { deleteContest, getChallenge, getContest, getOwnedChallengeIds, getReport, getSharedChallengeIds, giveAccessToContest } from "../api/admin";
+import { deleteContest, getChallenge, getContest, getOwnedChallangesIds, getReport, getSharedChallangesIds, giveAccessToContest } from "../api/admin";
 import { getChallengesInContest } from "../api/common";
 import { Layout } from "../components/templates";
 import { IMinimalContest } from "../helpers/interfaces";
@@ -45,7 +45,7 @@ const PastContestControls = () => {
     const [showNotification, setshowNotification] = useState(false);
     const [showFailNotification, setshowFailNotification] = useState(false);
     const {appState} = useApp();
-    const userID = appState.auth.userID;
+    const userId = appState.auth.userID;
     const navigate = useNavigate();
     const [ownedchallengeIds, setownedchallengeids] = useState<string[]>([]);
     const [sharedchallengeIds, setsharedchallengeids] = useState<string[]>([]);
@@ -121,8 +121,8 @@ const PastContestControls = () => {
     useEffect(() => {
         getChallengesInContest( axiosIns, contestId!, handleRecievedChallengeArray, (err: any) => console.log(err))
         getContest(axiosIns, contestId!,(res: any) => {setcontest(res.data)}, () => console.log("ËRROR OCCURRED"));
-        getSharedChallengeIds(axiosIns, userID!,(res: any) => {setsharedchallengeids(res.data)}, () => console.log("ËRROR OCCURRED"));
-        getOwnedChallengeIds(axiosIns, userID!,(res: any) => {setownedchallengeids(res.data)}, () => console.log("ËRROR OCCURRED")); 
+        getSharedChallangesIds(axiosIns, userId!,(res: any) => {setsharedchallengeids(res.data.map((challenge: any) => challenge.challengeId))},() => {});
+        getOwnedChallangesIds(axiosIns, userId!,(res: any) => {setownedchallengeids(res.data.map((challenge: any) => challenge.challengeId))},() => {})
         getReadmeContest(axiosPrivate, contestId!, getReadmeSucess, getReadmeFail);
         getReport(axiosPrivate, contestId!, (res: any) => setReport(res.data), () => console.log("Error occured"));
         csv = convertToCSV(report);
@@ -134,7 +134,7 @@ const PastContestControls = () => {
                 {contest ? contest.title : "Loading..."}
             </Typography>
 
-            {contest && contest.moderator === userID ?
+            {contest && contest.moderator === userId ?
                 <Button variant="outlined" sx={{alignItems: "center", color: "darkred" }} onClick={deleteClick}>Delete Contest</Button>: null
             }
 

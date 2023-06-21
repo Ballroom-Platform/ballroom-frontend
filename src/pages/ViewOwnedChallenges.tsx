@@ -66,7 +66,7 @@ const ViewOwnedChallenges : React.FC = () => {
             <TextField sx={{marginY: '2rem'}} id="outlined-basic" label="Search by title.." value={query} variant="outlined" onChange={(e) => setquery(e.target.value)}/>
            
             {challenges && challenges
-            .filter((challenge) => challenge.title.toLowerCase().includes(query.toLowerCase()))
+            //.filter((challenge) => challenge.title.toLowerCase().includes(query.toLowerCase()))
             .map((challenge) => (
 
                 <Card key={challenge.challengeId} sx={{marginY: '1rem', width: '100%'}} >

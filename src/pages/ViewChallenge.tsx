@@ -2,10 +2,10 @@ import { Box, Button, CircularProgress, Paper, Typography, Snackbar, IconButton,
 import { Layout } from "../components/templates";
 import DownloadIcon from '@mui/icons-material/Download';
 import { BFF_URLS } from "../links";
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import { useNavigate, useParams } from "react-router";
 import { useEffect, useState } from "react";
-import { getChallenge, giveAccessToChallenge, getChallengeAccessGrantedUsers, deleteChallenge } from "../api/admin";
+import { getChallenge, giveAccessToChallenge, deleteChallenge, getChallengeAdminAccess } from "../api/admin";
 import { OwnChallenge } from "../helpers/interfaces";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { useApp } from "../hooks/useApp";
@@ -17,6 +17,16 @@ import MarkdownRenderer from "../helpers/MarkdownRenderer";
 type ChallengeId = {
     challengeId: string;
 };
+
+type User = {
+    userId: string;
+    username: string;
+    fullname: string;
+};
+
+interface AccessDetails {
+    userId: string;
+}
 
 const ViewChallenge = () => {
     const {challengeId} = useParams<ChallengeId>()
@@ -54,7 +64,8 @@ const ViewChallenge = () => {
     }
 
     const giveAccessToThisChallenge = (thisUserId: string) => {
-        giveAccessToChallenge(axiosIns, challengeId!, thisUserId, (res: any) => {console.log(res); setshowNotification(true);},
+        const accessDetails: AccessDetails = {userId: thisUserId};
+        giveAccessToChallenge(axiosIns, challengeId!, accessDetails, (res: any) => {console.log(res); setshowNotification(true);},
          (err: any) => {
             console.log("ERROR...");
         });
@@ -74,8 +85,17 @@ const ViewChallenge = () => {
         fetch(link.href).then((res) => res.text()).then((res) => setPost(res));
     }
 
+    const getSuccess = (res : AxiosResponse) => {
+        const tempArr = res.data.data.map((item:User) => (item.userId));
+        setuserids([...tempArr]);
+    }
+  
+    const getFail = (err: AxiosError) =>{
+        console.log("Getting data failed", err)
+    }
+
     useEffect(() => {
-        getChallengeAccessGrantedUsers(axiosIns, challengeId!, (res: any) => setuserids(res.data), (err: any) => console.log(err));
+        getChallengeAdminAccess(axiosPrivate, challengeId!, getSuccess, getFail);
         getChallenge(axiosPrivate, challengeId!).then(res => {
             setChallenge(res.data);
             setLoading(false);

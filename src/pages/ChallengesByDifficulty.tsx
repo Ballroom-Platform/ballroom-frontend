@@ -1,6 +1,6 @@
 import { Button, Card, CardActions, CardContent, Tab, Tabs, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { getChallangesByDifficulty,  getOwnedChallangesByDifficulty, getOwnedChallengeIds, getSharedChallangesByDifficulty, getSharedChallengeIds } from "../api/admin";
+import { getChallangesByDifficulty,  getOwnedChallangesIds,  getSharedChallangesIds } from "../api/admin";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { Link, useLocation } from "react-router-dom";
 import { AxiosInstance } from "axios";
@@ -70,9 +70,9 @@ const ChallengesByDifficulty = ({adminEdit, addChallengeToContest} : IProps) => 
             const listOfChallenges: any[] = res.data
             setchallenges(listOfChallenges.map((challenge) : Challenge => ({challengeId: challenge.challengeId, title: challenge.title, difficulty: challenge.difficulty})))
         },
-        () => {})
-        getSharedChallengeIds(axiosIns, userId!,(res: any) => {setsharedchallengeids(res.data)}, () => console.log("ËRROR OCCURRED"));
-        getOwnedChallengeIds(axiosIns, userId!,(res: any) => {setownedchallengeids(res.data)}, () => console.log("ËRROR OCCURRED"));   
+        () => {});
+        getSharedChallangesIds(axiosIns, userId!,(res: any) => {setsharedchallengeids(res.data.map((challenge: any) => challenge.challengeId))},() => {});
+        getOwnedChallangesIds(axiosIns, userId!,(res: any) => {setownedchallengeids(res.data.map((challenge: any) => challenge.challengeId))},() => {})
     }, [value]);
 
     return ( 

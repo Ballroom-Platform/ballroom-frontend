@@ -1,11 +1,12 @@
 import { Button, Card, CardActions, CardContent, Tab, Tabs, TextField, Typography } from "@mui/material";
 import { useParams } from "react-router";
 import { useEffect, useState } from "react";
-import {  getChallengeAccessGrantedUsers } from "../api/admin";
+import { getChallengeAdminAccess } from "../api/admin";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { useApp } from '../hooks/useApp';
 import AdminAccessChallengeTable from "../components/AdminAccessChallengeTable";
 import { getAllUsers } from "../api/common";
+import { AxiosError, AxiosResponse } from "axios";
 
 type ChallengeId = {
     challengeId: string;
@@ -15,7 +16,7 @@ type User = {
     userId: string;
     username: string;
     fullname: string;
-    role: string;
+    role?: string;
 };
 
 type IProps = {
@@ -31,13 +32,23 @@ const ShareChallenge = ({ownerID, giveAccessToChallenge} : IProps) => {
     const [query, setquery] = useState<string>("");
     const [selectedTab, setselectedTab] = useState(0);
     const axiosIns = useAxiosPrivate();
+    const axiosPrivate = useAxiosPrivate();
 
     const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
         setselectedTab(newValue);
     };
-    
+
+    const getSuccess = (res : AxiosResponse) => {
+        const tempArr = res.data.data.map((item:User) => (item.userId));
+        setuserids([...tempArr]);
+    }
+  
+    const getFail = (err: AxiosError) =>{
+        console.log("Getting data failed", err)
+    }
+
     useEffect(() => {
-        getChallengeAccessGrantedUsers(axiosIns, challengeId!, (res: any) => setuserids(res.data), (err: any) => console.log(err));
+        getChallengeAdminAccess(axiosPrivate, challengeId!, getSuccess, getFail);
         getAllUsers(axiosIns, (res: any) => {const listOfUsers: any[] = res.data;
             setusers(listOfUsers.map((user) : User => ({userId: user.user_id, username: user.username, fullname: user.fullname, role: user.role})));
         }, () => {});

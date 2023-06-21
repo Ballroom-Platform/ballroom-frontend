@@ -6,7 +6,7 @@ import CardActions from "@mui/material/CardActions";
 import Paper from "@mui/material/Paper";
 import { useLocation, useNavigate, useParams } from "react-router"
 import { useEffect, useState } from "react";
-import { addChallenge, changeContestTime, getChallenge, getContest, removeChallengeFromContest, giveAccessToContest, deleteContest, getSharedChallengeIds, getOwnedChallengeIds } from "../api/admin";
+import { addChallenge, changeContestTime, getChallenge, getContest, removeChallengeFromContest, giveAccessToContest, deleteContest, getSharedChallangesIds, getOwnedChallangesIds } from "../api/admin";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { Layout } from "../components/templates";
 import { Link } from "react-router-dom";
@@ -51,7 +51,7 @@ const ContestControls: React.FC = () => {
     const [showNotification, setshowNotification] = useState(false);
     const [showFailNotification, setshowFailNotification] = useState(false);
     const {appState} = useApp();
-    const userID = appState.auth.userID;
+    const userId = appState.auth.userID;
     const [ownedchallengeIds, setownedchallengeids] = useState<string[]>([]);
     const [sharedchallengeIds, setsharedchallengeids] = useState<string[]>([]);
     const [post, setPost] = useState('');
@@ -129,8 +129,8 @@ const ContestControls: React.FC = () => {
         if(selectedTab === 0){
             getChallengesInContest( axiosIns, contestId!, handleRecievedChallengeArray, (err: any) => console.log(err))
             getContest(axiosIns, contestId!,(res: any) => {setcontest(res.data)}, () => console.log("ËRROR OCCURRED"));
-            getSharedChallengeIds(axiosIns, userID!,(res: any) => {setsharedchallengeids(res.data)}, () => console.log("ËRROR OCCURRED"));
-            getOwnedChallengeIds(axiosIns, userID!,(res: any) => {setownedchallengeids(res.data)}, () => console.log("ËRROR OCCURRED"));  
+            getSharedChallangesIds(axiosIns, userId!,(res: any) => {setsharedchallengeids(res.data.map((challenge: any) => challenge.challengeId))},() => {});
+            getOwnedChallangesIds(axiosIns, userId!,(res: any) => {setownedchallengeids(res.data.map((challenge: any) => challenge.challengeId))},() => {})
             getReadmeContest(axiosPrivate, contestId!, getReadmeSucess, getReadmeFail);    
         }
     },[selectedTab]);
@@ -144,7 +144,7 @@ const ContestControls: React.FC = () => {
 
             <div style={{display:"flex" ,width:"100%",justifyContent:"space-between"}}>
                 {contest && <Button variant="outlined" sx={{color: "darkblue"}}onClick={onForceStartClick}>Force Start</Button>}
-                {contest && contest.moderator === userID ?
+                {contest && contest.moderator === userId ?
                     <Button variant="outlined" sx={{marginX: "2rem", color: "darkred"}}onClick={deleteClick}>Delete Contest</Button>: null
                 }
             </div>
