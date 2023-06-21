@@ -4,6 +4,12 @@ import { BalDateTime, IUpdatedContest, NewContest } from "../helpers/interfaces"
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { BFF_URLS } from "../links/backend";
 
+interface AccessDetails {
+    userId: string;
+    accessType: string;
+}
+
+
 export const getChallenge = (axiosPrivate: AxiosInstance, challengeId : string) => {
     const url = `${BFF_URLS.challengeService}/challenges/${challengeId}`
     const method = "GET";
@@ -105,25 +111,18 @@ export const changeContestTime = (axiosPrivate: AxiosInstance, contestId: string
     axiosPrivate({url, method, headers, data}).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
 }
 
-export const getOwnerContests = (axiosPrivate: AxiosInstance, userId: string, contestType: string, successHandler: Function, failHandler: Function) => {
-    const url = `${BFF_URLS.contestService}/contests/${contestType}/owned/${userId}`
+export const getOwnerContests = (axiosPrivate: AxiosInstance, userId: string, status: string, successHandler: Function, failHandler: Function) => {
+    const url = `${BFF_URLS.contestService}/contests/owned/${userId}?status=${status}`
     const method = "GET";
     const headers = {}
     axiosPrivate({ url, method, headers }).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
 }
 
-export const getSharedContests = (axiosPrivate: AxiosInstance, userId: string, contestType: string, successHandler: Function, failHandler: Function) => {
-    const url = `${BFF_URLS.contestService}/contests/${contestType}/shared/${userId}`
+export const getSharedContests = (axiosPrivate: AxiosInstance, userId: string, status: string, successHandler: Function, failHandler: Function) => {
+    const url = `${BFF_URLS.contestService}/contests/shared/${userId}?status=${status}`
     const method = "GET";
     const headers = {}
     axiosPrivate({ url, method, headers }).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
-}
-
-export const getAccessGrantedUsers = (axiosPrivate: AxiosInstance, contestId: string, successHandler : Function, failHandler : Function) => {
-    const url = `${BFF_URLS.contestService}/contests/accessgranted/${contestId}`
-    const method = "GET";
-    const headers = {};
-    axiosPrivate({url, method, headers}).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
 }
 
 export const getChallengeAccessGrantedUsers = (axiosPrivate: AxiosInstance, challengeId: string, successHandler : Function, failHandler : Function) => {
@@ -134,7 +133,7 @@ export const getChallengeAccessGrantedUsers = (axiosPrivate: AxiosInstance, chal
 }
 
 export const getContestAdminAccess = (axiosPrivate: AxiosInstance, contestId : string, successHandler: Function, failHandler: Function) => {
-    const url = `${BFF_URLS.contestService}/contests/${contestId}/access`
+    const url = `${BFF_URLS.contestService}/contests/${contestId}/accessGrantedUsers`
     const method = "GET";
     const headers = {};
     axiosPrivate({ url, method, headers }).then((res: AxiosResponse) => successHandler(res)).catch((err: AxiosError) => failHandler(err));   
@@ -147,11 +146,12 @@ export const getChallengeAdminAccess = (axiosPrivate: AxiosInstance, challengeId
     axiosPrivate({ url, method, headers }).then((res: AxiosResponse) => successHandler(res)).catch((err: AxiosError) => failHandler(err));   
 }
 
-export const giveAccessToContest = (axiosPrivate: AxiosInstance, contestId: string, userId: string, accessType: string, successHandler : Function, failHandler : Function)=> {
-    const url = `${BFF_URLS.contestService}/contests/${contestId}/access/${userId}/${accessType}`
+export const giveAccessToContest = (axiosPrivate: AxiosInstance, contestId: string, accessDetails: AccessDetails, successHandler : Function, failHandler : Function)=> { 
+    const url = `${BFF_URLS.contestService}/contests/${contestId}/access`
     const method = "POST";
     const headers = {};
-    axiosPrivate({url, method, headers}).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
+    const data = accessDetails;
+    axiosPrivate({url, method, headers,data}).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
 }
 
 export const giveAccessToChallenge = (axiosPrivate: AxiosInstance, challengeId: string, userId: string, successHandler : Function, failHandler : Function)=> {
@@ -204,7 +204,7 @@ export const getSharedChallengeIds = (axiosPrivate: AxiosInstance, userId : stri
 }
 
 export const getReport = (axiosPrivate: AxiosInstance, contestId : string, successHandler: Function, failHandler: Function) => {
-    const url = `${BFF_URLS.contestService}/contests/${contestId}/report`
+    const url = `${BFF_URLS.contestService}/contests/report/${contestId}`
     const method = "GET";
     const headers = {};
     axiosPrivate({ url, method, headers }).then((res: AxiosResponse) => successHandler(res)).catch((err: AxiosError) => failHandler(err));   

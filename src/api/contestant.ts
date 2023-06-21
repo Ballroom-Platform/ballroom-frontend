@@ -74,7 +74,7 @@ export const getSubmissions = async (axiosPrivate: AxiosInstance, userId: string
 }
 
 export const getUserRegisteredContest = (axiosPrivate: AxiosInstance, status: string, userId: string, successHandler: Function, failHandler: Function) => {
-    const url = `${BFF_URLS.contestService}/contests/${status}/${userId}/registered`;
+    const url = `${BFF_URLS.contestService}/contests/${userId}/registered?status=${status}`;
     const method = "GET";
     const headers = {};
     axiosPrivate({ url, method, headers }).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());

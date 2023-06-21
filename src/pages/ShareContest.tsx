@@ -1,11 +1,12 @@
 import { Button, Card, CardActions, CardContent, Tab, Tabs, TextField, Typography } from "@mui/material";
 import { useParams } from "react-router";
 import { useEffect, useState } from "react";
-import { getAccessGrantedUsers } from "../api/admin";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { useApp } from '../hooks/useApp';
 import AdminAccessContestTable from "../components/AdminAccessContestTable";
 import { getAllUsers } from "../api/common";
+import { AxiosError, AxiosResponse } from "axios";
+import { getContestAdminAccess } from "../api/admin";
 
 type ContestId = {
     contestId: string;
@@ -31,13 +32,23 @@ const ShareContest = ({ ownerID, giveAccessToContest }: IProps) => {
     const [query, setquery] = useState<string>("");
     const [selectedTab, setselectedTab] = useState(0);
     const axiosIns = useAxiosPrivate();
+    const axiosPrivate = useAxiosPrivate();
 
     const handleChangeTab = (_event: React.SyntheticEvent, newValue: number) => {
         setselectedTab(newValue);
     };
 
+    const getSuccess = (res : AxiosResponse) => {
+        const tempArr = res.data.data.map((item:User) => (item.userId));
+        setuserids([...tempArr]);
+    }
+  
+    const getFail = (err: AxiosError) =>{
+        console.log("Getting data failed", err)
+    }
+
     useEffect(() => {
-        getAccessGrantedUsers(axiosIns, contestId!, (res: any) => setuserids(res.data), (err: any) => console.log(err));
+        getContestAdminAccess(axiosPrivate, contestId!, getSuccess, getFail);
  
         getAllUsers(axiosIns, (res: any) => {
             const listOfUsers: any[] = res.data;

@@ -34,6 +34,10 @@ type Challenge = {
     difficulty: string;
 };
 
+interface AccessDetails {
+    userId: string;
+    accessType: string;
+}
 
 const ContestControls: React.FC = () => {
 
@@ -106,7 +110,8 @@ const ContestControls: React.FC = () => {
     }
 
     const giveAccessToThisContest = (thisUserId: string, accessType: string) => {
-        giveAccessToContest(axiosIns, contestId!, thisUserId, accessType,(res: any) => {console.log(res); setshowNotification(true);},
+        const accessDetails: AccessDetails = {userId: thisUserId, accessType: accessType};
+        giveAccessToContest(axiosIns, contestId!, accessDetails, (res: any) => {console.log(res); setshowNotification(true);},
          (err: any) => {
             console.log("ERROR...");
         });
