@@ -168,11 +168,12 @@ export const giveAccessToChallenge = (axiosPrivate: AxiosInstance, challengeId: 
     axiosPrivate({url, method, headers,data}).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
 }
 
-export const removeAccessFromContest = (axiosPrivate: AxiosInstance, contestId: string, userId: string, successHandler : Function, failHandler : Function)=> {
-    const url = `${BFF_URLS.contestService}/contests/${contestId}/access/${userId}`
+export const removeAccessFromContest = (axiosPrivate: AxiosInstance, contestId: string, accessDetails: AccessDetails, successHandler : Function, failHandler : Function)=> {
+    const url = `${BFF_URLS.contestService}/contests/${contestId}/access`
     const method = "DELETE";
     const headers = {};
-    axiosPrivate({url, method, headers}).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
+    const data = accessDetails;
+    axiosPrivate({url, method, headers,data}).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
 }
 
 export const removeAccessFromChallenge = (axiosPrivate: AxiosInstance, challengeId: string, accessDetails: AccessDetails, successHandler : Function, failHandler : Function)=> {

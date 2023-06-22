@@ -26,6 +26,10 @@ interface IProps {
     userID: string
 }
 
+interface AccessDetails {
+    userId: string;
+}
+
 const AdminAccessContestTable = ({contestId,userID} : IProps) => {
     const [loading, setLoading] = useState<boolean>(true);
     const [rows, setRows] = useState<Array<IRow>>([] as Array<IRow>);
@@ -45,7 +49,8 @@ const AdminAccessContestTable = ({contestId,userID} : IProps) => {
     }
 
     const removePermission = (userId: string) => {
-        removeAccessFromContest(axiosPrivate, contestId, userId, (res: any) => {console.log(res); setshowNotification(true); setRows(rows.filter(row => row.userId !== userId)); }, (err: any) => {console.log("Error removing permission"); setshowFailNotification(true); }); 
+        const accessDetails: AccessDetails = {userId: userId};
+        removeAccessFromContest(axiosPrivate, contestId, accessDetails, (res: any) => {console.log(res); setshowNotification(true); setRows(rows.filter(row => row.userId !== userId)); }, (err: any) => {console.log("Error removing permission"); setshowFailNotification(true); }); 
     }
 
     useEffect(()=> {
