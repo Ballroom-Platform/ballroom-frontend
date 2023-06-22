@@ -5,7 +5,7 @@ import { getOwnedChallangesByDifficulty, getOwnerContests, getSharedChallangesBy
 import { getUser } from "../api/common";
 import { getUserRegisteredContest } from "../api/contestant";
 import { Layout } from "../components/templates";
-import { AccessContest, IMinimalContest, User, regitrants } from "../helpers/interfaces";
+import { AccessContest, IMinimalContest, User, IDateTimeObject } from "../helpers/interfaces";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { useApp } from "../hooks/useApp";
 import { formatUTCDate, getDateString } from "../helpers/dateConverter";
@@ -36,10 +36,21 @@ const UserProfile: React.FC = () => {
     const [hardchallenges, hardsetchallenges] = useState<Challenge[]>([]);
     const [hardsharedchallenges, hardsetsharedchallenges] = useState<Challenge[]>([]);
     const navigate = useNavigate();
-    const [pastregistrantcontests, setpastregistrantcontests] = useState<IMinimalContest[]>([]);
-    const [presentregistrantcontests, setpresentregistrantcontests] = useState<IMinimalContest[]>([]);
-    const [futureregistrantcontests, setfutureregistrantcontests] = useState<IMinimalContest[]>([]);
+    const [registeredContests, setregisteredcontests] = useState<IMinimalContest[]>([]);
 
+    let compareTime = (startTime: IDateTimeObject,endTime: IDateTimeObject) => {
+        //compare time and return 'Ongoing' or 'Upcoming' or 'Past'
+        let currentTime = new Date();
+        let start = new Date(startTime.year,startTime.month-1,startTime.day,startTime.hour,startTime.minute,startTime.second);
+        let end = new Date(endTime.year,endTime.month-1,endTime.day,endTime.hour,endTime.minute,endTime.second);
+        if(currentTime < start){
+            return "Upcoming";
+        } else if(currentTime > end){
+            return "Past";
+        } else{
+            return "Ongoing";
+        }
+    }
 
     const changeUserRole = (userId: string, newRole: string) => { 
         changeRole(axiosIns, userId, newRole,
@@ -116,13 +127,7 @@ const UserProfile: React.FC = () => {
         },
         () => {})
 
-        getUserRegisteredContest(axiosIns,"past", userId!, (res: any) => {setpastregistrantcontests((prevstate: any) => prevstate ? [...prevstate, ...res.data] : [{}])}, () => console.log("ERROR OCCURRED"));
-
-        getUserRegisteredContest(axiosIns,"present", userId!, (res: any) => {setpresentregistrantcontests((prevstate: any) => prevstate ? [...prevstate, ...res.data] : [{}])}, () => console.log("ERROR OCCURRED"));
-
-        getUserRegisteredContest(axiosIns,"future", userId!, (res: any) => {setfutureregistrantcontests((prevstate: any) => prevstate ? [...prevstate, ...res.data] : [{}])}, () => console.log("ERROR OCCURRED"));
-
-
+        getUserRegisteredContest(axiosIns, userId!, (res: any) => {setregisteredcontests((prevstate: any) => prevstate ? [...prevstate, ...res.data] : [{}])}, () => console.log("ERROR OCCURRED"));
     }, []);
 
     return ( 
@@ -240,82 +245,36 @@ const UserProfile: React.FC = () => {
 
                     <Table sx={{ minWidth: 650 }} aria-label="simple table">
                     
-                    <TableHead>
-                        <TableRow>
-                        <TableCell ></TableCell>
-                        <TableCell align="center">Start Time</TableCell>
-                        <TableCell align="center">End Time</TableCell>
-                        <TableCell align="center">Enter</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    </Table>
-                    <Typography sx={{marginY: 2, fontWeight: "bold" }} color="black">
-                       Upcoming  :
-                    </Typography>
-                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                    <TableBody>
-                        {
-                        futureregistrantcontests.map((row) => (
-                            <TableRow
-                            key={row.contestId}
-                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                            >
-                            <TableCell component="th" scope="row" >{row.title}</TableCell>
-                            <TableCell align="center">{formatUTCDate(getDateString(row.startTime))}</TableCell>
-                            <TableCell align="center">{formatUTCDate(getDateString(row.endTime))}</TableCell>
-                            <TableCell align="center"><Button variant="outlined" onClick={() => goToContest(row.contestId)}>Go to contest</Button></TableCell>
+                        <TableHead>
+                            <TableRow>
+                            <TableCell ></TableCell>
+                            <TableCell align="center">Start Time</TableCell>
+                            <TableCell align="center">End Time</TableCell>
+                            <TableCell align="center">Status</TableCell>
+                            <TableCell align="center">Enter</TableCell>
                             </TableRow>
-                        ))
-                        }
-                    </TableBody>
+                        </TableHead>
+
+                        <TableBody>
+                            {
+                            registeredContests
+                            .map((row) => (
+                                <TableRow
+                                key={row.contestId}
+                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                >
+                                <TableCell component="th" scope="row" >{row.title}</TableCell>
+                                <TableCell align="center">{formatUTCDate(getDateString(row.startTime))}</TableCell>
+                                <TableCell align="center">{formatUTCDate(getDateString(row.endTime))}</TableCell>
+                                <TableCell align="center">{compareTime(row.startTime,row.endTime)}</TableCell>
+                                <TableCell align="center"><Button variant="outlined" onClick={() => goToContest(row.contestId)}>Go to contest</Button></TableCell>
+                                </TableRow>
+                            ))
+                            }
+                        </TableBody>
                 
                     </Table>
 
-                    <Typography sx={{ marginY: 2, fontWeight: "bold" }} color="black">
-                       Ongoing  :
-                    </Typography>
-                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
-
-                    <TableBody>
-                        {
-                        presentregistrantcontests.map((row) => (
-                            <TableRow
-                            key={row.contestId}
-                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                            >
-                            <TableCell component="th" scope="row" >{row.title}</TableCell>
-                            <TableCell align="center">{formatUTCDate(getDateString(row.startTime))}</TableCell>
-                            <TableCell align="center">{formatUTCDate(getDateString(row.endTime))}</TableCell>
-                            <TableCell align="center"><Button variant="outlined" onClick={() => goToContest(row.contestId)}>Go to contest</Button></TableCell>
-                            </TableRow>
-                        ))
-                        }
-                    </TableBody>
-                
-                </Table>
-
-                <Typography sx={{ marginY: 2, fontWeight: "bold" }} color="black">
-                       Past  :
-                    </Typography>
-                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
-
-                    <TableBody>
-                        {
-                        pastregistrantcontests.map((row) => (
-                            <TableRow
-                            key={row.contestId}
-                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                            >
-                            <TableCell component="th" scope="row" >{row.title}</TableCell>
-                            <TableCell align="center">{formatUTCDate(getDateString(row.startTime))}</TableCell>
-                            <TableCell align="center">{formatUTCDate(getDateString(row.endTime))}</TableCell>
-                            <TableCell align="center"><Button variant="outlined" onClick={() => goToContest(row.contestId)}>Go to contest</Button></TableCell>
-                            </TableRow>
-                        ))
-                        }
-                    </TableBody>
-                
-                </Table>
                 </CardContent>
             </Card>
         </div>}
