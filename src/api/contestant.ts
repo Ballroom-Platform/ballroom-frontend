@@ -18,10 +18,30 @@ export const getLeaderboard = async (axiosPrivate: AxiosInstance, contestId: str
     axiosPrivate({ url, method, headers }).then((res: AxiosResponse) => successHandler(res)).catch((err: AxiosError) => failHandler(err));
 }
 
+export const getScoreboard = async (axiosPrivate: AxiosInstance, contestId: string, userId: string, successHandler: Function, failHandler: Function) => {
+    const url = BFF_URLS.submissionService + `/scoreboard/${contestId}/${userId}`;
+    const method = "GET";
+    const headers = {};
+    axiosPrivate({ url, method, headers }).then((res: AxiosResponse) => successHandler(res)).catch((err: AxiosError) => failHandler(err));
+}
 
 
 export const getTemplate = async (axiosPrivate: AxiosInstance, challengeId: string, successHandler: Function, failHandler: Function) => {
     const url = BFF_URLS.challengeService + `/challenges/${challengeId}/template/`;
+    const method = "GET";
+    const headers = {};
+    axiosPrivate({ url, method, headers, responseType: "blob" }).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
+}
+
+export const getReadmeChallenge = async (axiosPrivate: AxiosInstance, challengeId: string, successHandler: Function, failHandler: Function) => {
+    const url = BFF_URLS.challengeService + `/challenges/${challengeId}/readme/`;
+    const method = "GET";
+    const headers = {};
+    axiosPrivate({ url, method, headers, responseType: "blob" }).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
+}
+
+export const getReadmeContest = async (axiosPrivate: AxiosInstance, contestId: string, successHandler: Function, failHandler: Function) => {
+    const url = BFF_URLS.contestService+`/contests/${contestId}/readme/`;
     const method = "GET";
     const headers = {};
     axiosPrivate({ url, method, headers, responseType: "blob" }).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
@@ -53,3 +73,9 @@ export const getSubmissions = async (axiosPrivate: AxiosInstance, userId: string
     axiosPrivate({ url, method, headers, params }).then((res: AxiosResponse) => successHandler(res)).catch((err) => failHandler(err));
 }
 
+export const getUserRegisteredContest = (axiosPrivate: AxiosInstance, userId: string, successHandler: Function, failHandler: Function) => {
+    const url = `${BFF_URLS.contestService}/contests/${userId}/registered`;
+    const method = "GET";
+    const headers = {};
+    axiosPrivate({ url, method, headers }).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
+}

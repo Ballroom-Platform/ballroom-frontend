@@ -1,7 +1,7 @@
 import { Button, IconButton, Snackbar, Tab, Tabs, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router";
-import { addChallenge, changeContestTime, getChallenge, getContest, removeChallengeFromContest } from "../api/admin";
+import { addChallenge, changeContestTime, getChallenge, getContest, removeChallengeFromContest, giveAccessToContest, deleteContest, getSharedChallangesIds, getOwnedChallangesIds } from "../api/admin";
 import { getChallengesInContest } from "../api/common";
 import { Layout } from "../components/templates";
 import { BalDateTime, IMinimalContest } from "../helpers/interfaces";
@@ -12,10 +12,16 @@ import CardActions from "@mui/material/CardActions";
 import { Link } from "react-router-dom";
 import LeaderboardTable from "../components/LeaderboardTable";
 import ChallengesByDifficulty from "./ChallengesByDifficulty";
+import ShareContest from "./ShareContest";
 import CloseIcon from '@mui/icons-material/Close';
 import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { useApp } from "../hooks/useApp";
+import MarkdownRenderer from "../helpers/MarkdownRenderer";
+import { getReadmeContest } from "../api/contestant";
+import { axiosPrivate } from "../api/axios";
+import { AxiosResponse } from "axios";
 
 type ContestId = {
     contestId: string;
@@ -26,6 +32,11 @@ type Challenge = {
     title: string;
     difficulty: string;
 };
+
+interface AccessDetails {
+    userId: string;
+    accessType: string;
+}
 
 const OngoingContestControls = () => {
     const navigate = useNavigate();
@@ -42,6 +53,11 @@ const OngoingContestControls = () => {
     const [changedEndTimeFailNotification, setchangedEndTimeFailNotification] = useState(false);
     const [endTime, setendTime] = useState<BalDateTime>();
     const [endTimeIsValid, setendTimeIsValid] = useState(false);
+    const {appState} = useApp();
+    const userId = appState.auth.userID;
+    const [ownedchallengeIds, setownedchallengeids] = useState<string[]>([]);
+    const [sharedchallengeIds, setsharedchallengeids] = useState<string[]>([]);
+    const [post, setPost] = useState('');	
 
     const handleRecievedChallengeArray = (res: any) => {
         Promise.all(
@@ -56,11 +72,6 @@ const OngoingContestControls = () => {
         ); 
     }
 
-    const handleRemoval = (challengeId: string) => {
-        setchallenges((prevstate) => prevstate ? prevstate.filter((challenge) => challenge.challengeId !== challengeId) : []);
-    }
-
-
     const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
         setselectedTab(newValue);
     };
@@ -71,22 +82,38 @@ const OngoingContestControls = () => {
         if(contest) {
             changeContestTime(axiosIns, contestId!, {title: contest.title, startTime: contest.startTime, endTime: newEndTime, moderator: contest.moderator}, (res: any) => console.log(res.data), (err: any) => console.log(err));
         }
-
-        // FIXME: Should redirect to past contests here.
-        // The below doesnt work properly. Need to reload the page to see the changes.
         navigate("/pastContests");
-        
+        window.location.reload();
     }
 
     const addChallengeToThisContest = (thisChallengeId: string) => {
-        addChallenge(axiosIns, contestId!, thisChallengeId, (res: any) => {console.log(res); setshowNotification(true);},
+        addChallenge(axiosIns, contestId!, thisChallengeId, 
+            (res: any) => {
+                console.log(res); 
+                setshowNotification(true);},
+            (err: any) => {
+                console.log("ERROR...");
+                if(err.response.data === "Challenge already added to contest"){
+                    setshowFailNotification(true);
+                }
+        });
+
+    }
+
+    const giveAccessToThisContest = (thisUserId: string, accessType: string) => {
+        const accessDetails: AccessDetails = {userId: thisUserId, accessType: accessType};
+        giveAccessToContest(axiosIns, contestId!, accessDetails,(res: any) => {console.log(res); setshowNotification(true);},
          (err: any) => {
             console.log("ERROR...");
-            if(err.response.data === "Challenge already added to contest"){
+            if(err.response.data === "Already added to admin"){
                 setshowFailNotification(true);
             }
         });
 
+    }
+
+    const handleRemoval = (challengeId: string) => {
+        setchallenges((prevstate) => prevstate ? prevstate.filter((challenge) => challenge.challengeId !== challengeId) : []);
     }
 
     const handleChangeEndTime = (value: any) => {
@@ -114,40 +141,65 @@ const OngoingContestControls = () => {
         }
     }
 
+    const deleteClick = () => {
+        if(contest) {
+            deleteContest(axiosIns, contestId!, (res: any) => console.log(res.data), (err: any) => console.log(err));
+        }
+        navigate("/ongoingContests");
+        window.location.reload();
+    }
+
+    const getReadmeFail = () => {
+        console.log("Getting readme failed")
+    }
+
+    const getReadmeSucess = (res : AxiosResponse) => {
+        var link = document.createElement("a");
+        link.href = window.URL.createObjectURL(new Blob([res.data], { type: 'text/markdown' }));
+        fetch(link.href).then((res) => res.text()).then((res) => setPost(res));
+    }
 
     useEffect(() => {
-        if(selectedTab === 0){
-            getChallengesInContest( axiosIns, contestId!, handleRecievedChallengeArray, (err: any) => console.log(err));
+            getChallengesInContest( axiosIns, contestId!, handleRecievedChallengeArray, (err: any) => console.log(err));         
             getContest(axiosIns, contestId!,(res: any) => {setcontest(res.data)}, () => console.log("ËRROR OCCURRED"));
-        }
-
+            getSharedChallangesIds(axiosIns, userId!,(res: any) => {setsharedchallengeids(res.data.map((challenge: any) => challenge.challengeId))},() => {});
+            getOwnedChallangesIds(axiosIns, userId!,(res: any) => {setownedchallengeids(res.data.map((challenge: any) => challenge.challengeId))},() => {})
+            getReadmeContest(axiosPrivate, contestId!, getReadmeSucess, getReadmeFail);        
     },[selectedTab]);
 
-    
     return ( 
         <Layout>
-            <Typography variant="h3" gutterBottom>
+            <Typography variant="h4" textAlign="center" fontWeight={"bold"} gutterBottom>
                 {contest ? contest.title : "Loading..."}
             </Typography>
 
-
-            <Typography sx={{color: 'gray'}}variant="h6" gutterBottom>
-                {contest ? contest.description: "Loading..."}<br></br>
-            </Typography>
-
-            <Button variant="contained" sx={{marginX: "2rem", backgroundColor: "darkred"}}onClick={onForceStopClick}>Force Stop</Button>
+            <div style={{display:"flex" ,width:"100%",justifyContent:"space-between"}}>
+                {contest && <Button variant="outlined" sx={{ color: "darkblue"}}onClick={onForceStopClick}>Force Stop</Button>}
+                {contest && contest.moderator === userId ?
+                    <Button variant="outlined" sx={{marginX: "2rem", color: "darkred"}}onClick={deleteClick}>Delete Contest</Button>: null
+                }
+            </div>
 
             <Tabs value={selectedTab} onChange={handleChangeTab} centered>
+                <Tab label="ABOUT" />
                 <Tab label="CHALLENGES" />
                 <Tab label="LEADERBOARD" />
                 <Tab label="ADD CHALLENGE" />
                 <Tab label="CHANGE END TIME" />
+                <Tab label="SHARE" />
             </Tabs>
 
             {selectedTab === 0 && 
+            <>
+                <div>
+                    <MarkdownRenderer source={post} />
+                </div>
+            </>
+            }
+            {selectedTab === 1 && 
                     challenges && challenges.map((challenge) => (
 
-                        <Card key={challenge.challengeId} sx={{marginY: '1rem', width: '75%'}} >
+                        <Card key={challenge.challengeId} sx={{marginY: '1rem', width: '100%'}} >
     
                             <CardContent>
                                 <Typography variant="h5" component="div">
@@ -159,16 +211,19 @@ const OngoingContestControls = () => {
                             </CardContent>  
     
                             <CardActions>
-                                <Link to={`${location.pathname}/${challenge.challengeId}`}><Button size="small">View</Button></Link>
-                                <Button sx={{color: 'red'}} size="small" onClick={() => removeChallengeFromContest(axiosIns, contestId!, challenge.challengeId!, (res: any)=> {console.log(res.data); handleRemoval(challenge.challengeId)}, () => console.log("ERROR!"))}>Remove</Button>
+                                {(sharedchallengeIds.includes(challenge.challengeId) || ownedchallengeIds.includes(challenge.challengeId) )&& <Link to={`${location.pathname}/${challenge.challengeId}`}><Button size="small">View</Button></Link>}
+                                {(sharedchallengeIds.includes(challenge.challengeId) || ownedchallengeIds.includes(challenge.challengeId) )&&  <Button sx={{color: 'red'}} size="small" onClick={() => removeChallengeFromContest(axiosIns, contestId!, challenge.challengeId!, (res: any)=> {console.log(res.data); handleRemoval(challenge.challengeId)}, () => console.log("ERROR!"))}>Remove</Button>}
+
+                                {(!ownedchallengeIds.includes(challenge.challengeId) && !sharedchallengeIds.includes(challenge.challengeId)) && <Typography variant="body2" color="darkorange" sx={{marginX: 2}}>You Don't Have Access</Typography>}
+                                
                             </CardActions>
     
                         </Card>
             ))}
 
-            {selectedTab === 1 && <LeaderboardTable contestId={contestId!}/>}
+            {selectedTab === 2 && <LeaderboardTable contestId={contestId!}/>}
 
-            {selectedTab === 2 && 
+            {selectedTab === 3 && 
             <>
                 <ChallengesByDifficulty addChallengeToContest={addChallengeToThisContest}/>
             
@@ -178,7 +233,7 @@ const OngoingContestControls = () => {
             </>
             }
 
-            {selectedTab === 3 &&
+            {selectedTab === 4 &&
             <>
                 <LocalizationProvider sx={{border: '1px solid red'}} dateAdapter={AdapterDayjs}>
                     <DemoContainer sx={{marginY: '1rem', width: '30%'}} components={['DateTimePicker']}>
@@ -195,11 +250,19 @@ const OngoingContestControls = () => {
                 <Snackbar  open={changedEndTimeSuccessNotification} autoHideDuration={6000} onClose={() => setchangedEndTimeSuccessNotification(false)} message="End time successfully changed!" action={ <IconButton size="small" aria-label="close" color="inherit" onClick={() => setchangedEndTimeSuccessNotification(false)}> <CloseIcon fontSize="small" /> </IconButton>} />
 
                 <Snackbar  open={changedEndTimeFailNotification} autoHideDuration={6000} onClose={() => setchangedEndTimeFailNotification(false)} message="End time change fail!" action={ <IconButton size="small" aria-label="close" color="inherit" onClick={() => setchangedEndTimeFailNotification(false)}> <CloseIcon fontSize="small" /> </IconButton>} />
-
+                
             </>
             }
 
-
+            {selectedTab === 5 &&
+            <>
+                <ShareContest ownerID ={contest!.moderator} giveAccessToContest={giveAccessToThisContest}/>
+            
+                <Snackbar  open={showNotification} autoHideDuration={2000} onClose={() => setshowNotification(false)} message="Added Admin!" action={ <IconButton size="small" aria-label="close" color="inherit" onClick={() => setshowNotification(false)}> <CloseIcon fontSize="small" /> </IconButton>} />
+    
+                <Snackbar  open={showFailNotification} autoHideDuration={2000} onClose={() => setshowFailNotification(false)} message="Already added Admin!" action={ <IconButton size="small" aria-label="close" color="inherit" onClick={() => setshowFailNotification(false)}> <CloseIcon fontSize="small" /> </IconButton>} />
+            </>
+            }
         </Layout>
     );
 }

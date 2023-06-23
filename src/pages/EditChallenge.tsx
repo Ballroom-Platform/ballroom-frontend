@@ -1,6 +1,6 @@
 import { Button, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, Snackbar, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { editChallenge, getChallenge } from "../api/admin";
 import { Layout } from "../components/templates";
 import { IChallenge } from "../helpers/interfaces";
@@ -18,14 +18,14 @@ const EditChallenge = () => {
     const axiosPrivate = useAxiosPrivate();
     const [showSuccessNotification, setshowSuccessNotification] = useState(false);
     const [showFailNotification, setshowFailNotification] = useState(false);
+    const navigate = useNavigate();
+
     const handleSubmit = () => {
         const formData = new FormData();
         formData.append('title', challenge.title)
-        formData.append('description', challenge.description)
         formData.append('difficulty', challenge.difficulty)
-        formData.append('constraints', challenge.constraints)
         editChallenge(axiosPrivate, formData, challengeId!, (res: any) => {setshowSuccessNotification(true);}, (err: any) => setshowFailNotification(true))
-
+        navigate(-1);
     }
 
 
@@ -48,14 +48,6 @@ const EditChallenge = () => {
                     </Typography>
 
                     <TextField sx={{marginY: '2rem'}} id="outlined-basic" label="Title" variant="outlined" defaultValue={challenge.title} onChange={(e) => setChallenge({...challenge, title: e.target.value})}/>
-
-                    <br />
-
-                    <TextField fullWidth multiline rows={4} sx={{marginY: '1rem'}}  id="outlined-basic" label="Description" variant="outlined" value={challenge.description} onChange={(e) => setChallenge({...challenge, description: e.target.value})}/>
-
-                    <br />
-
-                    <TextField fullWidth multiline rows={4} sx={{marginY: '1rem'}}  id="outlined-basic" label="Constraints" variant="outlined" value={challenge.constraints} onChange={(e) => setChallenge({...challenge, constraints: e.target.value})}/>
 
                     <br />
 

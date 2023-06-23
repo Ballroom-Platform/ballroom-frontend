@@ -12,7 +12,7 @@ type Challenge = {
     difficulty: string;
 };
 
-const ViewAddedChallenges : React.FC = () => {
+const ViewAllChallenges : React.FC = () => {
 
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setvalue(newValue);
@@ -62,7 +62,7 @@ const ViewAddedChallenges : React.FC = () => {
             .filter((challenge) => challenge.title.toLowerCase().includes(query.toLowerCase()))
             .map((challenge) => (
 
-                <Card key={challenge.challengeId} sx={{marginY: '1rem', width: '75%'}} >
+                <Card key={challenge.challengeId} sx={{marginY: '1rem', width: '100%'}} >
 
                     <CardContent>
                         <Typography variant="h5" component="div">
@@ -70,9 +70,6 @@ const ViewAddedChallenges : React.FC = () => {
                         </Typography>
                         <Typography sx={{ mb: 1.5 }} color="text.secondary">
                         {challenge.difficulty}
-                        </Typography>
-                        <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                        Challenge Id: {challenge.challengeId}
                         </Typography>
                     </CardContent>
 
@@ -86,4 +83,4 @@ const ViewAddedChallenges : React.FC = () => {
     );
 }
  
-export default ViewAddedChallenges;
+export default ViewAllChallenges;

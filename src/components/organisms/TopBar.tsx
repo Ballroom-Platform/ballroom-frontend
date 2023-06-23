@@ -19,12 +19,22 @@ import {
     KeyboardArrowLeft,
   } from '@mui/icons-material'
 import { useAuthContext } from '@asgardeo/auth-react'
+import { useNavigate } from 'react-router'
+import { useApp } from "../../hooks/useApp";
   
 export const TopBar: React.FC = () => {
   const theme = useTheme()
   const {signOut} = useAuthContext()
+  const navigate = useNavigate();
+  const {appState} = useApp();
+  const userId = appState.auth.userID;
+
   const logoutHandler = async () => {
     signOut();
+  }
+
+  const userProfile = () => {
+    navigate("/userProfile" + `/${userId}`);
   }
 
   return (
@@ -69,8 +79,8 @@ export const TopBar: React.FC = () => {
                 onClickCapture={logoutHandler}
               />
             </IconButton>
-            <IconButton>
-              <Avatar src="avatar.png" />
+            <IconButton  onClick={userProfile}>
+              <Avatar src="avatar.png"/>
             </IconButton>
           </Grid>
         </Grid>

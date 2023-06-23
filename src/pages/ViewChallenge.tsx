@@ -1,23 +1,47 @@
-import { Box, Button, CircularProgress, Paper, Typography } from "@mui/material";
+import { Box, Button, CircularProgress, Paper, Typography, Snackbar, IconButton, Tab, Tabs } from "@mui/material";
 import { Layout } from "../components/templates";
 import DownloadIcon from '@mui/icons-material/Download';
 import { BFF_URLS } from "../links";
-import axios from "axios";
-import { useParams } from "react-router";
+import axios, { AxiosError, AxiosResponse } from "axios";
+import { useNavigate, useParams } from "react-router";
 import { useEffect, useState } from "react";
-import { getChallenge } from "../api/admin";
-import { IChallenge } from "../helpers/interfaces";
+import { getChallenge, giveAccessToChallenge, deleteChallenge, getChallengeAdminAccess } from "../api/admin";
+import { OwnChallenge } from "../helpers/interfaces";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import { useApp } from "../hooks/useApp";
+import ShareChallenge from "./ShareChallenge";
+import CloseIcon from '@mui/icons-material/Close';
+import { getReadmeChallenge } from "../api/contestant";
+import MarkdownRenderer from "../helpers/MarkdownRenderer";
 
 type ChallengeId = {
     challengeId: string;
 };
 
+type User = {
+    userId: string;
+    username: string;
+    fullname: string;
+};
+
+interface AccessDetails {
+    userId: string;
+}
+
 const ViewChallenge = () => {
     const {challengeId} = useParams<ChallengeId>()
-    const [challenge, setChallenge] = useState<IChallenge>({} as IChallenge);
+    const [challenge, setChallenge] = useState<OwnChallenge>({} as OwnChallenge);
     const [loading, setLoading] = useState<boolean>(true);
     const axiosPrivate = useAxiosPrivate();
+    const {appState} = useApp();
+    const userId = appState.auth.userID;
+    const navigate = useNavigate();
+    const axiosIns = useAxiosPrivate();
+    const [showNotification, setshowNotification] = useState(false);
+    const [selectedTab, setselectedTab] = useState(0);
+    const [userIds, setuserids] = useState<string[]>([]);
+    const [post, setPost] = useState('');	
+
     const downloadFunction = async () => {
         let results = await axios({
             url: `${BFF_URLS.challengeService}/challenges/${challengeId}/template`,
@@ -31,11 +55,52 @@ const ViewChallenge = () => {
          hidden_a.click();
     }
 
+    const editChallenge = () => {
+        navigate(`/editChallenge/${challengeId}`);
+    }
+
+    const deleteThisChallenge = () => {
+        deleteChallenge(axiosIns, challengeId!, (res: any) => {navigate(`/mychallenges`);}, (err: any) => console.log(err));
+    }
+
+    const giveAccessToThisChallenge = (thisUserId: string) => {
+        const accessDetails: AccessDetails = {userId: thisUserId};
+        giveAccessToChallenge(axiosIns, challengeId!, accessDetails, (res: any) => {console.log(res); setshowNotification(true);},
+         (err: any) => {
+            console.log("ERROR...");
+        });
+    }
+
+    const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
+        setselectedTab(newValue);
+    };
+
+    const getReadmeFail = () => {
+        console.log("Getting readme failed")
+    }
+
+    const getReadmeSucess = (res : AxiosResponse) => {
+        var link = document.createElement("a");
+        link.href = window.URL.createObjectURL(new Blob([res.data], { type: 'text/markdown' }));
+        fetch(link.href).then((res) => res.text()).then((res) => setPost(res));
+    }
+
+    const getSuccess = (res : AxiosResponse) => {
+        const tempArr = res.data.data.map((item:User) => (item.userId));
+        setuserids([...tempArr]);
+    }
+  
+    const getFail = (err: AxiosError) =>{
+        console.log("Getting data failed", err)
+    }
+
     useEffect(() => {
+        getChallengeAdminAccess(axiosPrivate, challengeId!, getSuccess, getFail);
         getChallenge(axiosPrivate, challengeId!).then(res => {
             setChallenge(res.data);
             setLoading(false);
         }).catch(() => console.log("Challenge fetching failed"))
+        getReadmeChallenge(axiosPrivate, challengeId!, getReadmeSucess, getReadmeFail);
     }, [challengeId])
 
     return ( 
@@ -47,40 +112,52 @@ const ViewChallenge = () => {
             {
                 !loading && (
                 <>
-                    <Paper sx={{padding: '1rem', minHeight: "600px"}}>
-                
-                        <Typography variant="h4" gutterBottom>
+                    <div style={{display:"flex" ,width:"100%",justifyContent:"space-between"}}>
+                        {challenge.authorId === userId ? 
+                            <Button variant="outlined" sx={{ color: "darkblue"}} onClick={() => editChallenge()}>Edit Challenge</Button> : null} 
+                        {userIds.includes(userId!) ? 
+                            <Button variant="outlined" sx={{ color: "darkblue"}} onClick={() => editChallenge()}>Edit Challenge</Button> : null}
+                        {challenge.authorId === userId ? 
+                            <Button variant="outlined" sx={{ color: "darkred" }} onClick={() => deleteThisChallenge()}>Delete Challenge</Button> : null}
+                    </div>
+                        <Typography variant="h4" textAlign="center" fontWeight={"bold"} gutterBottom>
                             {challenge.title}
                         </Typography>
 
-                        <Typography variant="body1" gutterBottom>
-                            Challenge ID: {challengeId}
-                        </Typography>
-
-                        <Typography sx={{marginTop:'3rem'}} variant="h6" gutterBottom>
+                        <Typography sx={{marginTop:1, marginBottom: 2, color:"gray"}} variant="h6" textAlign="center" gutterBottom>
                             Diffculty: {challenge.difficulty}
                         </Typography>
 
-                        <Typography sx={{marginTop:'3rem'}} variant="h6" gutterBottom>
-                            {/* Problem Statement: */}
-                        </Typography>
+                    {challenge.authorId === userId ? 
+                    <Tabs value={selectedTab} onChange={handleChangeTab} centered>
+                        <Tab label="VIEW" />
+                        <Tab label="SHARE" />
+                    </Tabs> 
+                    : null }
 
-                        <Typography variant="body1" gutterBottom>
-                            {challenge.description}
-                        </Typography>
+                    {selectedTab === 0  &&
+                        <>
 
-                        <Typography sx={{marginTop:'3rem', fontWeight:'bold'}} variant="body1" gutterBottom>
-                            Constraints:
-                        </Typography>
+                        <Paper sx={{padding: '1rem', minHeight: "600px" , marginBottom:6}}>
+                            <div>
+                                <MarkdownRenderer source={post} />
+                            </div>
 
-                        <Typography variant="body1" gutterBottom>
-                            {challenge.constraints}
-                        </Typography>
-                    </Paper>
-                    <Box sx={{marginY: '1rem'}}>
-                        <Button variant="outlined" onClick={downloadFunction}startIcon={<DownloadIcon />}>Dowload Template</Button>
-                    </Box>
+                            <Box sx={{marginleft: 2, marginTop:6, marginBottom:2}}>
+                                <Button variant="outlined" sx={{width:'100%', color:"darkblue"}} onClick={downloadFunction}startIcon={<DownloadIcon />}>Dowload Template</Button>
+                            </Box>
+                        </Paper>
+                        </>
+                    }
+                    {selectedTab === 1 && 
+                        <>
+                            <ShareChallenge ownerID ={challenge.authorId} giveAccessToChallenge={giveAccessToThisChallenge}/>
+            
+                            <Snackbar  open={showNotification} autoHideDuration={2000} onClose={() => setshowNotification(false)} message="Added Admin!" action={ <IconButton size="small" aria-label="close" color="inherit" onClick={() => setshowNotification(false)}> <CloseIcon fontSize="small" /> </IconButton>} />
+                        </>
+                    }
                 </>
+
                 )
             }
             

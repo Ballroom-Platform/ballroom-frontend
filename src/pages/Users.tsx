@@ -2,7 +2,7 @@ import { Button, Card, CardActions, CardContent, makeStyles, Tab, Tabs, Typograp
 import { makeUseVisualState } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { getUsersByRoles, upgradeContestantToAdmin } from "../api/admin";
+import { getUsersByRoles, changeRole } from "../api/admin";
 import { Layout } from "../components/templates";
 import { User } from "../helpers/interfaces";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
@@ -18,7 +18,7 @@ const Users = () => {
     const axiosIns = useAxiosPrivate();
 
     const makeUserAdmin = (userId: string) => { 
-        upgradeContestantToAdmin(axiosIns, userId,
+        changeRole(axiosIns, userId, "admin",
             (res: any) => {
                 console.log(res);
                 setusers(users.filter((user) => user.userId !== userId))
@@ -64,7 +64,7 @@ const Users = () => {
 
             {users && users.map((user) => (
 
-                <Card key={user.userId} sx={{marginY: '1rem', width: '75%'}} >
+                <Card key={user.userId} sx={{marginY: '1rem', width: '100%'}} >
 
                     <CardContent>
                         <Typography variant="h5" component="div">

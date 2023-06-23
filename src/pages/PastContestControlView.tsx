@@ -1,7 +1,7 @@
-import { Button, IconButton, Paper, Snackbar, Tab, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tabs, Typography } from "@mui/material";
+import { Button, Tab, Tabs, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router";
-import { deleteContest, getChallenge, getContest, getOwnedChallangesIds, getReport, getSharedChallangesIds, giveAccessToContest } from "../api/admin";
+import { useLocation, useParams } from "react-router";
+import { getChallenge, getContest, getOwnedChallangesIds, getReport, getSharedChallangesIds } from "../api/admin";
 import { getChallengesInContest } from "../api/common";
 import { Layout } from "../components/templates";
 import { IMinimalContest } from "../helpers/interfaces";
@@ -11,12 +11,10 @@ import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
 import { Link } from "react-router-dom";
 import LeaderboardTable from "../components/LeaderboardTable";
-import ShareContest from "./ShareContest";
-import CloseIcon from '@mui/icons-material/Close';
 import { useApp } from "../hooks/useApp";
+import { AxiosResponse } from "axios";
 import { getReadmeContest } from "../api/contestant";
 import { axiosPrivate } from "../api/axios";
-import { AxiosResponse } from "axios";
 import MarkdownRenderer from "../helpers/MarkdownRenderer";
 
 type ContestId = {
@@ -29,12 +27,7 @@ type Challenge = {
     difficulty: string;
 };
 
-interface AccessDetails {
-    userId: string;
-    accessType: string;
-}
-
-const PastContestControls = () => {
+const PastContestControlView = () => {
 
     const {contestId} = useParams<ContestId>();
     const location = useLocation();
@@ -42,11 +35,8 @@ const PastContestControls = () => {
     const [challenges, setchallenges] = useState<Challenge[]>([]);
     const [selectedTab, setselectedTab] = useState(0);
     const axiosIns = useAxiosPrivate();
-    const [showNotification, setshowNotification] = useState(false);
-    const [showFailNotification, setshowFailNotification] = useState(false);
     const {appState} = useApp();
     const userId = appState.auth.userID;
-    const navigate = useNavigate();
     const [ownedchallengeIds, setownedchallengeids] = useState<string[]>([]);
     const [sharedchallengeIds, setsharedchallengeids] = useState<string[]>([]);
     const [post, setPost] = useState('');
@@ -54,7 +44,6 @@ const PastContestControls = () => {
     let csv = '';
 
     const handleRecievedChallengeArray = (res: any) => {
-        console.log(res.data)
         res.data.forEach((challengeId: any) => {
             getChallenge(axiosIns, challengeId).then((res: any) => setchallenges((prevstate) => prevstate ? [...prevstate, {challengeId: res.data.challengeId,title: res.data.title, difficulty: res.data.difficulty}] : [{challengeId: res.data.challengeId,title: res.data.title, difficulty: res.data.difficulty}])).
             catch((res: any)=> console.log(res.data));
@@ -66,26 +55,6 @@ const PastContestControls = () => {
         setselectedTab(newValue);
     };
 
-    const giveAccessToThisContest = (thisUserId: string, accessType: string) => {
-        const accessDetails: AccessDetails = {userId: thisUserId, accessType: accessType};
-        giveAccessToContest(axiosIns, contestId!,accessDetails,(res: any) => {console.log(res); setshowNotification(true);},
-         (err: any) => {
-            console.log("ERROR...");
-            if(err.response.data === "Already added to admin"){
-                setshowFailNotification(true);
-            }
-        });
-
-    }
-
-    const deleteClick = () => {
-        if(contest) {
-            deleteContest(axiosIns, contestId!, (res: any) => console.log(res.data), (err: any) => console.log(err));
-        }
-        navigate("/pastContests");
-        window.location.reload();
-    }
-
     const getReadmeFail = () => {
         console.log("Getting readme failed")
     }
@@ -95,6 +64,7 @@ const PastContestControls = () => {
         link.href = window.URL.createObjectURL(new Blob([res.data], { type: 'text/markdown' }));
         fetch(link.href).then((res) => res.text()).then((res) => setPost(res));
     }
+
 
     const convertToCSV = (report: string[][]) => {
         var csv = '';
@@ -134,15 +104,10 @@ const PastContestControls = () => {
                 {contest ? contest.title : "Loading..."}
             </Typography>
 
-            {contest && contest.moderator === userId ?
-                <Button variant="outlined" sx={{alignItems: "center", color: "darkred" }} onClick={deleteClick}>Delete Contest</Button>: null
-            }
-
             <Tabs value={selectedTab} onChange={handleChangeTab} centered>
                 <Tab label="ABOUT" />
                 <Tab label="CHALLENGES" />
                 <Tab label="LEADERBOARD" />
-                <Tab label="SHARE" />
                 <Tab label="REPORT" />
             </Tabs>
 
@@ -169,8 +134,7 @@ const PastContestControls = () => {
                             </CardContent>  
     
                             <CardActions>
-                                {(sharedchallengeIds.includes(challenge.challengeId) || ownedchallengeIds.includes(challenge.challengeId) )&& <Link to={`${location.pathname}/${challenge.challengeId}`}><Button size="small">View</Button></Link>}
-
+                                {(sharedchallengeIds.includes(challenge.challengeId) || ownedchallengeIds.includes(challenge.challengeId) )&&<Link to={`${location.pathname}/${challenge.challengeId}`}><Button size="small">View</Button></Link>}
                                 {(!ownedchallengeIds.includes(challenge.challengeId) && !sharedchallengeIds.includes(challenge.challengeId)) && <Typography variant="body2" color="darkorange" sx={{marginX: 2}}>You Don't Have Access</Typography>}
                             </CardActions>
     
@@ -181,68 +145,58 @@ const PastContestControls = () => {
 
             {selectedTab === 3 &&
             <>
-                <ShareContest ownerID ={contest!.moderator} giveAccessToContest={giveAccessToThisContest}/>
-            
-                <Snackbar  open={showNotification} autoHideDuration={2000} onClose={() => setshowNotification(false)} message="Added Admin!" action={ <IconButton size="small" aria-label="close" color="inherit" onClick={() => setshowNotification(false)}> <CloseIcon fontSize="small" /> </IconButton>} />
-    
-                <Snackbar  open={showFailNotification} autoHideDuration={2000} onClose={() => setshowFailNotification(false)} message="Already added Admin!" action={ <IconButton size="small" aria-label="close" color="inherit" onClick={() => setshowFailNotification(false)}> <CloseIcon fontSize="small" /> </IconButton>} />
-            </>
-            }
+            <Typography sx={{marginTop:2, marginBottom: 2, color:"darkblue"}} fontSize={16} gutterBottom>
+                Download full report as CSV file
+            </Typography>
 
-            {selectedTab === 4 &&
-            <>
-                <Typography sx={{marginTop:2, marginBottom: 2, color:"darkblue"}} fontSize={16} gutterBottom>
-                    Download full report as CSV file
-                </Typography>
+            <Button variant="contained" color="primary" style={{marginBottom:6}} onClick={() => download(csv)}>Download</Button>
 
-                <Button variant="contained" color="primary" style={{marginBottom:6}} onClick={() => download(csv)}>Download</Button>
+            <Typography variant="h5" fontWeight={"bold"} marginTop={6} marginBottom={3} gutterBottom>
+                COMPETITION FINAL REPORT
+            </Typography>
 
-                <Typography variant="h5" fontWeight={"bold"} marginTop={6} marginBottom={3} gutterBottom>
-                    COMPETITION FINAL REPORT
-                </Typography>
-
-                <TableContainer component={Paper}>
-                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                        <TableHead>
-                        <TableRow>
-                            <TableCell>Submission Id</TableCell>
-                            <TableCell>Challenge Id</TableCell>
-                            <TableCell>Challenge Title</TableCell>
-                            <TableCell>User Id</TableCell>
-                            <TableCell>User Name</TableCell>
-                            <TableCell>Full Name</TableCell>
-                            <TableCell>Submitted Time</TableCell>
-                            <TableCell>Score</TableCell>
+            <TableContainer component={Paper}>
+                <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                    <TableHead>
+                    <TableRow>
+                        <TableCell>Submission Id</TableCell>
+                        <TableCell>Challenge Id</TableCell>
+                        <TableCell>Challenge Title</TableCell>
+                        <TableCell>User Id</TableCell>
+                        <TableCell>User Name</TableCell>
+                        <TableCell>Full Name</TableCell>
+                        <TableCell>Submitted Time</TableCell>
+                        <TableCell>Score</TableCell>
+                    </TableRow>
+                    </TableHead>
+                    <TableBody>
+                    {report
+                    .filter((row) => row[0] !== "submissionId")
+                    .map((row) => (
+                        <TableRow
+                        key={row[0]}
+                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                        >
+                        <TableCell component="th" scope="row">
+                            {row[0]}
+                        </TableCell>
+                        <TableCell>{row[1]}</TableCell>
+                        <TableCell>{row[2]}</TableCell>
+                        <TableCell>{row[3]}</TableCell>
+                        <TableCell>{row[4]}</TableCell>
+                        <TableCell>{row[5]}</TableCell>
+                        <TableCell>{row[6]}</TableCell>
+                        <TableCell>{row[7]}</TableCell>
                         </TableRow>
-                        </TableHead>
-                        <TableBody>
-                        {report
-                        .filter((row) => row[0] !== "submissionId")
-                        .map((row) => (
-                            <TableRow
-                            key={row[0]}
-                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                            >
-                            <TableCell component="th" scope="row">
-                                {row[0]}
-                            </TableCell>
-                            <TableCell>{row[1]}</TableCell>
-                            <TableCell>{row[2]}</TableCell>
-                            <TableCell>{row[3]}</TableCell>
-                            <TableCell>{row[4]}</TableCell>
-                            <TableCell>{row[5]}</TableCell>
-                            <TableCell>{row[6]}</TableCell>
-                            <TableCell>{row[7]}</TableCell>
-                            </TableRow>
-                        ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-            </>
-            }
+                    ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+        </>
+        }
 
         </Layout>
     );
 }
  
-export default PastContestControls;
+export default PastContestControlView;
