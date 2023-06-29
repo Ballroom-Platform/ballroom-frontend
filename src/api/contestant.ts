@@ -79,3 +79,17 @@ export const getUserRegisteredContest = (axiosPrivate: AxiosInstance, userId: st
     const headers = {};
     axiosPrivate({ url, method, headers }).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
 }
+
+export const registerContestants = (axiosPrivate: AxiosInstance, contestId: string, userId: string, successHandler: Function, failHandler: Function) => {
+    const url = `${BFF_URLS.contestService}/contests/${contestId}/register/${userId}`;
+    const method = "POST";
+    const headers = {};
+    axiosPrivate({ url, method, headers }).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
+}
+
+export const getContestantRegistrants = (axiosPrivate: AxiosInstance, contestId: string, successHandler: Function, failHandler: Function) => {
+    const url = `${BFF_URLS.contestService}/contests/${contestId}/registrants`;
+    const method = "GET";
+    const headers = {};
+    axiosPrivate({ url, method, headers }).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
+}

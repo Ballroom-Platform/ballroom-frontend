@@ -25,6 +25,9 @@ import ContestControlView from "../pages/ContestControlView";
 import ViewOwnedChallenges from "../pages/ViewOwnedChallenges";
 import ViewSharedChallenges from "../pages/ViewSharedChallenges";
 import UserProfile from "../pages/UserProfile";
+import ContestantUpcomingContest from "../pages/ContestantUpcomingContest";
+import ContestantOngoingContest from "../pages/ContestantOngoingContest";
+import ContestantPastContest from "../pages/ContestantPastContest";
 
 export const DefaultRouter : React.FC = () => {
 
@@ -44,6 +47,9 @@ export const DefaultRouter : React.FC = () => {
                         <Route path="/contests/:contestId/challenge/:challengeId/previousSubmissions"  Component={PreviousSubmissions}/>
                         <Route path="/contests" Component={Contests}/>
                         <Route path="/contests/:contestId" Component={Challenges}/>
+                    <Route path="/Contests/ongoing/:contestId" Component={ContestantOngoingContest} />
+                    <Route path="/Contests/past/:contestId" Component={ContestantPastContest} />
+                    <Route path="/Contests/upcoming/:contestId" Component={ContestantUpcomingContest} />
                     </Route>
                     <Route element={<RequireAuth allowedRoles={["admin"]} />}>
                         <Route path="/upcomingContests/:contestId" Component={ContestControls}/>

@@ -1,15 +1,16 @@
-import { Box, Button, CircularProgress, Grid, TextField } from "@mui/material"
+import { Box, CircularProgress, Grid, TextField } from "@mui/material"
 import { AxiosResponse } from "axios"
 import { useEffect, useState } from "react"
 import { useNavigate, useLocation } from "react-router"
 import { ContestCard } from "../components/molecules"
 import { Layout } from "../components/templates"
-import { AccessContest, IContest, IMinimalContest } from "../helpers/interfaces"
+import { AccessContest, IContest, IDateTimeObject, IMinimalContest } from "../helpers/interfaces"
 import { useApp } from "../hooks/useApp"
 import useAxiosPrivate from "../hooks/useAxiosPrivate"
 import { getUpcomingContests, getOngoingContests, getPastContests } from "../api/common"
 import { getDateString } from "../helpers/dateConverter"
-import { getOwnerContests, getSharedContests } from "../api/admin"
+import { getContest, getOwnerContests, getSharedContests } from "../api/admin"
+import { get } from "http"
 
 
 export const Contests : React.FC = () => {
@@ -38,9 +39,29 @@ export const Contests : React.FC = () => {
     const [pastcontestsshared, setpastcontestsshared] = useState<AccessContest[]>([]);
     const [contestIds, setcontestids] = useState<string[]>([]);
     const [query, setquery] = useState<string>("");
+    const [contest, setcontest] = useState<IMinimalContest>();
+
+    let compareTime = (startTime: IDateTimeObject, endTime: IDateTimeObject) => {
+
+        let currentTime = new Date();
+        let start = new Date(startTime.year, startTime.month - 1, startTime.day, startTime.hour, startTime.minute, startTime.second);
+        let end = new Date(endTime.year, endTime.month - 1, endTime.day, endTime.hour, endTime.minute, endTime.second);
+        if (currentTime < start) {
+            return "Upcoming";
+        } else if (currentTime > end) {
+            return "Past";
+        } else {
+            return "Ongoing";
+        }
+    }
+
 
     const clickHandler = (key: string) => {
-        navigate(location.pathname + `/${key}`);
+        getContest(axiosPrivate, key, (res: any) => {
+            compareTime(res.data.startTime, res.data.endTime) === "Ongoing" ? navigate(location.pathname + `/ongoing/${key}`) :
+                compareTime(res.data.startTime, res.data.endTime) === "Upcoming" ? navigate(location.pathname + `/upcoming/${key}`) :
+                    navigate(location.pathname + `/past/${key}`)
+        }, (err: any) => console.log(err));
     }
 
     const [contests, setContests] = useState<Array<IContest>>([] as Array<IContest>);
@@ -70,7 +91,6 @@ export const Contests : React.FC = () => {
         ongoingcontestsshared.map((item) => contestIds.push(item.contestId));
         pastcontests.map((item) => contestIds.push(item.contestId));
         pastcontestsshared.map((item) => contestIds.push(item.contestId));
-        console.log(contestIds);
         setLoading(false);
     }
 
