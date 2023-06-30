@@ -7,7 +7,6 @@ import { IMinimalContest, AccessContest } from "../helpers/interfaces";
 import { useEffect, useState } from "react";
 import { getOwnerContests, getSharedContests} from "../api/admin";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
-import { Link } from "react-router-dom";
 import { getDateString } from "../helpers/dateConverter";
 
 const UpcomingContests = () => {
