@@ -69,7 +69,7 @@ const ContestantPastContest = () => {
                 </>
             }
 
-            {selectedTab === 2 && <LeaderboardTable contestId={contestId!} />}
+            {selectedTab === 1 && <LeaderboardTable contestId={contestId!} />}
 
         </Layout>
     )

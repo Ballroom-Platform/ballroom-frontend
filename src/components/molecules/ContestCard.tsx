@@ -19,10 +19,9 @@ export const ContestCard : React.FC<IProps> = ({contestId, contestName, contestI
     contestImageURL = contestImageURL === null ? "image_placeholder.png" : contestImageURL;
     let state : TState;
     const utcTimestamp = Date.now();
-    const istTimestamp = new Date(utcTimestamp + (5.5 * 60 * 60 * 1000));
     const startTimeInMilliseconds = Date.parse(startTime);
     const endTimeInMilliseconds = Date.parse(endTime)
-    const currTimeInMilliseconds = istTimestamp.getTime();
+    const currTimeInMilliseconds = utcTimestamp;
     if(forcedState){
         state = forcedState;
     }else{
@@ -35,7 +34,6 @@ export const ContestCard : React.FC<IProps> = ({contestId, contestName, contestI
         }
     }
 
-    console.log(contestName, state, startTimeInMilliseconds, endTimeInMilliseconds, currTimeInMilliseconds);
     return (
         <ButtonBase sx={{width:'350px', height:'400px', margin:'20px'}} onClick={() => clickHandler(contestId,accessType)}>
             <Card sx={{width:'100%', height:'100%'}}>

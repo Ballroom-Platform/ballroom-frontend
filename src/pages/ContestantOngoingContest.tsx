@@ -24,7 +24,6 @@ import { Layout } from "../components/templates";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { useApp } from "../hooks/useApp";
 import CloseIcon from "@mui/icons-material/Close";
-import moment from "moment";
 import { Box, Button, IconButton, Typography } from "@mui/material";
 import { IMinimalContest, User, regitrants } from "../helpers/interfaces";
 import { getContest } from "../api/admin";
@@ -163,58 +162,6 @@ const ContestantOngoingContest = () => {
                         <div>
                             <MarkdownRenderer source={post} />
                         </div>
-
-                        <div style={{ marginTop: 20, marginBottom: 100 }}>
-                            <Typography
-                                variant="h5"
-                                gutterBottom
-                                fontWeight="bold"
-                                color="darkblue"
-                            >
-                                Registerted users
-                            </Typography>
-
-                            <TableContainer component={Paper}>
-                                <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell align="center">Name</TableCell>
-                                            <TableCell align="center">Registered time</TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {registrants.map(
-                                            (row: {
-                                                id: Key | null | undefined;
-                                                fullname: string |
-                                                number |
-                                                boolean |
-                                                ReactElement<any, string | JSXElementConstructor<any>> |
-                                                ReactFragment |
-                                                ReactPortal |
-                                                null |
-                                                undefined;
-                                                registeredTime: any;
-                                            }) => (
-                                                <TableRow
-                                                    key={row.id}
-                                                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                                                >
-                                                    <TableCell component="th" scope="row">
-                                                        {row.fullname}
-                                                    </TableCell>
-                                                    <TableCell align="center">
-                                                        {formatUTCDate(getDateString(row.registeredTime))}
-                                                    </TableCell>
-                                                </TableRow>
-                                            )
-                                        )}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-                        </div>
-
-
 
                         <Snackbar
                             open={showNotification}

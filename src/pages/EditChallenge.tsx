@@ -1,10 +1,11 @@
 import { Button, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, Snackbar, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router";
+import { useParams } from "react-router";
 import { editChallenge, getChallenge } from "../api/admin";
 import { Layout } from "../components/templates";
 import { IChallenge } from "../helpers/interfaces";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import { InputWrapper } from "../components";
 
 type IParams = {
     challengeId: string;
@@ -18,16 +19,31 @@ const EditChallenge = () => {
     const axiosPrivate = useAxiosPrivate();
     const [showSuccessNotification, setshowSuccessNotification] = useState(false);
     const [showFailNotification, setshowFailNotification] = useState(false);
-    const navigate = useNavigate();
+    const [testCaseFile, settestCaseFile] = useState({} as FileList);
+    const [readmeFile, setReadmeFile] = useState({} as FileList);
+    const [templateFile, settemplateFile] = useState({} as FileList);
 
     const handleSubmit = () => {
         const formData = new FormData();
         formData.append('title', challenge.title)
         formData.append('difficulty', challenge.difficulty)
-        editChallenge(axiosPrivate, formData, challengeId!, (res: any) => {setshowSuccessNotification(true);}, (err: any) => setshowFailNotification(true))
-        navigate(-1);
+        formData.append('testCase', testCaseFile[0], "test001 "+ "_" + Date.now());
+        formData.append('readme', readmeFile[0], "readme001 "+ "_" + Date.now());
+        formData.append('template', templateFile[0], "template001 "+ "_" + Date.now());
+        editChallenge(axiosPrivate, formData, challengeId!, (res: any) => {setshowSuccessNotification(true);}, (err: any) => setshowFailNotification(true));
     }
 
+    const onTestCaseFileChange = (e : any) => {
+        settestCaseFile(prev => ({...prev, ...e.target.files}));
+    }
+
+    const onReadmeFileChange = (e : any) => {
+        setReadmeFile(prev => ({...prev, ...e.target.files}));
+    }
+
+    const onTemplateFileChange = (e : any) => {
+        settemplateFile(prev => ({...prev, ...e.target.files}));
+    }
 
     useEffect(() => {
         getChallenge(axiosPrivate, challengeId!).then(res => {
@@ -66,7 +82,13 @@ const EditChallenge = () => {
                     </FormControl>
                     <br />
 
-                    <Button sx={{margin: '1rem'}}variant="contained" onClick={()=>handleSubmit()}>Submit</Button>
+                    <InputWrapper  label="Upload updated Readme .md File: "><input onChange={onReadmeFileChange} id="readmeInput" type="file" name="readmeFile" accept=".md"  style={{flex:6}}/></InputWrapper>
+
+                    <InputWrapper  label="Upload updated Test Case .zip File: "><input onChange={onTestCaseFileChange} id="testFileInput" type="file" name="submissionFile" accept=".zip"  style={{flex:6}}/></InputWrapper>
+
+                    <InputWrapper  label="Upload updated Template .zip File: "><input onChange={onTemplateFileChange} id="testFileInput" type="file" name="templateFile" accept=".zip"  style={{flex:6}}/></InputWrapper>
+
+                    <Button variant="contained" onClick={()=>handleSubmit()}>Update</Button>
 
                     <Snackbar open={showSuccessNotification} autoHideDuration={6000} onClose={() => setshowSuccessNotification(false)} message="Challenge Updated Successfully" />
 

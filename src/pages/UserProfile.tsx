@@ -1,21 +1,15 @@
 import { Button, Card, CardContent, Icon, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getOwnedChallangesByDifficulty, getOwnerContests, getSharedChallangesByDifficulty, getSharedContests, getUsersByRoles, changeRole} from "../api/admin";
+import { changeRole, getOwnedChallenges, getOwnerContests, getSharedChallenges, getSharedContests} from "../api/admin";
 import { getUser } from "../api/common";
 import { getUserRegisteredContest } from "../api/contestant";
 import { Layout } from "../components/templates";
-import { AccessContest, IMinimalContest, User, IDateTimeObject } from "../helpers/interfaces";
+import { AccessContest, IMinimalContest, User, IDateTimeObject, IChallenge } from "../helpers/interfaces";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { useApp } from "../hooks/useApp";
-import { formatUTCDate, getDateString } from "../helpers/dateConverter";
+import { compareTime, formatUTCDate, getDateString } from "../helpers/dateConverter";
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
-
-type Challenge = {
-    challengeId: string;
-    title: string;
-    difficulty: string;
-};
 
 const UserProfile: React.FC = () => {
 
@@ -23,34 +17,12 @@ const UserProfile: React.FC = () => {
     const axiosIns = useAxiosPrivate();
     const {appState} = useApp();
     const userId = appState.auth.userID;
-    const [upcomingcontests, setupcomingcontests] = useState<IMinimalContest[]>([]);
-    const [upcomingcontestsshared, setupcomingcontestsshared] = useState<AccessContest[]>([]);
-    const [ongoingcontests, setongoingcontests] = useState<IMinimalContest[]>([]);
-    const [ongoingcontestsshared, setongoingcontestsshared] = useState<AccessContest[]>([]);
-    const [pastcontests, setpastcontests] = useState<IMinimalContest[]>([]);
-    const [pastcontestsshared, setpastcontestsshared] = useState<AccessContest[]>([]);
-    const [easychallenges, easysetchallenges] = useState<Challenge[]>([]);
-    const [easysharedchallenges, easysetsharedchallenges] = useState<Challenge[]>([]);
-    const [mediumchallenges, mediumsetchallenges] = useState<Challenge[]>([]);
-    const [mediumsharedchallenges, mediumsetsharedchallenges] = useState<Challenge[]>([]);
-    const [hardchallenges, hardsetchallenges] = useState<Challenge[]>([]);
-    const [hardsharedchallenges, hardsetsharedchallenges] = useState<Challenge[]>([]);
     const navigate = useNavigate();
     const [registeredContests, setregisteredcontests] = useState<IMinimalContest[]>([]);
-
-    let compareTime = (startTime: IDateTimeObject,endTime: IDateTimeObject) => {
-        //compare time and return 'Ongoing' or 'Upcoming' or 'Past'
-        let currentTime = new Date();
-        let start = new Date(startTime.year,startTime.month-1,startTime.day,startTime.hour,startTime.minute,startTime.second);
-        let end = new Date(endTime.year,endTime.month-1,endTime.day,endTime.hour,endTime.minute,endTime.second);
-        if(currentTime < start){
-            return "Upcoming";
-        } else if(currentTime > end){
-            return "Past";
-        } else{
-            return "Ongoing";
-        }
-    }
+    const [contests, setcontests] = useState<IMinimalContest[]>([]);
+    const [contestsshared, setcontestsshared] = useState<AccessContest[]>([]);
+    const [ownedchallenges, setownedchallenges] = useState<IChallenge[]>([]);
+    const [sharedchallenges, setsharedchallenges] = useState<IChallenge[]>([]);
 
     const changeUserRole = (userId: string, newRole: string) => { 
         changeRole(axiosIns, userId, newRole,
@@ -62,72 +34,26 @@ const UserProfile: React.FC = () => {
         navigate("/loginHandler"); window.location.reload();   
     }
 
-    const goToContest = (contestId: string) => {
-        navigate("/contests/"+contestId);       
+    const goToContest = (contestId: string, Status: string) => {
+        if (Status === "Upcoming") { navigate("/contests/upcoming/"+contestId);} 
+        else if (Status === "Ongoing") { navigate("/contests/ongoing/"+contestId);}
+        else if (Status === "Past") { navigate("/contests/past/"+contestId);}
     }
-
+    
     useEffect(() => {
 
-        getUser(axiosIns,userId!,(res: any) => {setuser(res.data.data)},(err: any) => {console.log(err);});
+        getUser(axiosIns,userId!,(res: any) => {setuser(res.data.data);},(err: any) => {console.log(err);});
 
-        getOwnerContests(axiosIns, userId!, "future", (res: any) => setupcomingcontests((prevstate) => prevstate ? [...prevstate, ...res.data] : [{}]),(err: any) => console.log(err));
-        getSharedContests(axiosIns, userId!, "future",(res: any) => setupcomingcontestsshared((prevstate) => prevstate ? [...prevstate, ...res.data] : [{}]),(err: any) => console.log(err));
+        getOwnerContests(axiosIns, userId!, (res: any) => {setcontests((prevstate: any) => prevstate ? [...prevstate, ...res.data] : [{}]);}, () => console.log("ERROR OCCURRED"));
 
-        getOwnerContests(axiosIns, userId!, "present", (res: any) => setongoingcontests((prevstate) => prevstate ? [...prevstate, ...res.data] : [{}]),(err: any) => console.log(err));
-        getSharedContests(axiosIns, userId!, "present",(res: any) => setongoingcontestsshared((prevstate) => prevstate ? [...prevstate, ...res.data] : [{}]),(err: any) => console.log(err));
+        getSharedContests(axiosIns, userId!, (res: any) => {setcontestsshared((prevstate: any) => prevstate ? [...prevstate, ...res.data] : [{}]); }, () => console.log("ERROR OCCURRED"));
 
-        getOwnerContests(axiosIns, userId!, "past", (res: any) => setpastcontests((prevstate) => prevstate ? [...prevstate, ...res.data] : [{}]),(err: any) => console.log(err));
-        getSharedContests(axiosIns, userId!, "past",(res: any) => setpastcontestsshared((prevstate) => prevstate ? [...prevstate, ...res.data] : [{}]),(err: any) => console.log(err));
+        getOwnedChallenges(axiosIns, userId!, (res: any) => {setownedchallenges((prevstate: any) => prevstate ? [...prevstate, ...res.data] : [{}]); }, () => console.log("ERROR OCCURRED"));
 
-        getOwnedChallangesByDifficulty(axiosIns,
-            "EASY", userId!,
-            (res: any) => {
-            const listOfChallenges: any[] = res.data
-            easysetchallenges(listOfChallenges.map((challenge) : Challenge => ({challengeId: challenge.challengeId, title: challenge.title, difficulty: challenge.difficulty})))
-        },
-        () => {})
+        getSharedChallenges(axiosIns, userId!, (res: any) => {setsharedchallenges((prevstate: any) => prevstate ? [...prevstate, ...res.data] : [{}]); }, () => console.log("ERROR OCCURRED"));
 
-        getSharedChallangesByDifficulty(axiosIns,
-            "EASY", userId!,
-            (res: any) => {
-            const listOfChallenges: any[] = res.data
-            easysetsharedchallenges(listOfChallenges.map((challenge) : Challenge => ({challengeId: challenge.challengeId, title: challenge.title, difficulty: challenge.difficulty}))); console.log(res)
-        },
-        () => {})
+        getUserRegisteredContest(axiosIns, userId!, (res: any) => {setregisteredcontests((prevstate: any) => prevstate ? [...prevstate, ...res.data] : [{}]);}, () => console.log("ERROR OCCURRED"));
 
-        getOwnedChallangesByDifficulty(axiosIns,
-            "MEDIUM", userId!,
-            (res: any) => {
-            const listOfChallenges: any[] = res.data
-            mediumsetchallenges(listOfChallenges.map((challenge) : Challenge => ({challengeId: challenge.challengeId, title: challenge.title, difficulty: challenge.difficulty})))
-        },
-        () => {})
-
-        getSharedChallangesByDifficulty(axiosIns,
-            "MEDIUM", userId!,
-            (res: any) => {
-            const listOfChallenges: any[] = res.data
-            mediumsetsharedchallenges(listOfChallenges.map((challenge) : Challenge => ({challengeId: challenge.challengeId, title: challenge.title, difficulty: challenge.difficulty}))); console.log(res)
-        },
-        () => {})
-
-        getOwnedChallangesByDifficulty(axiosIns,
-            "HARD", userId!,
-            (res: any) => {
-            const listOfChallenges: any[] = res.data
-            hardsetchallenges(listOfChallenges.map((challenge) : Challenge => ({challengeId: challenge.challengeId, title: challenge.title, difficulty: challenge.difficulty})))
-        },
-        () => {})
-
-        getSharedChallangesByDifficulty(axiosIns,
-            "HARD", userId!,
-            (res: any) => {
-            const listOfChallenges: any[] = res.data
-            hardsetsharedchallenges(listOfChallenges.map((challenge) : Challenge => ({challengeId: challenge.challengeId, title: challenge.title, difficulty: challenge.difficulty}))); console.log(res)
-        },
-        () => {})
-
-        getUserRegisteredContest(axiosIns, userId!, (res: any) => {setregisteredcontests((prevstate: any) => prevstate ? [...prevstate, ...res.data] : [{}])}, () => console.log("ERROR OCCURRED"));
     }, []);
 
     return ( 
@@ -145,7 +71,7 @@ const UserProfile: React.FC = () => {
                     <Typography sx={{ mb: 1.5 }} color="black">
                         USER ROLE  :  {user?.role}
                     </Typography>
-                    {user?.role === "admin" ? <Button variant="contained" sx={{marginY: "2rem", backgroundColor: "darkblue"}} onClick={() =>changeUserRole(userId!,"contestant")}>Use as a Contestant</Button> : <Button variant="contained" sx={{marginY: "2rem", backgroundColor: "darkblue"}} onClick={() => changeUserRole(userId!,"admin")}> Use as an Admin </Button>} 
+                    {user?.role === "admin" ? <Button variant="outlined" sx={{marginY: "2rem", color: "darkblue"}} onClick={() =>changeUserRole(userId!,"contestant")}>Use as a Contestant</Button> : <Button variant="contained" sx={{marginY: "2rem", backgroundColor: "darkblue"}} onClick={() => changeUserRole(userId!,"admin")}> Use as an Admin </Button>} 
                 </div>
             </div>
             
@@ -166,15 +92,15 @@ const UserProfile: React.FC = () => {
                                 </Typography>
                             
                                 <Typography sx={{ mb: 1.5 ,marginX:5}} color="black">
-                                    <ArrowRightIcon/> Upcomig contests  :  {upcomingcontests.length}
+                                    <ArrowRightIcon/> Upcomig contests  :  {contests.map((contest: any) => compareTime(contest.startTime,contest.endTime) === "Upcoming" ? 1 : 0).reduce((a: any, b: any) => a + b, 0)}
                                 </Typography>
 
                                 <Typography sx={{ mb: 1.5 ,marginX:5}} color="black">
-                                    <ArrowRightIcon/>Ongoing contests  :  {ongoingcontests.length}
+                                    <ArrowRightIcon/>Ongoing contests  :  {contests.map((contest: any) => compareTime(contest.startTime,contest.endTime) === "Ongoing" ? 1 : 0).reduce((a: any, b: any) => a + b, 0)}
                                 </Typography>
 
                                 <Typography sx={{ mb: 1.5 ,marginX:5}} color="black">
-                                    <ArrowRightIcon/>Past contests  :  {pastcontests.length}
+                                    <ArrowRightIcon/>Past contests  :  {contests.map((contest: any) => compareTime(contest.startTime,contest.endTime) === "Past" ? 1 : 0).reduce((a: any, b: any) => a + b, 0)}
                                 </Typography>
 
                                 <Typography sx={{ marginY: 2, fontWeight: "bold"}} color="darkred">
@@ -182,15 +108,15 @@ const UserProfile: React.FC = () => {
                                 </Typography>
 
                                 <Typography sx={{ mb: 1.5 ,marginX:5}} color="black">
-                                    <ArrowRightIcon/>Upcomig contests  :  {upcomingcontestsshared.length}
+                                    <ArrowRightIcon/>Upcomig contests  :  {contestsshared.map((contest: any) => compareTime(contest.startTime,contest.endTime) === "Upcoming" ? 1 : 0).reduce((a: any, b: any) => a + b, 0)}
                                 </Typography>
 
                                 <Typography sx={{ mb: 1.5 ,marginX:5}} color="black">
-                                    <ArrowRightIcon/>Ongoing contests  :  {ongoingcontestsshared.length}
+                                    <ArrowRightIcon/>Ongoing contests  :  {contestsshared.map((contest: any) => compareTime(contest.startTime,contest.endTime) === "Ongoing" ? 1 : 0).reduce((a: any, b: any) => a + b, 0)}
                                 </Typography>
 
                                 <Typography sx={{ mb: 1.5 ,marginX:5}} color="black">
-                                    <ArrowRightIcon/>Past contests  :  {pastcontestsshared.length}
+                                    <ArrowRightIcon/>Past contests  :  {contestsshared.map((contest: any) => compareTime(contest.startTime,contest.endTime) === "Past" ? 1 : 0).reduce((a: any, b: any) => a + b, 0)}
                                 </Typography>
                             </div>
 
@@ -200,15 +126,15 @@ const UserProfile: React.FC = () => {
                                 </Typography>
 
                                 <Typography sx={{ mb: 1.5 ,marginX:5}} color="black">
-                                    <ArrowRightIcon/>Easy challenges  :  {easychallenges.length}
+                                    <ArrowRightIcon/>Easy challenges  :  {ownedchallenges.map((challenge: any) => challenge.difficulty === "EASY" ? 1 : 0).reduce((a: any, b: any) => a + b, 0)}
                                 </Typography>
 
                                 <Typography sx={{ mb: 1.5 ,marginX:5}} color="black">
-                                    <ArrowRightIcon/>Midum challenges  :  {mediumchallenges.length}
+                                    <ArrowRightIcon/>Midum challenges  :  {ownedchallenges.map((challenge: any) => challenge.difficulty === "MEDIUM" ? 1 : 0).reduce((a: any, b: any) => a + b, 0)}
                                 </Typography>
 
                                 <Typography sx={{ mb: 1.5 ,marginX:5}} color="black">
-                                    <ArrowRightIcon/>Hard challenges  :  {hardchallenges.length}
+                                    <ArrowRightIcon/>Hard challenges  :  {ownedchallenges.map((challenge: any) => challenge.difficulty === "HARD" ? 1 : 0).reduce((a: any, b: any) => a + b, 0)}
                                 </Typography>
 
                                 <Typography sx={{ marginY: 2, fontWeight: "bold"}} color="darkgreen">
@@ -216,15 +142,15 @@ const UserProfile: React.FC = () => {
                                 </Typography>
 
                                 <Typography sx={{ mb: 1.5 ,marginX:5}} color="black">
-                                    <ArrowRightIcon/>Easy challenges  :  {easysharedchallenges.length}
+                                    <ArrowRightIcon/>Easy challenges  :  {sharedchallenges.map((challenge: any) => challenge.difficulty === "EASY" ? 1 : 0).reduce((a: any, b: any) => a + b, 0)}
                                 </Typography>
 
                                 <Typography sx={{ mb: 1.5 ,marginX:5}} color="black">
-                                    <ArrowRightIcon/>Medium challenges  :  {mediumsharedchallenges.length}
+                                    <ArrowRightIcon/>Medium challenges  :  {sharedchallenges.map((challenge: any) => challenge.difficulty === "MEDIUM" ? 1 : 0).reduce((a: any, b: any) => a + b, 0)}
                                 </Typography>
 
                                 <Typography sx={{ mb: 1.5 ,marginX:5}} color="black">
-                                    <ArrowRightIcon/>Hard challenges  :  {hardsharedchallenges.length}
+                                    <ArrowRightIcon/>Hard challenges  :  {sharedchallenges.map((challenge: any) => challenge.difficulty === "HARD" ? 1 : 0).reduce((a: any, b: any) => a + b, 0)}
                                 </Typography>
                             </div>
                             </div>
@@ -267,7 +193,7 @@ const UserProfile: React.FC = () => {
                                 <TableCell align="center">{formatUTCDate(getDateString(row.startTime))}</TableCell>
                                 <TableCell align="center">{formatUTCDate(getDateString(row.endTime))}</TableCell>
                                 <TableCell align="center">{compareTime(row.startTime,row.endTime)}</TableCell>
-                                <TableCell align="center"><Button variant="outlined" onClick={() => goToContest(row.contestId)}>Go to contest</Button></TableCell>
+                                <TableCell align="center"><Button variant="outlined" onClick={() => goToContest(row.contestId,compareTime(row.startTime,row.endTime))}>Go to contest</Button></TableCell>
                                 </TableRow>
                             ))
                             }

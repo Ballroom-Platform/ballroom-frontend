@@ -32,7 +32,6 @@ import { useApp } from "../hooks/useApp";
 import CloseIcon from "@mui/icons-material/Close";
 import { formatUTCDate, getDateString } from "../helpers/dateConverter";
 import { getUser } from "../api/common";
-import moment from "moment";
 import { Box, Button, IconButton, Typography } from "@mui/material"
 import { blue, brown } from "@mui/material/colors";
 import Timer from "../components/timer";
@@ -139,7 +138,11 @@ const ContestantUpcomingContest = () => {
                             <Timer startTime={contest!.startTime} />
                         </div>
 
-                        {registrantIds.includes(userId!) ? null : (
+                        {registrantIds.includes(userId!) ? 
+                        <Typography align="center" variant="h5" sx={{ color: "darkred", marginTop: 5, marginBottom: 5 }} gutterBottom>
+                            You Already Registered ! Wait for the contest to start
+                        </Typography> 
+                        : (
                             <div style={{ textAlign: "center" }}>
                                 <Button variant="contained" sx={{ marginY: "1rem", backgroundColor: "darkgreen" }} onClick={handler}>
                                     Register Now!
@@ -150,58 +153,6 @@ const ContestantUpcomingContest = () => {
                         <div>
                             <MarkdownRenderer source={post} />
                         </div>
-
-                        <div style={{ marginTop: 20, marginBottom: 100 }}>
-                            <Typography
-                                variant="h5"
-                                gutterBottom
-                                fontWeight="bold"
-                                color="darkblue"
-                            >
-                                Registerted users
-                            </Typography>
-
-                            <TableContainer component={Paper}>
-                                <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell align="center">Name</TableCell>
-                                            <TableCell align="center">Registered time</TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {registrants.map(
-                                            (row: {
-                                                id: Key | null | undefined;
-                                                fullname: string |
-                                                number |
-                                                boolean |
-                                                ReactElement<any, string | JSXElementConstructor<any>> |
-                                                ReactFragment |
-                                                ReactPortal |
-                                                null |
-                                                undefined;
-                                                registeredTime: any;
-                                            }) => (
-                                                <TableRow
-                                                    key={row.id}
-                                                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                                                >
-                                                    <TableCell component="th" scope="row">
-                                                        {row.fullname}
-                                                    </TableCell>
-                                                    <TableCell align="center">
-                                                        {formatUTCDate(getDateString(row.registeredTime))}
-                                                    </TableCell>
-                                                </TableRow>
-                                            )
-                                        )}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-                        </div>
-
-
 
                         <Snackbar
                             open={showNotification}

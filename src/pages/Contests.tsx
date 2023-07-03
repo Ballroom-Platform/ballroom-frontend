@@ -7,10 +7,9 @@ import { Layout } from "../components/templates"
 import { AccessContest, IContest, IDateTimeObject, IMinimalContest } from "../helpers/interfaces"
 import { useApp } from "../hooks/useApp"
 import useAxiosPrivate from "../hooks/useAxiosPrivate"
-import { getUpcomingContests, getOngoingContests, getPastContests } from "../api/common"
-import { getDateString } from "../helpers/dateConverter"
+import { getContests } from "../api/common"
+import { compareTime, getDateString } from "../helpers/dateConverter"
 import { getContest, getOwnerContests, getSharedContests } from "../api/admin"
-import { get } from "http"
 
 
 export const Contests : React.FC = () => {
@@ -23,38 +22,12 @@ export const Contests : React.FC = () => {
     const [check1, setCheck1] = useState<boolean>(true);
     const [check2, setCheck2] = useState<boolean>(true);
     const [check3, setCheck3] = useState<boolean>(true);
-    const [check4, setCheck4] = useState<boolean>(true);
-    const [check5, setCheck5] = useState<boolean>(true);
-    const [check6, setCheck6] = useState<boolean>(true);
-    const [check7, setCheck7] = useState<boolean>(true);
-    const [check8, setCheck8] = useState<boolean>(true);
-    const [check9, setCheck9] = useState<boolean>(true);
     const axiosIns = useAxiosPrivate();
     const userId = appState.auth.userID;
-    const [upcomingcontests, setupcomingcontests] = useState<IMinimalContest[]>([]);
-    const [upcomingcontestsshared, setupcomingcontestsshared] = useState<AccessContest[]>([]);
-    const [ongoingcontests, setongoingcontests] = useState<IMinimalContest[]>([]);
-    const [ongoingcontestsshared, setongoingcontestsshared] = useState<AccessContest[]>([]);
-    const [pastcontests, setpastcontests] = useState<IMinimalContest[]>([]);
-    const [pastcontestsshared, setpastcontestsshared] = useState<AccessContest[]>([]);
+    const [ownedcontests, setownedcontests] = useState<IMinimalContest[]>([]);
+    const [sharedcontests, setsharedcontests] = useState<AccessContest[]>([]);
     const [contestIds, setcontestids] = useState<string[]>([]);
     const [query, setquery] = useState<string>("");
-    const [contest, setcontest] = useState<IMinimalContest>();
-
-    let compareTime = (startTime: IDateTimeObject, endTime: IDateTimeObject) => {
-
-        let currentTime = new Date();
-        let start = new Date(startTime.year, startTime.month - 1, startTime.day, startTime.hour, startTime.minute, startTime.second);
-        let end = new Date(endTime.year, endTime.month - 1, endTime.day, endTime.hour, endTime.minute, endTime.second);
-        if (currentTime < start) {
-            return "Upcoming";
-        } else if (currentTime > end) {
-            return "Past";
-        } else {
-            return "Ongoing";
-        }
-    }
-
 
     const clickHandler = (key: string) => {
         getContest(axiosPrivate, key, (res: any) => {
@@ -70,45 +43,26 @@ export const Contests : React.FC = () => {
         setContests(res.data);
         setCheck1(false);
     }
-    const getUpcomingContestsSuccess = (res: AxiosResponse) => {
-        setContests(prev => [...prev, ...res.data])
-        setCheck2(false);
-    }
-
-    const getPastContestsSuccess = (res: AxiosResponse) => {
-        setContests(prev => [...prev, ...res.data])
-        setCheck3(false);
-    }
 
     const getContestsFail = () => {
         console.log("Getting contests failed");
     }
 
     const setUserContest = () => {
-        upcomingcontests.map((item) => contestIds.push(item.contestId));
-        upcomingcontestsshared.map((item) => contestIds.push(item.contestId));
-        ongoingcontests.map((item) => contestIds.push(item.contestId));
-        ongoingcontestsshared.map((item) => contestIds.push(item.contestId));
-        pastcontests.map((item) => contestIds.push(item.contestId));
-        pastcontestsshared.map((item) => contestIds.push(item.contestId));
+        ownedcontests.map((item) => contestIds.push(item.contestId));
+        sharedcontests.map((item) => contestIds.push(item.contestId));
         setLoading(false);
     }
 
     useEffect(() => {
         if(loading){
-            if(check1) getOngoingContests(axiosPrivate,getContestsSuccess, getContestsFail);
-            else if(check2) getUpcomingContests(axiosPrivate, getUpcomingContestsSuccess, getContestsFail);
-            else if(check3) getPastContests(axiosPrivate, getPastContestsSuccess, getContestsFail);
-            else if(check4)getOwnerContests(axiosIns, userId!, "future", (res: any) => {setupcomingcontests((prevstate) => prevstate ? [...prevstate, ...res.data] : [{}]); setCheck4(false);},(err: any) => console.log(err));
-            else if(check5)getSharedContests(axiosIns, userId!, "future",(res: any) => {setupcomingcontestsshared((prevstate) => prevstate ? [...prevstate, ...res.data] : [{}]); setCheck5(false);},(err: any) => console.log(err));
-            else if(check6)getOwnerContests(axiosIns, userId!, "present", (res: any) => {setongoingcontests((prevstate) => prevstate ? [...prevstate, ...res.data] : [{}]); setCheck6(false);},(err: any) => console.log(err));
-            else if(check7)getSharedContests(axiosIns, userId!, "present",(res: any) => {setongoingcontestsshared((prevstate) => prevstate ? [...prevstate, ...res.data] : [{}]); setCheck7(false);},(err: any) => console.log(err));
-            else if(check8)getOwnerContests(axiosIns, userId!, "past", (res: any) => {setpastcontests((prevstate) => prevstate ? [...prevstate, ...res.data] : [{}]); setCheck8(false);},(err: any) => console.log(err));
-            else if(check9)getSharedContests(axiosIns, userId!, "past",(res: any) => {setpastcontestsshared((prevstate) => prevstate ? [...prevstate, ...res.data] : [{}]); setCheck9(false);},(err: any) => console.log(err));
+            if(check1) getContests(axiosPrivate,getContestsSuccess, getContestsFail);
+            else if(check2)getOwnerContests(axiosIns, userId!, (res: any) => {setownedcontests((prevstate) => prevstate ? [...prevstate, ...res.data] : [{}]); setCheck2(false);},(err: any) => console.log(err));
+            else if(check3)getSharedContests(axiosIns, userId!, (res: any) => {setsharedcontests((prevstate) => prevstate ? [...prevstate, ...res.data] : [{}]); setCheck3(false);},(err: any) => console.log(err));
 
             else setUserContest();
         }
-    }, [loading, check1, check2, check3, check4, check5, check6 , check7, check8, check9])
+    }, [loading, check1, check2, check3])
 
 
     return(

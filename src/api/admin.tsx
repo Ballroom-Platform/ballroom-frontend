@@ -46,7 +46,18 @@ export const createChallenge = (axiosPrivate : AxiosInstance, data: FormData, su
 export const editChallenge = (axiosPrivate : AxiosInstance, data: FormData, challengeId: string, successHandler : Function, failHandler : Function)=> {
     const url = `${BFF_URLS.challengeService}/challenges/${challengeId}`;
     const method = "PUT";
-    const headers = {};
+    const headers = {
+        "Content-Type": "multipart/form-data",
+    };
+    axiosPrivate({url, method, headers, data }).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
+}
+
+export const editContest = (axiosPrivate : AxiosInstance, data: FormData, contestId: string, successHandler : Function, failHandler : Function)=> {
+    const url = `${BFF_URLS.contestService}/contests/${contestId}`;
+    const method = "PUT";
+    const headers = {
+        "Content-Type": "multipart/form-data",
+    };
     axiosPrivate({url, method, headers, data }).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
 }
 
@@ -80,14 +91,14 @@ export const getSharedChallangesByDifficulty = (axiosPrivate: AxiosInstance, dif
     axiosPrivate({url, method, headers}).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
 }
 
-export const getOwnedChallangesIds = (axiosPrivate: AxiosInstance, userId : string, successHandler : Function, failHandler : Function)=> {
+export const getOwnedChallenges = (axiosPrivate: AxiosInstance, userId : string, successHandler : Function, failHandler : Function)=> {
     const url = `${BFF_URLS.challengeService}/challenges/owned/${userId}`
     const method = "GET";
     const headers = {};
     axiosPrivate({url, method, headers}).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
 }
 
-export const getSharedChallangesIds = (axiosPrivate: AxiosInstance, userId : string, successHandler : Function, failHandler : Function)=> {
+export const getSharedChallenges = (axiosPrivate: AxiosInstance, userId : string, successHandler : Function, failHandler : Function)=> {
     const url = `${BFF_URLS.challengeService}/challenges/shared/${userId}`
     const method = "GET";
     const headers = {};
@@ -116,23 +127,15 @@ export const removeChallengeFromContest = (axiosPrivate: AxiosInstance, contestI
     axiosPrivate({url, method, headers}).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
 }
 
-export const changeContestTime = (axiosPrivate: AxiosInstance, contestId: string, updatedContest: IUpdatedContest, successHandler : Function, failHandler : Function) => {
-    const url = `${BFF_URLS.contestService}/contests/${contestId}`
-    const method = "PUT";
-    const data = updatedContest;
-    const headers = {};
-    axiosPrivate({url, method, headers, data}).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
-}
-
-export const getOwnerContests = (axiosPrivate: AxiosInstance, userId: string, status: string, successHandler: Function, failHandler: Function) => {
-    const url = `${BFF_URLS.contestService}/contests/owned/${userId}?status=${status}`
+export const getOwnerContests = (axiosPrivate: AxiosInstance, userId: string, successHandler: Function, failHandler: Function) => {
+    const url = `${BFF_URLS.contestService}/contests/owned/${userId}`
     const method = "GET";
     const headers = {}
     axiosPrivate({ url, method, headers }).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
 }
 
-export const getSharedContests = (axiosPrivate: AxiosInstance, userId: string, status: string, successHandler: Function, failHandler: Function) => {
-    const url = `${BFF_URLS.contestService}/contests/shared/${userId}?status=${status}`
+export const getSharedContests = (axiosPrivate: AxiosInstance, userId: string, successHandler: Function, failHandler: Function) => {
+    const url = `${BFF_URLS.contestService}/contests/shared/${userId}`
     const method = "GET";
     const headers = {}
     axiosPrivate({ url, method, headers }).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
