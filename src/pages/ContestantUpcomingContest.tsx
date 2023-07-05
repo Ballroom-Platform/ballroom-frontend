@@ -140,7 +140,7 @@ const ContestantUpcomingContest = () => {
 
                         {registrantIds.includes(userId!) ? 
                         <Typography align="center" variant="h5" sx={{ color: "darkred", marginTop: 5, marginBottom: 5 }} gutterBottom>
-                            You Already Registered ! Wait for the contest to start
+                                You Already Registered ! Wait for the contest to start ...
                         </Typography> 
                         : (
                             <div style={{ textAlign: "center" }}>
@@ -149,6 +149,16 @@ const ContestantUpcomingContest = () => {
                                 </Button>
                             </div>
                         )}
+
+                        <div style={{ marginTop: 20, marginBottom: 20 }}>
+                            <Typography
+                                variant="h5"
+                                gutterBottom
+                                color="darkred"
+                            >
+                                Registered count : {registrants.length}
+                            </Typography>
+                        </div>
 
                         <div>
                             <MarkdownRenderer source={post} />
