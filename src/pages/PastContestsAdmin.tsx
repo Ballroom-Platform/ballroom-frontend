@@ -8,7 +8,7 @@ import { ContestCard } from "../components/molecules";
 import { Layout } from "../components/templates";
 import { IMinimalContest, AccessContest } from "../helpers/interfaces";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
-import { getDateString } from "../helpers/dateConverter";
+import { compareTime, getDateString } from "../helpers/dateConverter";
 
 const PastContestsAdmin = () => {
     const navigate = useNavigate();
@@ -35,8 +35,8 @@ const PastContestsAdmin = () => {
     };
 
     useEffect(() => {
-        getOwnerContests(axiosIns, userId!, "past", (res: any) => setcontests((prevstate) => prevstate ? [...prevstate, ...res.data] : [{}]),(err: any) => console.log(err));
-        getSharedContests(axiosIns, userId!, "past",(res: any) => setcontestsshared((prevstate) => prevstate ? [...prevstate, ...res.data] : [{}]),(err: any) => console.log(err));
+        getOwnerContests(axiosIns, userId! , (res: any) => { setcontests((prevstate) => prevstate ? [...prevstate, ...res.data] : [{}]); } ,(err: any) => console.log(err));
+        getSharedContests(axiosIns, userId! , (res: any) => { setcontestsshared((prevstate) => prevstate ? [...prevstate, ...res.data] : [{}]); } ,(err: any) => console.log(err));
     }, []);
     
     return ( 
@@ -56,6 +56,7 @@ const PastContestsAdmin = () => {
                 <Grid container sx={{marginY: '2rem'}}>
 
                 {contests
+                .filter((item) => compareTime(item.startTime,item.endTime) === "Past")
                 .filter((item) => item.title.toLowerCase().includes(query.toLowerCase()))
                 .map((contest) => 
                         <ContestCard contestImageURL={null} key={contest.contestId} contestId={contest.contestId} contestName={contest.title} startTime={getDateString(contest.startTime)} endTime={getDateString(contest.endTime)} owner="" accessType="" clickHandler={clickHandler}/>
@@ -71,12 +72,14 @@ const PastContestsAdmin = () => {
                     <Grid container sx={{marginY: '2rem'}}>
                 
                     {contestsshared
+                    .filter((item) => compareTime(item.startTime,item.endTime) === "Past")
                     .filter((item) => item.title.toLowerCase().includes(query.toLowerCase()))
                     .filter((contest) => contest.accessType === "EDIT").map((contest) => 
                             <ContestCard contestImageURL={null} key={contest.contestId} contestId={contest.contestId} contestName={contest.title} startTime={getDateString(contest.startTime)} endTime={getDateString(contest.endTime)} owner="" accessType={contest.accessType} clickHandler={clickHandler}/>        
                     )} 
                     
                     {contestsshared
+                    .filter((item) => compareTime(item.startTime,item.endTime) === "Past")
                     .filter((item) => item.title.toLowerCase().includes(query.toLowerCase()))
                     .filter((contest) => contest.accessType === "VIEW").map((contest) => 
                             <ContestCard contestImageURL={null} key={contest.contestId} contestId={contest.contestId} contestName={contest.title} startTime={getDateString(contest.startTime)} endTime={getDateString(contest.endTime)} owner="" accessType={contest.accessType} clickHandler={clickHandler}/>         

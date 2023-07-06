@@ -14,7 +14,7 @@ import { useApp } from "../hooks/useApp";
 import { IconButton, Snackbar } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import { useNavigate } from "react-router"
-import { getDateString } from "../helpers/dateConverter";
+import { getDateString, getUTCDateString } from "../helpers/dateConverter";
 import { InputWrapper } from "../components";
 
 const CreateContest = () => {
@@ -25,16 +25,15 @@ const CreateContest = () => {
     const [showNotification, setshowNotification] = useState(false);
     const {appState} = useApp()
     const utcTimestamp = Date.now();
-    const istTimestamp = new Date(utcTimestamp + (5.5 * 60 * 60 * 1000));;
     const navigate = useNavigate();
     const [readmeFile, setReadmeFile] = useState({} as FileList);
 
     const axiosIns = useAxiosPrivate();
 
     const navigateContest = () => {
-        const startTimeInMilliseconds = Date.parse(getDateString(startTime!));
-        const endTimeInMilliseconds = Date.parse(getDateString(endTime!))
-        const nowTimeInMilliseconds = istTimestamp.getTime();
+        const startTimeInMilliseconds = Date.parse(getUTCDateString(startTime!));
+        const endTimeInMilliseconds = Date.parse(getUTCDateString(endTime!))
+        const nowTimeInMilliseconds = utcTimestamp;
 
         if (startTimeInMilliseconds < endTimeInMilliseconds && endTimeInMilliseconds < nowTimeInMilliseconds) {
             navigate("/pastContests");
@@ -49,8 +48,8 @@ const CreateContest = () => {
         const formData = new FormData();
         formData.append('readme', readmeFile[0], "readmecontest001 "+ "_" + Date.now());
         formData.append('title', contestName);  
-        formData.append('startTime', getDateString(startTime!));
-        formData.append('endTime', getDateString(endTime!));
+        formData.append('startTime', getUTCDateString(startTime!));
+        formData.append('endTime', getUTCDateString(endTime!));
         formData.append('moderator', appState.auth.userID!);
         createContest(axiosIns, formData, (res: any) => {setshowNotification(true); clearAllInputs(); navigateContest();}, (err: any) => console.log("ERROR OCCURED")) 
     }

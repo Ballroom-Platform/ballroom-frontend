@@ -28,6 +28,7 @@ import UserProfile from "../pages/UserProfile";
 import ContestantUpcomingContest from "../pages/ContestantUpcomingContest";
 import ContestantOngoingContest from "../pages/ContestantOngoingContest";
 import ContestantPastContest from "../pages/ContestantPastContest";
+import EditContest from "../pages/EditContest";
 
 export const DefaultRouter : React.FC = () => {
 
@@ -47,9 +48,9 @@ export const DefaultRouter : React.FC = () => {
                         <Route path="/contests/:contestId/challenge/:challengeId/previousSubmissions"  Component={PreviousSubmissions}/>
                         <Route path="/contests" Component={Contests}/>
                         <Route path="/contests/:contestId" Component={Challenges}/>
-                    <Route path="/Contests/ongoing/:contestId" Component={ContestantOngoingContest} />
-                    <Route path="/Contests/past/:contestId" Component={ContestantPastContest} />
-                    <Route path="/Contests/upcoming/:contestId" Component={ContestantUpcomingContest} />
+                        <Route path="/contests/ongoing/:contestId" Component={ContestantOngoingContest} />
+                        <Route path="/contests/past/:contestId" Component={ContestantPastContest} />
+                        <Route path="/contests/upcoming/:contestId" Component={ContestantUpcomingContest} />
                     </Route>
                     <Route element={<RequireAuth allowedRoles={["admin"]} />}>
                         <Route path="/upcomingContests/:contestId" Component={ContestControls}/>
@@ -63,6 +64,7 @@ export const DefaultRouter : React.FC = () => {
                         <Route path="/users" Component={Users}/>
                         <Route path="/adminListChallenges" Component={ListOfChallengesAdmin}/>
                         <Route path="/editChallenge/:challengeId" Component={EditChallenge}/>
+                        <Route path="/editContest/:contestId" Component={EditContest}/>
                         <Route path="/pastContests" Component={PastContestsAdmin}/>
                         <Route path="/pastContests/:contestId" Component={PastContestControls}/>
                         <Route path="/pastContests/view/:contestId" Component={PastContestControlView}/>

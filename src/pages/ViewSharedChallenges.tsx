@@ -46,7 +46,7 @@ const ViewSharedChallenges : React.FC = () => {
             difficulty, userId!,
             (res: any) => {
             const listOfChallenges: any[] = res.data
-            setchallenges(listOfChallenges.map((challenge) : Challenge => ({challengeId: challenge.challengeId, title: challenge.title, difficulty: challenge.difficulty}))); console.log(res)
+            setchallenges(listOfChallenges.map((challenge) : Challenge => ({challengeId: challenge.challengeId, title: challenge.title, difficulty: challenge.difficulty})));
         },
         () => {})
     }, [value]);

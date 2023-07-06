@@ -1,10 +1,10 @@
 import { Button, IconButton, Paper, Snackbar, Tab, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tabs, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { Key, useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router";
-import { deleteContest, getChallenge, getContest, getOwnedChallangesIds, getReport, getSharedChallangesIds, giveAccessToContest } from "../api/admin";
+import { deleteContest, getChallenge, getContest, getOwnedChallenges, getReport, getSharedChallenges, giveAccessToContest } from "../api/admin";
 import { getChallengesInContest } from "../api/common";
 import { Layout } from "../components/templates";
-import { IMinimalContest } from "../helpers/interfaces";
+import { IMinimalContest, regitrants } from "../helpers/interfaces";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -14,10 +14,11 @@ import LeaderboardTable from "../components/LeaderboardTable";
 import ShareContest from "./ShareContest";
 import CloseIcon from '@mui/icons-material/Close';
 import { useApp } from "../hooks/useApp";
-import { getReadmeContest } from "../api/contestant";
+import { getContestantRegistrants, getReadmeContest } from "../api/contestant";
 import { axiosPrivate } from "../api/axios";
 import { AxiosResponse } from "axios";
 import MarkdownRenderer from "../helpers/MarkdownRenderer";
+import { formatUTCDate, getDateString } from "../helpers/dateConverter";
 
 type ContestId = {
     contestId: string;
@@ -52,6 +53,7 @@ const PastContestControls = () => {
     const [post, setPost] = useState('');
     const [report, setReport] = useState<string[][]>([]);
     let csv = '';
+    const [registrants, setregistrants] = useState<regitrants[]>([]);
 
     const handleRecievedChallengeArray = (res: any) => {
         console.log(res.data)
@@ -121,11 +123,12 @@ const PastContestControls = () => {
     useEffect(() => {
         getChallengesInContest( axiosIns, contestId!, handleRecievedChallengeArray, (err: any) => console.log(err))
         getContest(axiosIns, contestId!,(res: any) => {setcontest(res.data)}, () => console.log("ËRROR OCCURRED"));
-        getSharedChallangesIds(axiosIns, userId!,(res: any) => {setsharedchallengeids(res.data.map((challenge: any) => challenge.challengeId))},() => {});
-        getOwnedChallangesIds(axiosIns, userId!,(res: any) => {setownedchallengeids(res.data.map((challenge: any) => challenge.challengeId))},() => {})
+        getSharedChallenges(axiosIns, userId!,(res: any) => {setsharedchallengeids(res.data.map((challenge: any) => challenge.challengeId))},() => {});
+        getOwnedChallenges(axiosIns, userId!,(res: any) => {setownedchallengeids(res.data.map((challenge: any) => challenge.challengeId))},() => {});
         getReadmeContest(axiosPrivate, contestId!, getReadmeSucess, getReadmeFail);
         getReport(axiosPrivate, contestId!, (res: any) => setReport(res.data), () => console.log("Error occured"));
         csv = convertToCSV(report);
+        getContestantRegistrants(axiosIns,contestId!, (res: any) => {setregistrants((prevstate: any) =>prevstate ? [...prevstate, ...res.data] : [{}]);},() => console.log("ERROR OCCURRED."));
     },[]);
     
     return ( 
@@ -144,6 +147,7 @@ const PastContestControls = () => {
                 <Tab label="LEADERBOARD" />
                 <Tab label="SHARE" />
                 <Tab label="REPORT" />
+                <Tab label="REGISTRANTS" />
             </Tabs>
 
             {selectedTab === 0 && 
@@ -211,7 +215,7 @@ const PastContestControls = () => {
                             <TableCell>User Id</TableCell>
                             <TableCell>User Name</TableCell>
                             <TableCell>Full Name</TableCell>
-                            <TableCell>Submitted Time</TableCell>
+                            <TableCell>Submitted Time (UTC)</TableCell>
                             <TableCell>Score</TableCell>
                         </TableRow>
                         </TableHead>
@@ -239,6 +243,41 @@ const PastContestControls = () => {
                     </Table>
                 </TableContainer>
             </>
+            }
+            {selectedTab === 5 &&
+                <div style={{ marginTop: 5, marginBottom: 100 }}>
+                <TableContainer component={Paper}>
+                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                        <TableHead>
+                            <TableRow>
+                            <TableCell align="center">Name</TableCell>
+                            <TableCell align="center">Registered time</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {registrants.map(
+                            (row: {
+                                id: Key ;
+                                fullname: string ;
+                                registeredTime: any;
+                            }) => (
+                                <TableRow
+                                    key={row.id}
+                                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                                >
+                                    <TableCell component="th" scope="row">
+                                        {row.fullname}
+                                    </TableCell>
+                                    <TableCell align="center">
+                                        {formatUTCDate(getDateString(row.registeredTime))}
+                                    </TableCell>
+                                </TableRow>
+                            )
+                        )}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </div>
             }
 
         </Layout>

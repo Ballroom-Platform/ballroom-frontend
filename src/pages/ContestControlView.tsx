@@ -5,19 +5,20 @@ import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
 import Paper from "@mui/material/Paper";
 import { useLocation, useParams } from "react-router"
-import { useEffect, useState } from "react";
-import { getChallenge, getContest, getOwnedChallangesIds, getSharedChallangesIds } from "../api/admin";
+import { Key, useEffect, useState } from "react";
+import { getChallenge, getContest, getOwnedChallenges, getSharedChallenges } from "../api/admin";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { Layout } from "../components/templates";
 import { Link } from "react-router-dom";
 import { getChallengesInContest } from "../api/common";
-import { IMinimalContest } from "../helpers/interfaces";
-import { Tab, Tabs } from "@mui/material";
+import { IMinimalContest, regitrants } from "../helpers/interfaces";
+import { Tab, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tabs } from "@mui/material";
 import { useApp } from "../hooks/useApp";
 import MarkdownRenderer from "../helpers/MarkdownRenderer";
-import { getReadmeContest } from "../api/contestant";
+import { getContestantRegistrants, getReadmeContest } from "../api/contestant";
 import { axiosPrivate } from "../api/axios";
 import { AxiosResponse } from "axios";
+import { formatUTCDate, getDateString } from "../helpers/dateConverter";
 
 type ContestId = {
     contestId: string;
@@ -42,6 +43,7 @@ const ContestControlView: React.FC = () => {
     const [ownedchallengeIds, setownedchallengeids] = useState<string[]>([]);
     const [sharedchallengeIds, setsharedchallengeids] = useState<string[]>([]);
     const [post, setPost] = useState('');
+    const [registrants, setregistrants] = useState<regitrants[]>([]);
 
     const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
         setselectedTab(newValue);
@@ -78,9 +80,10 @@ const ContestControlView: React.FC = () => {
         if(selectedTab === 0){
             getChallengesInContest( axiosIns, contestId!, handleRecievedChallengeArray, (err: any) => console.log(err))
             getContest(axiosIns, contestId!,(res: any) => {setcontest(res.data)}, () => console.log("ËRROR OCCURRED"));
-            getSharedChallangesIds(axiosIns, userId!,(res: any) => {setsharedchallengeids(res.data.map((challenge: any) => challenge.challengeId))},() => {});
-            getOwnedChallangesIds(axiosIns, userId!,(res: any) => {setownedchallengeids(res.data.map((challenge: any) => challenge.challengeId))},() => {})
-            getReadmeContest(axiosPrivate, contestId!, getReadmeSucess, getReadmeFail);     
+            getSharedChallenges(axiosIns, userId!,(res: any) => {setsharedchallengeids(res.data.map((challenge: any) => challenge.challengeId))},() => {});
+            getOwnedChallenges(axiosIns, userId!,(res: any) => {setownedchallengeids(res.data.map((challenge: any) => challenge.challengeId))},() => {})
+            getReadmeContest(axiosPrivate, contestId!, getReadmeSucess, getReadmeFail); 
+            getContestantRegistrants(axiosIns,contestId!, (res: any) => {setregistrants((prevstate: any) =>prevstate ? [...prevstate, ...res.data] : [{}]);},() => console.log("ERROR OCCURRED."));    
         }
     },[selectedTab]);
 
@@ -94,6 +97,7 @@ const ContestControlView: React.FC = () => {
             <Tabs value={selectedTab} onChange={handleChangeTab} centered>
                 <Tab label="ABOUT" />
                 <Tab label="CHALLENGES" />
+                <Tab label="REGISTRANTS" />
             </Tabs>
             
             {selectedTab === 0 && 
@@ -131,9 +135,41 @@ const ContestControlView: React.FC = () => {
                 </>
             }
             
-            <Paper sx={{marginY: '2rem'}}>
- 
-            </Paper>
+            {selectedTab === 2 &&
+                <div style={{ marginTop: 5, marginBottom: 100 }}>
+                <TableContainer component={Paper}>
+                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                        <TableHead>
+                            <TableRow>
+                            <TableCell align="center">Name</TableCell>
+                            <TableCell align="center">Registered time</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {registrants.map(
+                            (row: {
+                                id: Key ;
+                                fullname: string ;
+                                registeredTime: any;
+                            }) => (
+                                <TableRow
+                                    key={row.id}
+                                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                                >
+                                    <TableCell component="th" scope="row">
+                                        {row.fullname}
+                                    </TableCell>
+                                    <TableCell align="center">
+                                        {formatUTCDate(getDateString(row.registeredTime))}
+                                    </TableCell>
+                                </TableRow>
+                            )
+                        )}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </div>
+            }
             
         </Layout>
     );

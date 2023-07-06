@@ -1,15 +1,21 @@
 import { Button, Card, CardActions, CardContent, Tab, Tabs, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { getChallangesByDifficulty,  getOwnedChallangesIds,  getSharedChallangesIds } from "../api/admin";
+import { getChallangesByDifficulty,  getOwnedChallenges,  getSharedChallenges } from "../api/admin";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { Link, useLocation } from "react-router-dom";
-import { AxiosInstance } from "axios";
+import { AxiosInstance, AxiosResponse } from "axios";
 import { useApp } from "../hooks/useApp";
+import { getChallengesInContest } from "../api/common";
+import { useParams } from "react-router";
 
 type Challenge = {
     challengeId: string;
     title: string;
     difficulty: string;
+};
+
+type ContestId = {
+    contestId: string;
 };
 
 type IProps = {
@@ -47,6 +53,8 @@ const ChallengesByDifficulty = ({adminEdit, addChallengeToContest} : IProps) => 
     const axiosIns = useAxiosPrivate();
     const {appState} = useApp();
     const userId = appState.auth.userID;
+    const {contestId} = useParams<ContestId>();
+    const [challengeIds, setchallengeids] = useState<string[]>([]);
 
     useEffect(() => {
         let difficulty : string;
@@ -71,9 +79,16 @@ const ChallengesByDifficulty = ({adminEdit, addChallengeToContest} : IProps) => 
             setchallenges(listOfChallenges.map((challenge) : Challenge => ({challengeId: challenge.challengeId, title: challenge.title, difficulty: challenge.difficulty})))
         },
         () => {});
-        getSharedChallangesIds(axiosIns, userId!,(res: any) => {setsharedchallengeids(res.data.map((challenge: any) => challenge.challengeId))},() => {});
-        getOwnedChallangesIds(axiosIns, userId!,(res: any) => {setownedchallengeids(res.data.map((challenge: any) => challenge.challengeId))},() => {})
-    }, [value]);
+        getSharedChallenges(axiosIns, userId!,(res: any) => {setsharedchallengeids(res.data.map((challenge: any) => challenge.challengeId))},() => {});
+        getOwnedChallenges(axiosIns, userId!,(res: any) => {setownedchallengeids(res.data.map((challenge: any) => challenge.challengeId))},() => {});
+        if (contestId) {
+            getChallengesInContest(axiosIns, contestId, (res: any) => {
+                setchallengeids([...res.data]);
+            }
+            , () => {})
+        }
+
+    }, [value,addChallengeToContest]);
 
     return ( 
         <>
@@ -104,7 +119,8 @@ const ChallengesByDifficulty = ({adminEdit, addChallengeToContest} : IProps) => 
                     <CardActions>
                         {(!ownedchallengeIds.includes(challenge.challengeId) && !sharedchallengeIds.includes(challenge.challengeId)) && <Typography variant="body2" color="darkorange" sx={{marginX: 2}}>You Don't Have Access</Typography>}
                         {(sharedchallengeIds.includes(challenge.challengeId) || ownedchallengeIds.includes(challenge.challengeId)) && <Link to={`${location.pathname}/${challenge.challengeId}`}><Button size="small">View</Button></Link>}
-                        {(sharedchallengeIds.includes(challenge.challengeId) || ownedchallengeIds.includes(challenge.challengeId)) && addChallengeToContest && <Button size="small" onClick={() => addChallengeToContest(challenge.challengeId)}>Add to Contest</Button>}
+                        {(sharedchallengeIds.includes(challenge.challengeId) || ownedchallengeIds.includes(challenge.challengeId)) && addChallengeToContest && !challengeIds.includes(challenge.challengeId) && <Button size="small" onClick={() => addChallengeToContest(challenge.challengeId)}>Add to Contest</Button>}
+                        {(sharedchallengeIds.includes(challenge.challengeId) || ownedchallengeIds.includes(challenge.challengeId)) && challengeIds.includes(challenge.challengeId) && addChallengeToContest && <Typography variant="body2" color="darkblue" sx={{marginX: 2}} >Already Added to the contest</Typography>}
                     </CardActions>
 
                 </Card>

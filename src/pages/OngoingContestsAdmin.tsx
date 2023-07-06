@@ -1,14 +1,13 @@
 import { Grid, Typography, Tab, Tabs, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router";
+import { useNavigate } from "react-router";
 import { useApp } from "../hooks/useApp";
-import { Link } from "react-router-dom";
 import { getOwnerContests,  getSharedContests } from "../api/admin";
 import { ContestCard } from "../components/molecules";
 import { Layout } from "../components/templates";
 import { IMinimalContest, AccessContest } from "../helpers/interfaces";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
-import { getDateString } from "../helpers/dateConverter";
+import { compareTime, getDateString } from "../helpers/dateConverter";
 
 const OngoingContestsAdmin = () => {
     const navigate = useNavigate();
@@ -20,6 +19,7 @@ const OngoingContestsAdmin = () => {
     const axiosIns = useAxiosPrivate();
     const [query, setquery] = useState<string>("");
 
+
     const clickHandler = (key: string, accessType: string) => {
         if(accessType === "VIEW")
         {
@@ -29,14 +29,14 @@ const OngoingContestsAdmin = () => {
         }  
     }
 
+
     const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
         setselectedTab(newValue);
     };
 
     useEffect(() => {
-        
-        getOwnerContests(axiosIns, userId!, "present", (res: any) => setcontests((prevstate) => prevstate ? [...prevstate, ...res.data] : [{}]),(err: any) => console.log(err));
-        getSharedContests(axiosIns, userId!, "present", (res: any) => setcontestsshared((prevstate) => prevstate ? [...prevstate, ...res.data] : [{}]),(err: any) => console.log(err))
+            getOwnerContests(axiosIns, userId! , (res: any) => { setcontests((prevstate) => prevstate ? [...prevstate, ...res.data] : [{}]); } ,(err: any) => console.log(err));
+            getSharedContests(axiosIns, userId! , (res: any) => { setcontestsshared((prevstate) => prevstate ? [...prevstate, ...res.data] : [{}]); } ,(err: any) => console.log(err));
     }, []);
     
     return ( 
@@ -56,6 +56,7 @@ const OngoingContestsAdmin = () => {
                 <Grid container sx={{marginY: '2rem'}}>
 
                 {contests
+                .filter((item) => compareTime(item.startTime,item.endTime) === "Ongoing")
                 .filter((item) => item.title.toLowerCase().includes(query.toLowerCase()))
                 .map((contest) => 
                         <ContestCard contestImageURL={null} key={contest.contestId} contestId={contest.contestId} contestName={contest.title} startTime={getDateString(contest.startTime)} endTime={getDateString(contest.endTime)} owner="" accessType="" clickHandler={clickHandler}/>
@@ -72,12 +73,14 @@ const OngoingContestsAdmin = () => {
                 <Grid container sx={{marginY: '2rem'}}>
             
                 {contestsshared
+                .filter((item) => compareTime(item.startTime,item.endTime) === "Ongoing")
                 .filter((item) => item.title.toLowerCase().includes(query.toLowerCase()))
                 .filter((contest) => contest.accessType === "EDIT").map((contest) => 
                         <ContestCard contestImageURL={null} key={contest.contestId} contestId={contest.contestId} contestName={contest.title} startTime={getDateString(contest.startTime)} endTime={getDateString(contest.endTime)} owner="" accessType={contest.accessType} clickHandler={clickHandler}/>        
                 )} 
                 
                 {contestsshared
+                .filter((item) => compareTime(item.startTime,item.endTime) === "Ongoing")
                 .filter((item) => item.title.toLowerCase().includes(query.toLowerCase()))
                 .filter((contest) => contest.accessType === "VIEW").map((contest) => 
                         <ContestCard contestImageURL={null} key={contest.contestId} contestId={contest.contestId} contestName={contest.title} startTime={getDateString(contest.startTime)} endTime={getDateString(contest.endTime)} owner="" accessType={contest.accessType} clickHandler={clickHandler}/>        

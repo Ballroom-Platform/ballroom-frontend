@@ -15,6 +15,7 @@ import { useParams } from "react-router";
 import { useApp } from "../hooks/useApp";
 import { AxiosError, AxiosResponse } from "axios";
 import { Box, CircularProgress } from "@mui/material";
+import { formatUTCDate, getDateString } from "../helpers/dateConverter";
 
 
 interface IRow {
@@ -125,7 +126,7 @@ const PreviousSubmissions = () => {
                             <TableCell component="th" scope="row" >
                               {row.submissionId}
                             </TableCell>
-                            <TableCell align="center">{ new Date(row.submittedTime.year, row.submittedTime.month - 1, row.submittedTime.day, row.submittedTime.hour, row.submittedTime.minute, row.submittedTime.second).toLocaleString()}</TableCell>
+                            <TableCell align="center">{formatUTCDate(getDateString(row.submittedTime))}</TableCell>
                             <TableCell align="center">{(row.score) ? row.score : "pending"}</TableCell>
                             <TableCell align="center">
                                 <Button variant="outlined" onClick={() => downloadFunction(row.submissionId)} startIcon={<DownloadIcon />}>

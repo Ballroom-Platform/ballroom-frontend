@@ -5,24 +5,25 @@ import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
 import Paper from "@mui/material/Paper";
 import { useLocation, useNavigate, useParams } from "react-router"
-import { useEffect, useState } from "react";
-import { addChallenge, changeContestTime, getChallenge, getContest, removeChallengeFromContest, giveAccessToContest, deleteContest, getSharedChallangesIds, getOwnedChallangesIds } from "../api/admin";
+import { Key, useEffect, useState } from "react";
+import { addChallenge, getChallenge, getContest, removeChallengeFromContest, giveAccessToContest, deleteContest, getSharedChallenges, getOwnedChallenges, editContest } from "../api/admin";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { Layout } from "../components/templates";
 import { Link } from "react-router-dom";
 import CreateContest from "./CreateContest";
 import { getChallengesInContest } from "../api/common";
 import { AxiosInstance, AxiosResponse } from "axios";
-import { IMinimalContest } from "../helpers/interfaces";
-import { Snackbar, Tab, Tabs } from "@mui/material";
+import { IMinimalContest, regitrants } from "../helpers/interfaces";
+import { Snackbar, Tab, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tabs } from "@mui/material";
 import ChallengesByDifficulty from "./ChallengesByDifficulty";
 import CloseIcon from '@mui/icons-material/Close';
 import IconButton from '@mui/material/IconButton';
 import ShareContest from "./ShareContest";
 import { useApp } from "../hooks/useApp";
-import { getReadmeContest } from "../api/contestant";
+import { getContestantRegistrants, getReadmeContest } from "../api/contestant";
 import { axiosPrivate } from "../api/axios";
 import MarkdownRenderer from "../helpers/MarkdownRenderer";
+import { formatUTCDate, getDateString, getUTCDateString } from "../helpers/dateConverter";
 
 type ContestId = {
     contestId: string;
@@ -55,6 +56,7 @@ const ContestControls: React.FC = () => {
     const [ownedchallengeIds, setownedchallengeids] = useState<string[]>([]);
     const [sharedchallengeIds, setsharedchallengeids] = useState<string[]>([]);
     const [post, setPost] = useState('');
+    const [registrants, setregistrants] = useState<regitrants[]>([]);
 
     const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
         setselectedTab(newValue);
@@ -103,7 +105,9 @@ const ContestControls: React.FC = () => {
         const date = new Date();
         const newStartTime = {second: date.getSeconds(), minute: date.getMinutes(), hour: date.getHours(), day: date.getDate(), month: date.getMonth() + 1, year: date.getFullYear()}
         if(contest) {
-            changeContestTime(axiosIns, contestId!, {title: contest.title, startTime: newStartTime, endTime: contest.endTime, moderator: contest.moderator}, (res: any) => console.log(res.data), (err: any) => console.log(err));
+            const formData = new FormData();;
+            formData.append('startTime', getUTCDateString(newStartTime));
+            editContest(axiosIns, formData, contestId!, (res: any) => console.log(res.data), (err: any) => console.log(err));
         }
         navigate("/ongoingContests");
         window.location.reload();
@@ -125,13 +129,18 @@ const ContestControls: React.FC = () => {
         window.location.reload();
     }
 
+    const onEditClick = () => {
+        navigate(`/editContest/${contestId}`);
+    }
+
     useEffect(() => {
         if(selectedTab === 0){
             getChallengesInContest( axiosIns, contestId!, handleRecievedChallengeArray, (err: any) => console.log(err))
             getContest(axiosIns, contestId!,(res: any) => {setcontest(res.data)}, () => console.log("ËRROR OCCURRED"));
-            getSharedChallangesIds(axiosIns, userId!,(res: any) => {setsharedchallengeids(res.data.map((challenge: any) => challenge.challengeId))},() => {});
-            getOwnedChallangesIds(axiosIns, userId!,(res: any) => {setownedchallengeids(res.data.map((challenge: any) => challenge.challengeId))},() => {})
+            getSharedChallenges(axiosIns, userId!,(res: any) => {setsharedchallengeids(res.data.map((challenge: any) => challenge.challengeId))},() => {});
+            getOwnedChallenges(axiosIns, userId!,(res: any) => {setownedchallengeids(res.data.map((challenge: any) => challenge.challengeId))},() => {})
             getReadmeContest(axiosPrivate, contestId!, getReadmeSucess, getReadmeFail);    
+            getContestantRegistrants(axiosIns,contestId!, (res: any) => {setregistrants((prevstate: any) =>prevstate ? [...prevstate, ...res.data] : [{}]);},() => console.log("ERROR OCCURRED."));
         }
     },[selectedTab]);
 
@@ -144,9 +153,12 @@ const ContestControls: React.FC = () => {
 
             <div style={{display:"flex" ,width:"100%",justifyContent:"space-between"}}>
                 {contest && <Button variant="outlined" sx={{color: "darkblue"}}onClick={onForceStartClick}>Force Start</Button>}
-                {contest && contest.moderator === userId ?
-                    <Button variant="outlined" sx={{marginX: "2rem", color: "darkred"}}onClick={deleteClick}>Delete Contest</Button>: null
-                }
+                <div>
+                    {contest && <Button variant="outlined" sx={{color: "darkgreen"}}onClick={onEditClick}>Edit Contest</Button>}
+                    {contest && contest.moderator === userId ?
+                        <Button variant="outlined" sx={{marginX: "2rem", color: "darkred"}}onClick={deleteClick}>Delete Contest</Button>: null
+                    }
+                </div>
             </div>
             
             <Tabs value={selectedTab} onChange={handleChangeTab} centered>
@@ -154,6 +166,7 @@ const ContestControls: React.FC = () => {
                 <Tab label="CHALLENGES" />
                 <Tab label="ADD CHALLENGE" />
                 <Tab label="SHARE" />
+                <Tab label="REGISTRANTS" />
             </Tabs>
 
             {selectedTab === 0 && 
@@ -212,9 +225,41 @@ const ContestControls: React.FC = () => {
             </>
             }
             
-            <Paper sx={{marginY: '2rem'}}>
- 
-            </Paper>
+            {selectedTab === 4 &&
+                <div style={{ marginTop: 5, marginBottom: 100 }}>
+                <TableContainer component={Paper}>
+                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                        <TableHead>
+                            <TableRow>
+                            <TableCell align="center">Name</TableCell>
+                            <TableCell align="center">Registered time</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {registrants.map(
+                            (row: {
+                                id: Key ;
+                                fullname: string ;
+                                registeredTime: any;
+                            }) => (
+                                <TableRow
+                                    key={row.id}
+                                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                                >
+                                    <TableCell component="th" scope="row">
+                                        {row.fullname}
+                                    </TableCell>
+                                    <TableCell align="center">
+                                        {formatUTCDate(getDateString(row.registeredTime))}
+                                    </TableCell>
+                                </TableRow>
+                            )
+                        )}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </div>
+            }
             
         </Layout>
     );

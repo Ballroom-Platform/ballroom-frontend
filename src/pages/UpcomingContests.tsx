@@ -1,25 +1,26 @@
 import { Grid, Typography, Tab, Tabs, TextField } from "@mui/material";
 import { ContestCard } from "../components/molecules";
 import { useApp } from "../hooks/useApp";
-import { useNavigate, useLocation } from "react-router"
+import { useNavigate } from "react-router"
 import { Layout } from "../components/templates";
 import { IMinimalContest, AccessContest } from "../helpers/interfaces";
 import { useEffect, useState } from "react";
 import { getOwnerContests, getSharedContests} from "../api/admin";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
-import { getDateString } from "../helpers/dateConverter";
+import { compareTime, getDateString } from "../helpers/dateConverter";
 
 const UpcomingContests = () => {
 
     const {appState, setAppState} = useApp();
     const navigate = useNavigate();
-    const location = useLocation()
     const userId = appState.auth.userID;
     const [selectedTab, setselectedTab] = useState(0);
     const [contests, setcontests] = useState<IMinimalContest[]>([]);
     const [contestsshared, setcontestsshared] = useState<AccessContest[]>([]);
+
     const axiosIns = useAxiosPrivate();
     const [query, setquery] = useState<string>("");
+	    
 
     const clickHandler = (key: string, accessType: string) => {
         if(accessType === "VIEW")
@@ -34,8 +35,8 @@ const UpcomingContests = () => {
     };
 
     useEffect(() => {
-        getOwnerContests(axiosIns, userId!, "future" ,(res: any) => setcontests((prevstate) => prevstate ? [...prevstate, ...res.data] : [{}]),(err: any) => console.log(err))
-        getSharedContests(axiosIns, userId! , "future", (res: any) => setcontestsshared((prevstate) => prevstate ? [...prevstate, ...res.data] : [{}]),(err: any) => console.log(err))
+        getOwnerContests(axiosIns, userId! , (res: any) => { setcontests((prevstate) => prevstate ? [...prevstate, ...res.data] : [{}]); } ,(err: any) => console.log(err));
+        getSharedContests(axiosIns, userId! , (res: any) => { setcontestsshared((prevstate) => prevstate ? [...prevstate, ...res.data] : [{}]); } ,(err: any) => console.log(err));
     }, []);
 
     return ( 
@@ -56,6 +57,7 @@ const UpcomingContests = () => {
                 <Grid container sx={{marginY: '2rem'}}>
 
                 {contests
+                .filter((item) => compareTime(item.startTime,item.endTime) === "Upcoming")
                 .filter((item) => item.title.toLowerCase().includes(query.toLowerCase()))
                 .map((contest) => 
                         <ContestCard contestImageURL={null} key={contest.contestId} contestId={contest.contestId} contestName={contest.title} startTime={getDateString(contest.startTime)} endTime={getDateString(contest.endTime)} owner="" accessType="" clickHandler={clickHandler}/>
@@ -71,12 +73,14 @@ const UpcomingContests = () => {
                 <Grid container sx={{marginY: '2rem'}}>
             
                 {contestsshared
+                .filter((item) => compareTime(item.startTime,item.endTime) === "Upcoming")
                 .filter((item) => item.title.toLowerCase().includes(query.toLowerCase()))
                 .filter((contest) => contest.accessType === "EDIT").map((contest) => 
                         <ContestCard contestImageURL={null} key={contest.contestId} contestId={contest.contestId} contestName={contest.title} startTime={getDateString(contest.startTime)} endTime={getDateString(contest.endTime)} owner="" accessType={contest.accessType} clickHandler={clickHandler}/>      
                 )} 
                 
                 {contestsshared
+                .filter((item) => compareTime(item.startTime,item.endTime) === "Upcoming")
                 .filter((item) => item.title.toLowerCase().includes(query.toLowerCase()))
                 .filter((contest) => contest.accessType === "VIEW").map((contest) => 
                         <ContestCard contestImageURL={null} key={contest.contestId} contestId={contest.contestId} contestName={contest.title} startTime={getDateString(contest.startTime)} endTime={getDateString(contest.endTime)} owner="" accessType={contest.accessType} clickHandler={clickHandler}/>        
