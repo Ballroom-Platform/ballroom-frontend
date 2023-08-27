@@ -63,12 +63,11 @@ const ContestantUpcomingContest = () => {
             axiosIns,
             contestId!,
             userId!,
-            (res: any) => setshowNotification(true),
+            (res: any) => {setshowNotification(true); window.location.reload();},
             (err: any) => {
                 setalreadyNotification(true);
             }
         );
-        window.location.reload();
     };
 
     const getReadmeFail = () => {

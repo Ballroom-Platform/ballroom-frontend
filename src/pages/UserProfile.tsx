@@ -1,4 +1,4 @@
-import { Button, Card, CardContent, Icon, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
+import { Box, Button, Card, CardContent, CircularProgress, Icon, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { changeRole, getOwnedChallenges, getOwnerContests, getSharedChallenges, getSharedContests} from "../api/admin";
@@ -23,15 +23,20 @@ const UserProfile: React.FC = () => {
     const [contestsshared, setcontestsshared] = useState<AccessContest[]>([]);
     const [ownedchallenges, setownedchallenges] = useState<IChallenge[]>([]);
     const [sharedchallenges, setsharedchallenges] = useState<IChallenge[]>([]);
+    const [check, setCheck] = useState<boolean>(true);
 
-    const changeUserRole = (userId: string, newRole: string) => { 
-        changeRole(axiosIns, userId, newRole,
+    const changeUserRole = (userId: string, userName: string, newRole: string) => { 
+        const formData = new FormData();
+        formData.append('userId', userId)
+        formData.append('role', newRole)
+        formData.append('userName', userName)
+
+        changeRole(axiosIns, formData, userId,
             (res: any) => {
                 console.log(res);
+                window.location.reload();
             },
-            (err: any) => console.log(err))
-
-        navigate("/loginHandler"); window.location.reload();   
+            (err: any) => console.log(err))   
     }
 
     const goToContest = (contestId: string, Status: string) => {
@@ -41,8 +46,10 @@ const UserProfile: React.FC = () => {
     }
     
     useEffect(() => {
-
-        getUser(axiosIns,userId!,(res: any) => {setuser(res.data.data);},(err: any) => {console.log(err);});
+        
+        if (check) {
+            getUser(axiosIns,userId!,(res: any) => {setuser(res.data.data);setCheck(false)},(err: any) => {console.log(err);});
+        }
 
         getOwnerContests(axiosIns, userId!, (res: any) => {setcontests((prevstate: any) => prevstate ? [...prevstate, ...res.data] : [{}]);}, () => console.log("ERROR OCCURRED"));
 
@@ -59,6 +66,12 @@ const UserProfile: React.FC = () => {
     return ( 
         <Layout>
 
+            {
+                check && <Box width="100%" textAlign="center" padding="40px"><CircularProgress /></Box>
+            }
+            {!check && (
+                <>
+
             <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'row'}}>
             <img src="../user.png" width="250px" style={{margin : 20 , color: "red"}}/>
                 <div>
@@ -71,7 +84,7 @@ const UserProfile: React.FC = () => {
                     <Typography sx={{ mb: 1.5 }} color="black">
                         USER ROLE  :  {user?.role}
                     </Typography>
-                    {user?.role === "admin" ? <Button variant="outlined" sx={{marginY: "2rem", color: "darkblue"}} onClick={() =>changeUserRole(userId!,"contestant")}>Use as a Contestant</Button> : <Button variant="contained" sx={{marginY: "2rem", backgroundColor: "darkblue"}} onClick={() => changeUserRole(userId!,"admin")}> Use as an Admin </Button>} 
+                    {user?.role === "admin" ? <Button variant="outlined" sx={{marginY: "2rem", color: "darkblue"}} onClick={() =>changeUserRole(userId!,user!.username,"contestant")}>Use as a Contestant</Button> : <Button variant="contained" sx={{marginY: "2rem", backgroundColor: "darkblue"}} onClick={() => changeUserRole(userId!,user!.username,"admin")}> Use as an Admin </Button>} 
                 </div>
             </div>
             
@@ -204,6 +217,8 @@ const UserProfile: React.FC = () => {
                 </CardContent>
             </Card>
         </div>}
+        </>
+        )}
 
         </Layout>
 

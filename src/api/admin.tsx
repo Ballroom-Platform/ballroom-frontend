@@ -18,6 +18,15 @@ export const getChallenge = (axiosPrivate: AxiosInstance, challengeId : string) 
 
 }
 
+export const addNewUser = (axiosPrivate : AxiosInstance, data: FormData, successHandler : Function, failHandler : Function)=> {
+    const url = `${BFF_URLS.userService}/users`;
+    const method = "POST";
+    const headers = {
+        "Content-Type": "multipart/form-data",
+    };
+    axiosPrivate({url, method, headers, data }).then((res: AxiosResponse) => successHandler(res)).catch((err) => failHandler(err));
+}
+
 export const createContest = (axiosPrivate : AxiosInstance, data: FormData, successHandler : Function, failHandler : Function)=> {
     const url = `${BFF_URLS.contestService}/contests`;
     const method = "POST";
@@ -113,11 +122,13 @@ export const getUsersByRoles = (axiosPrivate: AxiosInstance, role : string, succ
 
 }
 
-export const changeRole = (axiosPrivate: AxiosInstance, userId: string, newRole: string, successHandler : Function, failHandler : Function) => {
-    const url = `${BFF_URLS.userService}/users/${userId}/roles/${newRole}`
-    const method = "PUT";
-    const headers = {};
-    axiosPrivate({url, method, headers}).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
+export const changeRole = (axiosPrivate: AxiosInstance, data: FormData, userId: string, successHandler : Function, failHandler : Function) => {
+    const url = `${BFF_URLS.userService}/users/${userId}/changerole`
+    const method = "PATCH";
+    const headers = {
+        "Content-Type": "multipart/form-data",
+    };
+    axiosPrivate({url, method, headers, data}).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
 }
 
 export const removeChallengeFromContest = (axiosPrivate: AxiosInstance, contestId: string, challengeId: string, successHandler : Function, failHandler : Function) => {
