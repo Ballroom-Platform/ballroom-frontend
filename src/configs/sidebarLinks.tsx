@@ -60,7 +60,6 @@ const SidbarLinks: Record<string, Record<string, Array<ISidebarItem>>> = {
       getItem("createChallenge", "Create a challenge", AddCircleTwoTone, "General", []),
       getItem("myChallenges", "My challenges", ReceiptLong, "General", []),
       getItem("sharedChallenges", "Shared challenges", ReceiptLong, "General", []),
-      //getItem("allChallenges", "All challenges", ReceiptLong, "General", []),
     ]
   }
   

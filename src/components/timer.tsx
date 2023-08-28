@@ -11,7 +11,7 @@ const Timer = ({ startTime }: IProps) => {
     const startTimeInSeconds = new Date(getDateString(startTime));
     const now = new Date();
     const timer1 = Math.floor((startTimeInSeconds.getTime() - now.getTime()) / 1000);
-    const [timer, setTimer] = useState(timer1); // Initial 
+    const [timer, setTimer] = useState(timer1); 
 
     useEffect(() => {
         const interval = setInterval(() => {

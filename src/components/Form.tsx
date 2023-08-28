@@ -65,8 +65,6 @@ export const Form : React.FC = () => {
             setSuccessStates(defaultSuccessStates);
             setErrorStates(prev => ({...prev, uploadFailed:true}));
         }
-
-        //uploadSubmission(formData, successHandler, failHandler)
     }
 
     return (

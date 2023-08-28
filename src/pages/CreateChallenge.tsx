@@ -10,7 +10,6 @@ import { InputWrapper } from "../components";
 import { createChallenge } from "../api/admin";
 import { useNavigate } from "react-router"
 
-// data_model:Challenge newChallenge = {title: "", challengeId: "", description: "", difficulty: "HARD", testCase: []};
 const CreateChallenge = () => {
 
     const [challengeTitle, setchallengeTitle] = useState<string>("");

@@ -23,20 +23,6 @@ type IProps = {
     addChallengeToContest?: (challengeId: string) => void;
 }
 
-// public type Challenge record{
-//     @sql:Column {name: "challenge_id"}
-//     string challengeId;
-//     string title;
-//     string description;
-//     string constraints;
-//     // Not sure about the type here, byte[]?
-//     // ChallengeDifficulty difficulty; 
-//     string difficulty;
-//     byte[] testCase;
-//     @sql:Column {name: "challenge_template"}
-//     byte[]? template;
-// };
-
 const ChallengesByDifficulty = ({adminEdit, addChallengeToContest} : IProps) => {
 
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {

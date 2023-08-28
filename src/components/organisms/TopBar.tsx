@@ -56,7 +56,7 @@ export const TopBar: React.FC = () => {
         >
           <Grid item height="100%" lg={8} sx={{ display: { md: 'block', xs: 'none' } }}>
             {
-              //Can implement subsections here
+
             }
           </Grid>
           <Grid

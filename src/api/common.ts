@@ -4,21 +4,10 @@ import { BFF_URLS } from "../links/backend";
 import axios, { axiosPrivate } from "./axios";
 
 
-// export const fetchAccessToken = (idpToken: string) => {
-//     return axios.get(STS_URLS.accessToken, {
-//         headers: {
-//             "Content-Type": "application/json",
-//             "Authorization": "Bearer " + idpToken,
-//             "ngrok-skip-browser-warning": true
-//         },
-//     })
-// }
-
 export const getChallengesInContest = (axiosPrivate: AxiosInstance, contestId: string, successHandler: Function, failHandler: Function) => {
     const url = `${BFF_URLS.contestService}/contests/${contestId}/challenges`
     const method = "GET";
     const headers = {}
-    // const headers = { "Accept":"application/json", "Authorization" : AUTH_HEADER};
     axiosPrivate({ url, method, headers }).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
 
 }
