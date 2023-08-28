@@ -9,7 +9,6 @@ import AddChallengeToContest from "../pages/AddChallengeToContest";
 import { Contests, Home, PageNotFound, LoginHandler, Challenges, Leaderboard, Scoreboard } from "../pages"
 import CreateChallenge from "../pages/CreateChallenge";
 import ViewChallenge from "../pages/ViewChallenge";
-import Users from "../pages/Users";
 import ListOfChallengesAdmin from "../pages/ListOfChallengesAdmin";
 import EditChallenge from "../pages/EditChallenge";
 import PastContestsAdmin from "../pages/PastContestsAdmin";
@@ -61,7 +60,6 @@ export const DefaultRouter : React.FC = () => {
                         <Route path="/createContest" Component={CreateContest}/> 
                         <Route path="/upcomingContests" Component={UpcomingContests}/>
                         <Route path="/createChallenge" Component={CreateChallenge}/>
-                        <Route path="/users" Component={Users}/>
                         <Route path="/adminListChallenges" Component={ListOfChallengesAdmin}/>
                         <Route path="/editChallenge/:challengeId" Component={EditChallenge}/>
                         <Route path="/editContest/:contestId" Component={EditContest}/>

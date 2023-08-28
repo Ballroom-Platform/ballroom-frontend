@@ -3,7 +3,7 @@ import { useApp } from "../../hooks/useApp"
 import { TRole } from "../../helpers/interfaces";
 import { Navigate, Outlet, useLocation } from "react-router";
 import { BasicUserInfo, useAuthContext } from "@asgardeo/auth-react";
-import { fetchAccessToken, getUserRole } from "../../api/common";
+import { getUserRole } from "../../api/common";
 import { Unauthorized } from "../../pages/Unauthorized";
 import { Box, CircularProgress } from "@mui/material";
 
@@ -36,17 +36,13 @@ export const RequireAuth : React.FC<IProps> = ({allowedRoles}) => {
           }
     
           if(idpToken !== null){
-            fetchAccessToken(idpToken).then((res) => {
-              if (res.status === 200) {
+            getAccessToken().then((token) => {
                 console.log("Setting App state");
-                setAppState(prev => ({ ...prev, auth: { ...(prev.auth), status: "active", accessToken: res?.data?.data?.accessToken } }));
+                setAppState(prev => ({ ...prev, auth: { ...(prev.auth), status: "active", accessToken: token} }));
                 console.log("Getting user role")
                 if(!(appState.auth.userRole)){
                   fetchUserRole();
                 }
-              }else{
-                signOut()
-              }
             }).catch(() => signOut());
           }else{
             getToken();

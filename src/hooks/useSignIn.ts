@@ -6,10 +6,6 @@ export const useSignIn = () => {
     const { signIn } = useAuthContext();
     const location = useLocation();
     const signInHandler = () => {
-        // if( location.pathname !== URL_LIST.dashboard){
-        //     localStorage.setItem("redirectURL", location.pathname);
-        // }
-
         signIn()
     }
 

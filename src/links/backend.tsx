@@ -7,11 +7,3 @@ export const BFF_URLS = {
     userService: BASE_URL + "/userService",
     submissionService: BASE_URL + "/submissionService",
 }
-
-const STS_BASE = "http://localhost:9093/sts";
-
-export const STS_URLS = {
-    accessToken :  STS_BASE + "/accessToken",
-    refreshToken : STS_BASE + "/refreshToken"
-}
-
