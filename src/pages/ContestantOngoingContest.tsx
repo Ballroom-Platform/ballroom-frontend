@@ -109,7 +109,7 @@ const ContestantOngoingContest = () => {
                 contestId!,
                 (res: any) => {
                     setregistrants((prevstate: any) =>
-                        prevstate ? [...prevstate, ...res.data] : [{}]
+                        prevstate ? [...res.data] : [{}]
                     );
                     res.data.forEach((element: any) => {
                         registrantIds.push(element.userId);

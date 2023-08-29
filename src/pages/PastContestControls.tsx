@@ -128,7 +128,7 @@ const PastContestControls = () => {
         getReadmeContest(axiosPrivate, contestId!, getReadmeSucess, getReadmeFail);
         getReport(axiosPrivate, contestId!, (res: any) => setReport(res.data), () => console.log("Error occured"));
         csv = convertToCSV(report);
-        getContestantRegistrants(axiosIns,contestId!, (res: any) => {setregistrants((prevstate: any) =>prevstate ? [...prevstate, ...res.data] : [{}]);},() => console.log("ERROR OCCURRED."));
+        getContestantRegistrants(axiosIns,contestId!, (res: any) => {setregistrants((prevstate: any) =>prevstate ? [...res.data] : [{}]);},() => console.log("ERROR OCCURRED."));
     },[]);
     
     return ( 

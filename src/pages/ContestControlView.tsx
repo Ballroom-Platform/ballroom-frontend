@@ -83,7 +83,7 @@ const ContestControlView: React.FC = () => {
             getSharedChallenges(axiosIns, userId!,(res: any) => {setsharedchallengeids(res.data.map((challenge: any) => challenge.challengeId))},() => {});
             getOwnedChallenges(axiosIns, userId!,(res: any) => {setownedchallengeids(res.data.map((challenge: any) => challenge.challengeId))},() => {})
             getReadmeContest(axiosPrivate, contestId!, getReadmeSucess, getReadmeFail); 
-            getContestantRegistrants(axiosIns,contestId!, (res: any) => {setregistrants((prevstate: any) =>prevstate ? [...prevstate, ...res.data] : [{}]);},() => console.log("ERROR OCCURRED."));    
+            getContestantRegistrants(axiosIns,contestId!, (res: any) => {setregistrants((prevstate: any) =>prevstate ? [...res.data] : [{}]);},() => console.log("ERROR OCCURRED."));    
         }
     },[selectedTab]);
 
