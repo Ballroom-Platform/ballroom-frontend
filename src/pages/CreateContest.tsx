@@ -13,13 +13,15 @@ import { BalDateTime } from "../helpers/interfaces";
 import { useApp } from "../hooks/useApp";
 import { IconButton, Snackbar } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
+import InfoIcon from '@mui/icons-material/Info';
+import MdFileIcon from '@mui/icons-material/FileCopy';
 import { useNavigate } from "react-router"
 import { getDateString, getUTCDateString } from "../helpers/dateConverter";
 import { InputWrapper } from "../components";
 
 const CreateContest = () => {
 
-    const [contestName, setcontestName] = useState<string>("");
+    const [contestTitle, setcontestTitle] = useState<string>("");
     const [startTime, setstartTime] = useState<BalDateTime | null>();
     const [endTime, setendTime] = useState<BalDateTime | null>();
     const [showNotification, setshowNotification] = useState(false);
@@ -27,6 +29,7 @@ const CreateContest = () => {
     const utcTimestamp = Date.now();
     const navigate = useNavigate();
     const [readmeFile, setReadmeFile] = useState({} as FileList);
+    const [fontColor, setFontColor] = useState<string>('red');
 
     const axiosIns = useAxiosPrivate();
 
@@ -47,7 +50,7 @@ const CreateContest = () => {
     const handleSubmit = () => {
         const formData = new FormData();
         formData.append('readme', readmeFile[0], "readmecontest001 "+ "_" + Date.now());
-        formData.append('title', contestName);  
+        formData.append('title', contestTitle);  
         formData.append('startTime', getUTCDateString(startTime!));
         formData.append('endTime', getUTCDateString(endTime!));
         formData.append('moderator', appState.auth.userID!);
@@ -56,10 +59,11 @@ const CreateContest = () => {
 
     const onReadmeFileChange = (e : any) => {
         setReadmeFile(prev => ({...prev, ...e.target.files}));
+        setFontColor('green');
     }
 
     const clearAllInputs = () => {
-        setcontestName("");
+        setcontestTitle("");
         setReadmeFile({} as FileList);
         setstartTime(null);
         setendTime(null);
@@ -71,9 +75,26 @@ const CreateContest = () => {
                     Create a Contest
             </Typography>
 
-            <TextField id="outlined-basic" label="Name" variant="outlined" value={contestName} sx={{marginY:2}} onChange={(e) => setcontestName(e.target.value)}/>
-
-            <InputWrapper  label="Upload Contest Details as .md File: "><input onChange={onReadmeFileChange} id="readmeInput" type="file" name="readmeFile" accept=".md"  style={{flex:6}}/></InputWrapper>
+            <TextField id="outlined-basic" label="Title" variant="outlined" value={contestTitle} sx={{marginY:2}} onChange={(e) => setcontestTitle(e.target.value)}/>
+            <div style={{display:'flex', alignItems: 'center'}}>
+                <MdFileIcon style={{marginRight:10}}/>
+                <InputWrapper  label="Upload contest details as .md file: "><input onChange={onReadmeFileChange} id="readmeInput" type="file" name="readmeFile" accept=".md" style={{color: fontColor, fontFamily:'Poppins', marginLeft:20}}/></InputWrapper>
+            </div>
+            <div style={{ padding: '10px', borderRadius: '8px', display: 'flex', alignItems: 'center', background: '#eff7ff'}}>
+                <div style={{color: '#808080'}}>
+                    <p style={{ display: 'flex', alignItems: 'center'}}> 
+                        <InfoIcon sx={{marginRight: '0.5rem'}}/>
+                        You can include the following details in the .md file:
+                    </p>
+                    <ul>
+                        <li>Contest description</li>
+                        <li>Contest rules</li>
+                        <li>Prizes and rewards</li>
+                        <li>Submission guidelines</li>
+                        <li>Important dates</li>
+                    </ul>
+                </div>
+            </div>
 
             <LocalizationProvider sx={{border: '1px solid red'}} dateAdapter={AdapterDayjs}>
                 <DemoContainer sx={{marginY: '1rem', width: '30%'}} components={['DateTimePicker']}>

@@ -9,6 +9,9 @@ import { FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, Snackbar, 
 import { InputWrapper } from "../components";
 import { createChallenge } from "../api/admin";
 import { useNavigate } from "react-router"
+import MdFileIcon from '@mui/icons-material/FileCopy';
+import ZipFileIcon from '@mui/icons-material/FolderZip';
+import InfoIcon from '@mui/icons-material/Info';
 
 const CreateChallenge = () => {
 
@@ -20,6 +23,9 @@ const CreateChallenge = () => {
     const {appState} = useApp();
     const userId = appState.auth.userID;
     const navigate = useNavigate();
+    const [readmeFontColor, setReadmeFontColor] = useState<string>('red');
+    const [templateFontColor, setTemplateFontColor] = useState<string>('red');
+    const [testFontColor, setTestFontColor] = useState<string>('red');
 
     const [showNotification, setshowNotification] = useState(false);
 
@@ -52,14 +58,17 @@ const CreateChallenge = () => {
 
     const onTestCaseFileChange = (e : any) => {
         settestCaseFile(prev => ({...prev, ...e.target.files}));
+        setTestFontColor('green');
     }
 
     const onReadmeFileChange = (e : any) => {
         setReadmeFile(prev => ({...prev, ...e.target.files}));
+        setReadmeFontColor('green');
     }
 
     const onTemplateFileChange = (e : any) => {
         settemplateFile(prev => ({...prev, ...e.target.files}));
+        setTemplateFontColor('green');
 
     }
     
@@ -88,11 +97,55 @@ const CreateChallenge = () => {
             </FormControl>
             <br />
 
-            <InputWrapper  label="Upload Readme .md File: "><input onChange={onReadmeFileChange} id="readmeInput" type="file" name="readmeFile" accept=".md"  style={{flex:6}}/></InputWrapper>
+            <div style={{display:'flex', alignItems: 'center'}}>
+                <MdFileIcon style={{marginRight:10}}/>
+                <InputWrapper  label="Upload readme .md file: "><input onChange={onReadmeFileChange} id="readmeInput" type="file" name="readmeFile" accept=".md" style={{color: readmeFontColor, fontFamily:'Poppins', marginLeft:25}}/></InputWrapper>
+            </div>
+            <div style={{ padding: '10px', borderRadius: '8px', display: 'flex', alignItems: 'center', background: '#eff7ff'}}>
+                <div style={{color: '#808080'}}>
+                    <p style={{ display: 'flex', alignItems: 'center'}}> 
+                        <InfoIcon sx={{marginRight: '0.5rem'}}/>
+                        You can include the following details in the .md file:
+                    </p>
+                    <ul>
+                        <li>Challenge description</li>
+                        <li>Input format</li>
+                        <li>Constraints</li>
+                        <li>Code examples</li>
+                    </ul>
+                </div>
+            </div>
 
-            <InputWrapper  label="Upload Test Case .zip File: "><input onChange={onTestCaseFileChange} id="testFileInput" type="file" name="submissionFile" accept=".zip"  style={{flex:6}}/></InputWrapper>
+            <div style={{display:'flex', alignItems: 'center'}}>
+                <ZipFileIcon style={{marginRight:10}}/>
+                <InputWrapper  label="Upload template .zip file: "><input onChange={onTemplateFileChange} id="testFileInput" type="file" name="templateFile" accept=".zip" style={{color: templateFontColor, fontFamily:'Poppins', marginLeft:20}}/></InputWrapper>
+            </div>
+            <div style={{ padding: '10px', borderRadius: '8px', display: 'flex', alignItems: 'center', background: '#eff7ff'}}>
+                <div style={{color: '#808080'}}>
+                    <p style={{ display: 'flex', alignItems: 'center'}}> 
+                        <InfoIcon sx={{marginRight: '0.5rem'}}/>
+                        You need to include the following files in the zip folder:
+                    </p>
+                    <ul>
+                        <li>main.bal(file)</li>
+                        <li>Ballerina.toml(file)</li>
+                        <li>tests(folder) - You can include sample testcases and evaluation file inside this folder.</li>  
+                    </ul>
+                </div>
+            </div>
 
-            <InputWrapper  label="Upload Template .zip File: "><input onChange={onTemplateFileChange} id="testFileInput" type="file" name="templateFile" accept=".zip"  style={{flex:6}}/></InputWrapper>
+            <div style={{display:'flex', alignItems: 'center'}}>
+                <ZipFileIcon style={{marginRight:10}}/>
+                <InputWrapper  label="Upload test case .zip file: "><input onChange={onTestCaseFileChange} id="testFileInput" type="file" name="submissionFile" accept=".zip" style={{color: testFontColor, fontFamily:'Poppins', marginLeft:20}}/></InputWrapper>
+            </div>
+            <div style={{ padding: '10px', borderRadius: '8px', display: 'flex', alignItems: 'center', background: '#eff7ff'}}>
+                <div style={{color: '#808080'}}>
+                    <p style={{ display: 'flex', alignItems: 'center'}}> 
+                        <InfoIcon sx={{marginRight: '0.5rem'}}/>
+                        You need to include the testcases and evaluation file for final evaluation in this zip folder. This folder is replaced with uploaded solution 'tests' folder and give final scores.
+                    </p>
+                </div>
+            </div>
 
             <Button sx={{margin: '1rem'}}variant="contained" onClick={()=>handleSubmit()}>Submit</Button>
 
