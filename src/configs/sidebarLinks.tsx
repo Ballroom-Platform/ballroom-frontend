@@ -50,16 +50,16 @@ const SidbarLinks: Record<string, Record<string, Array<ISidebarItem>>> = {
   },
   admin: {
     Contests: [
-      getItem("createContest", "Create a contest", AddCircleTwoTone, "General", []),
+      getItem("createContest", "Create a Contest", AddCircleTwoTone, "General", []),
       getItem("upcomingContests", "Upcoming Contests", Event, "General", []),
       getItem("ongoingContests", "Ongoing Contests", Event, "General", []),
       getItem("pastContests", "Past Contests", Event, "General", []),
 
     ],
     Challenges: [
-      getItem("createChallenge", "Create a challenge", AddCircleTwoTone, "General", []),
-      getItem("myChallenges", "My challenges", ReceiptLong, "General", []),
-      getItem("sharedChallenges", "Shared challenges", ReceiptLong, "General", []),
+      getItem("createChallenge", "Create a Challenge", AddCircleTwoTone, "General", []),
+      getItem("myChallenges", "My Challenges", ReceiptLong, "General", []),
+      getItem("sharedChallenges", "Shared Challenges", ReceiptLong, "General", []),
     ]
   }
   
