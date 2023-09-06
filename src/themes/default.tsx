@@ -1,5 +1,4 @@
 import { createTheme } from "@mui/material"
-import { teal } from "@mui/material/colors"
 
 export const themeColors = {
   brand: {
@@ -8,12 +7,6 @@ export const themeColors = {
     secondary: '#2C3333',
     neutral: '#CBE4DE'
   },
-}
-
-const fonts = {
-    body : "\"Poppins\", \"Arial\"",
-    heading: "\"Poppins\", \"Arial\"",
-    mono: "\"Poppins\", \"Arial\""
 }
 
 export const defaultTheme = createTheme({
