@@ -7,16 +7,16 @@ import { useApp } from "../hooks/useApp";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
 function createData(
-    userId: string,
+    fullname: string,
     score: number,
-    name: string
+    username: string
     ) {
-    return { userId, score, name};
+    return { fullname, score, username};
 }
 
 interface IRow {
-    userId: string;
-    name: string
+    fullname: string;
+    username: string
     score: number;
 }
 
@@ -32,7 +32,7 @@ const LeaderboardTable = ({contestId} : IProps) => {
     const userId = appState.auth.userID;
 
     const getSubmissionsSuccess = (res : AxiosResponse) => {
-      const tempArr = res.data.data.map((item:IRow) => (createData(item.userId, item.score, item.name)));
+      const tempArr = res.data.data.map((item:IRow) => (createData(item.fullname, item.score, item.username)));
       setRows([...tempArr]);
       setLoading(false);
     }
@@ -62,8 +62,8 @@ const LeaderboardTable = ({contestId} : IProps) => {
                     
                         <TableHead>
                             <TableRow>
-                            <TableCell >User Id</TableCell>
-                            <TableCell align="center">Name</TableCell>
+                            <TableCell >Name</TableCell>
+                            <TableCell align="center">Username/Email</TableCell>
                             <TableCell align="center">Score</TableCell>
                             </TableRow>
                         </TableHead>
@@ -71,13 +71,13 @@ const LeaderboardTable = ({contestId} : IProps) => {
                             {
                             rows.map((row) => (
                                 <TableRow
-                                key={row.userId}
+                                key={row.username}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                 >
                                 <TableCell component="th" scope="row" >
-                                    {row.userId}
+                                    {row.fullname}
                                 </TableCell>
-                                <TableCell align="center">{row.name}</TableCell>
+                                <TableCell align="center">{row.username}</TableCell>
                                 <TableCell align="center">{row.score}</TableCell>
                                 </TableRow>
                             ))
