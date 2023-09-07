@@ -32,10 +32,7 @@ function ProductValues() {
               </Typography>
               <Typography>
                 {
-                  'From the latest trendy boutique hotel to the iconic palace with XXL pool'
-                }
-                {
-                  ', go for a mini-vacation just a few subway stops away from your home.'
+                  'Tutors and educators can orchestrate graceful assignments, allowing students to take center stage in real-world projects.'
                 }
               </Typography>
             </Box>
@@ -48,7 +45,7 @@ function ProductValues() {
               </Typography>
               <Typography>
                 {
-                  'Privatize a pool, take a Japanese bath or wake up in 900m2 of garden… '
+                  'Organizers can host dazzling hackathons, encouraging brilliant minds to tango together and innovate on cutting-edge projects.'
                 }
                 {'your Sundays will not be alike.'}
               </Typography>
@@ -61,8 +58,7 @@ function ProductValues() {
                 For interviews
               </Typography>
               <Typography>
-                {'By registering, you will access specially negotiated rates '}
-                {'that you will not find anywhere else.'}
+                {'Interviewers can lead candidates through an enchanting tango of scenarios, evaluating their skills and potential in depth.'}
               </Typography>
             </Box>
           </Grid>
