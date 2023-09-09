@@ -15,6 +15,7 @@ import { IconButton, Snackbar } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import InfoIcon from '@mui/icons-material/Info';
 import MdFileIcon from '@mui/icons-material/FileCopy';
+import ImageUploadIcon from '@mui/icons-material/Image';
 import { useNavigate } from "react-router"
 import { getDateString, getUTCDateString } from "../helpers/dateConverter";
 import { InputWrapper } from "../components";
@@ -29,8 +30,9 @@ const CreateContest = () => {
     const utcTimestamp = Date.now();
     const navigate = useNavigate();
     const [readmeFile, setReadmeFile] = useState({} as FileList);
-    const [fontColor, setFontColor] = useState<string>('red');
-
+    const [readmefontColor, setReadmeFontColor] = useState<string>('red');
+    const [ImagefontColor, setImageFontColor] = useState<string>('red');
+    const [bannerImage, setBannerImage] = useState<File | null>(null);
     const axiosIns = useAxiosPrivate();
 
     const navigateContest = () => {
@@ -50,6 +52,9 @@ const CreateContest = () => {
     const handleSubmit = () => {
         const formData = new FormData();
         formData.append('readme', readmeFile[0], "readmecontest001 "+ "_" + Date.now());
+        if (bannerImage) {
+            formData.append('bannerImage', bannerImage, "bannerImage001 " + "_" + Date.now());
+        }
         formData.append('title', contestTitle);  
         formData.append('startTime', getUTCDateString(startTime!));
         formData.append('endTime', getUTCDateString(endTime!));
@@ -59,7 +64,15 @@ const CreateContest = () => {
 
     const onReadmeFileChange = (e : any) => {
         setReadmeFile(prev => ({...prev, ...e.target.files}));
-        setFontColor('green');
+        setReadmeFontColor('green');
+    }
+
+    const onBannerImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file) {
+            setBannerImage(file);
+            setImageFontColor('green');
+        }
     }
 
     const clearAllInputs = () => {
@@ -78,7 +91,7 @@ const CreateContest = () => {
             <TextField id="outlined-basic" label="Title" variant="outlined" value={contestTitle} sx={{marginY:2}} onChange={(e) => setcontestTitle(e.target.value)}/>
             <div style={{display:'flex', alignItems: 'center'}}>
                 <MdFileIcon style={{marginRight:10}}/>
-                <InputWrapper  label="Upload contest details as .md file: "><input onChange={onReadmeFileChange} id="readmeInput" type="file" name="readmeFile" accept=".md" style={{color: fontColor, fontFamily:'Poppins', marginLeft:20}}/></InputWrapper>
+                <InputWrapper  label="Upload contest details as .md file: "><input onChange={onReadmeFileChange} id="readmeInput" type="file" name="readmeFile" accept=".md" style={{color: readmefontColor, fontFamily:'Poppins', marginLeft:20}}/></InputWrapper>
             </div>
             <div style={{ padding: '10px', borderRadius: '8px', display: 'flex', alignItems: 'center', background: '#eff7ff'}}>
                 <div style={{color: '#808080'}}>
@@ -96,6 +109,20 @@ const CreateContest = () => {
                 </div>
             </div>
 
+            <div style={{display:'flex', alignItems: 'center'}}>
+                <ImageUploadIcon style={{marginRight:10}}/>
+                <InputWrapper label="Upload Contest banner image: "><input onChange={onBannerImageChange} id="bannerImageInput" type="file" name="bannerImage" accept="image/*" style={{color: ImagefontColor, fontFamily:'Poppins', marginLeft:20}} /></InputWrapper>
+            </div>
+            {bannerImage && (<div>
+                <h4>Selected Image Preview:</h4>
+                <img
+                    src={URL.createObjectURL(bannerImage)}
+                    alt="Selected Image"
+                    width="300"
+                    height="200"
+                />
+            </div>)}
+            
             <LocalizationProvider sx={{border: '1px solid red'}} dateAdapter={AdapterDayjs}>
                 <DemoContainer sx={{marginY: '1rem', width: '30%'}} components={['DateTimePicker']}>
                     <DateTimePicker label="Start Time" onChange={(value: any, context) => setstartTime({

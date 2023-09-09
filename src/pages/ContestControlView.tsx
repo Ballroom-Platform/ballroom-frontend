@@ -30,6 +30,16 @@ type Challenge = {
     difficulty: string;
 };
 
+function arrayToBlob(array: number[]): Blob {
+    const uint8Array = new Uint8Array(array);
+    return new Blob([uint8Array]);
+  }
+  
+  function arrayToFile(array: number[], fileName: string): File {
+    const blob = arrayToBlob(array);
+    return new File([blob], fileName);
+  }
+
 const ContestControlView: React.FC = () => {
 
     const {contestId} = useParams<ContestId>();
@@ -103,6 +113,7 @@ const ContestControlView: React.FC = () => {
             {selectedTab === 0 && 
             <>
                 <div>
+                    {contest && <img src={URL.createObjectURL(arrayToFile(contest.imageUrl, "image.png"))} alt="Contest Image" style={{width: "100%", height: "auto", marginTop: 2, marginBottom: 2}}/>}
                     <MarkdownRenderer source={post} />
                 </div>
             </>
