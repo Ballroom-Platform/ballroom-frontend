@@ -53,11 +53,22 @@ const ViewSharedChallenges : React.FC = () => {
 
     return (
         <Layout>
-            <Typography variant="h3" gutterBottom>
+            <Typography variant="h4" gutterBottom>
                     Shared Challenges
             </Typography>
 
-            <Tabs value={value} onChange={handleChange} centered>
+            <Tabs value={value} onChange={handleChange}
+                  variant="scrollable"
+                  textColor="secondary"
+                  indicatorColor="secondary"
+                  scrollButtons={false}
+                  
+                  sx={{
+                    height: '5rem',
+                    alignItems: 'center',
+                    borderColor: 'divider'
+                  }}
+                  >
                 <Tab label="EASY" />
                 <Tab label="MEDIUM" />
                 <Tab label="HARD" />

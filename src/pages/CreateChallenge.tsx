@@ -74,7 +74,7 @@ const CreateChallenge = () => {
     
     return ( 
         <Layout>
-            <Typography variant="h3" gutterBottom>
+            <Typography variant="h4" gutterBottom>
                     Create a Challenge
             </Typography>
 

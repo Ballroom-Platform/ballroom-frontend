@@ -41,11 +41,23 @@ const OngoingContestsAdmin = () => {
     
     return ( 
         <Layout>
-            <Typography variant="h3" gutterBottom>
+            <Typography variant="h4" gutterBottom>
                     Ongoing Contests
             </Typography>
 
-            <Tabs value={selectedTab} onChange={handleChangeTab} centered>
+            <Tabs value={selectedTab}
+                  onChange={handleChangeTab}
+                  variant="scrollable"
+                  textColor="secondary"
+                  indicatorColor="secondary"
+                  scrollButtons={false}
+                  
+                  sx={{
+                    height: '5rem',
+                    alignItems: 'center',
+                    borderColor: 'divider'
+                  }}
+                  >
                 <Tab label="OWNED" />
                 <Tab label="SHARED" />
             </Tabs>
