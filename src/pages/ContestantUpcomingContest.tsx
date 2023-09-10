@@ -39,6 +39,7 @@ import { AxiosResponse } from "axios";
 import MarkdownRenderer from "../helpers/MarkdownRenderer";
 import { Margin } from "@mui/icons-material";
 
+
 type ContestId = {
     contestId: string;
 };
@@ -129,7 +130,11 @@ const ContestantUpcomingContest = () => {
             {
                 !loading && (
                     <Layout>
-                        <Typography align="center" variant="h3" sx={{ fontWeight: "bold" }} gutterBottom>
+                        <Typography align="center" variant="h3" 
+                        sx={{ fontWeight: "bold",
+                        height: '5rem',
+                        alignItems: 'center',
+                        borderColor: 'divider'}} gutterBottom>
                             {contest?.title}
                         </Typography>
 

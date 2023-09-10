@@ -13,10 +13,10 @@ export const Sidebar: React.FC = () => {
 
   return (
     <Paper
-      sx={{ height: '100vh', padding: '1rem', width: '20%', position: 'fixed' }}
+      sx={{ height: '100vh', padding: '1rem', width: '15%', position: 'fixed', backgroundColor: "#F5F5F5" }}
       elevation={3}
     >
-      <Paper
+      {/* <Paper
         sx={{
           display: { xs: 'none', lg: 'flex' },
           alignItems: 'center',
@@ -31,7 +31,7 @@ export const Sidebar: React.FC = () => {
           width="220px"
           height="93px"
         />
-      </Paper>
+      </Paper> */}
       <div style={{ paddingTop: '4rem' }}>
         {Object.keys(links).map((key, index) => (
           <SidebarSection section={key} key={index} itemsArray={links[key]} />

@@ -23,26 +23,26 @@ import { useNavigate } from 'react-router'
 import { useApp } from "../../hooks/useApp";
   
 export const TopBar: React.FC = () => {
-  const theme = useTheme()
-  const {signOut} = useAuthContext()
-  const navigate = useNavigate();
+  // const theme = useTheme()
+  // const {signOut} = useAuthContext()
+  // const navigate = useNavigate();
   const {appState} = useApp();
-  const userId = appState.auth.userID;
+  // const userId = appState.auth.userID;
 
-  const logoutHandler = async () => {
-    signOut();
-  }
+  // const logoutHandler = async () => {
+  //   signOut();
+  // }
 
-  const userProfile = () => {
-    navigate("/userProfile" + `/${userId}`);
-  }
+  // const userProfile = () => {
+  //   navigate("/userProfile" + `/${userId}`);
+  // }
 
   return (
     <>
       <Paper
         elevation={0}
         sx={{
-          height: '10rem',
+          height: '8rem',
           width: '100%',
           padding: '0.75rem 1rem',
           display: 'flex',
@@ -54,12 +54,12 @@ export const TopBar: React.FC = () => {
           height="100%"
           sx={{ alignItems: 'center', justifyContent: 'space-between' }}
         >
-          <Grid item height="100%" lg={8} sx={{ display: { md: 'block', xs: 'none' } }}>
+          {/* <Grid item height="100%" lg={8} sx={{ display: { md: 'block', xs: 'none' } }}>
             {
 
             }
-          </Grid>
-          <Grid
+          </Grid> */}
+          {/* <Grid
             item
             lg={4}
             sx={{
@@ -82,7 +82,7 @@ export const TopBar: React.FC = () => {
             <IconButton  onClick={userProfile}>
               <Avatar src="avatar.png"/>
             </IconButton>
-          </Grid>
+          </Grid> */}
         </Grid>
       </Paper>
     </>
