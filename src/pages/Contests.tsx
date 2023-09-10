@@ -75,7 +75,7 @@ export const Contests: React.FC = () => {
             }
             {!loading && (
                 <>
-                    <TextField sx={{ marginX: '1.4rem', marginY: '1rem' }} id="outlined-basic" label="Search by title" value={query} variant="outlined" onChange={(e) => setquery(e.target.value)} />
+                    <TextField sx={{marginY: '1rem'}} id="outlined-basic" label="Search by title" value={query} variant="outlined" onChange={(e) => setquery(e.target.value)} />
                     <Grid container sx={{marginY: '2rem'}}>
                         {contests
                             .filter((item) => item.title.toLowerCase().includes(query.toLowerCase()))

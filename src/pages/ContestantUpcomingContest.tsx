@@ -38,6 +38,8 @@ import Timer from "../components/timer";
 import { AxiosResponse } from "axios";
 import MarkdownRenderer from "../helpers/MarkdownRenderer";
 import { Margin } from "@mui/icons-material";
+import Container from "@mui/material/Container";
+import Grid from "@mui/material/Grid";
 
 
 type ContestId = {
@@ -64,7 +66,7 @@ const ContestantUpcomingContest = () => {
             axiosIns,
             contestId!,
             userId!,
-            (res: any) => {setshowNotification(true); window.location.reload();},
+            (res: any) => { setshowNotification(true); window.location.reload(); },
             (err: any) => {
                 setalreadyNotification(true);
             }
@@ -130,31 +132,58 @@ const ContestantUpcomingContest = () => {
             {
                 !loading && (
                     <Layout>
-                        <Typography align="center" variant="h3" 
-                        sx={{ fontWeight: "bold",
-                        height: '5rem',
-                        alignItems: 'center',
-                        borderColor: 'divider'}} gutterBottom>
-                            {contest?.title}
-                        </Typography>
-
-                        <div>
+                        <Container
+                            sx={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                justifyContent: 'space-between',
+                                alignItems: 'left',
+                                marginLeft: 0,
+                                paddingLeft: 0,
+                            }}
+                        >
+                            <Grid
+                                sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                }}
+                            >
+                                <Typography variant="h3" gutterBottom>
+                                    {contest?.title}
+                                </Typography>
+                                <Typography sx={{ marginTop: 1, marginBottom: 2, color: "green" }} variant="h6" textAlign="left" color="red" gutterBottom>
+                                    {contest ? "NOT STARTED" : "Loading..."}
+                                </Typography>
+                            </Grid>
+                            <Grid>
+                                {registrantIds.includes(userId!) ?
+                                    <Typography align="center" variant="h6" sx={{ color: "darkred", marginTop: 5, marginBottom: 5 }} gutterBottom>
+                                        Registered
+                                    </Typography>
+                                    : (
+                                        <div style={{ textAlign: "center" }}>
+                                            <Button variant="contained" sx={{ marginY: "1rem", backgroundColor: "darkgreen" }} onClick={handler}>
+                                                Register Now!
+                                            </Button>
+                                        </div>
+                                    )}
+                                <div>
+                                    <Typography
+                                        variant="h6"
+                                        gutterBottom
+                                        color="darkred"
+                                    >
+                                        Registered count : {registrants.length}
+                                    </Typography>
+                                </div>
+                            </Grid>
+                        </Container>
+                        <div style={{ marginTop: 20, marginBottom: 30 }}>
                             <Timer startTime={contest!.startTime} />
                         </div>
 
-                        {registrantIds.includes(userId!) ? 
-                        <Typography align="center" variant="h5" sx={{ color: "darkred", marginTop: 5, marginBottom: 5 }} gutterBottom>
-                                You Already Registered ! Wait for the contest to start ...
-                        </Typography> 
-                        : (
-                            <div style={{ textAlign: "center" }}>
-                                <Button variant="contained" sx={{ marginY: "1rem", backgroundColor: "darkgreen" }} onClick={handler}>
-                                    Register Now!
-                                </Button>
-                            </div>
-                        )}
 
-                        <div style={{ marginTop: 20, marginBottom: 20 }}>
+                        {/* <div style={{ marginTop: 20, marginBottom: 20 }}>
                             <Typography
                                 variant="h5"
                                 gutterBottom
@@ -162,7 +191,7 @@ const ContestantUpcomingContest = () => {
                             >
                                 Registered count : {registrants.length}
                             </Typography>
-                        </div>
+                        </div> */}
 
                         <div>
                             <MarkdownRenderer source={post} />
