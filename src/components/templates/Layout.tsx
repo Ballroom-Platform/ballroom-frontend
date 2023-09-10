@@ -59,7 +59,7 @@ export const Layout: React.FC<IProps> = ({ children }) => {
             justifyContent: 'space-between',
           }}
         >
-          <img src='ballroom-logo.png' width="10%" alt="Ballroom logo" />
+          <img src='../ballroom-logo.png' width="10%" alt="Ballroom logo" />
           <Grid
             item
             lg={4}
