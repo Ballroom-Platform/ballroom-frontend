@@ -50,7 +50,7 @@ const EditContest = () => {
             {loading && <div>Loading...</div>}
 
             {!loading && <>
-                    <Typography variant="h3" gutterBottom>
+                    <Typography variant="h4" gutterBottom>
                         Edit Contest
                     </Typography>
 

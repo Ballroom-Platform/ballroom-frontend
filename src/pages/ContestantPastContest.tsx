@@ -56,7 +56,17 @@ const ContestantPastContest = () => {
                 {contest ? contest.title + " has ended." : "Loading..."}
             </Typography>
 
-            <Tabs value={selectedTab} onChange={handleChangeTab} centered>
+            <Tabs value={selectedTab} onChange={handleChangeTab} variant="scrollable"
+                textColor="secondary"
+                indicatorColor="secondary"
+                scrollButtons={false}
+
+                sx={{
+                    height: '3rem',
+                    alignItems: 'center',
+                    borderColor: 'divider'
+                }}
+            >
                 <Tab label="ABOUT" />
                 <Tab label="LEADERBOARD" />
             </Tabs>
