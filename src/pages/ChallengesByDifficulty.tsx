@@ -1,6 +1,6 @@
 import { Button, Card, CardActions, CardContent, Tab, Tabs, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { getChallangesByDifficulty,  getOwnedChallenges,  getSharedChallenges } from "../api/admin";
+import { getChallangesByDifficulty, getOwnedChallenges, getSharedChallenges } from "../api/admin";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { Link, useLocation } from "react-router-dom";
 import { AxiosInstance, AxiosResponse } from "axios";
@@ -23,13 +23,13 @@ type IProps = {
     addChallengeToContest?: (challengeId: string) => void;
 }
 
-const ChallengesByDifficulty = ({adminEdit, addChallengeToContest} : IProps) => {
+const ChallengesByDifficulty = ({ adminEdit, addChallengeToContest }: IProps) => {
 
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setvalue(newValue);
         setquery("");
     };
-    
+
     const [challenges, setchallenges] = useState<Challenge[]>([]);
     const [ownedchallengeIds, setownedchallengeids] = useState<string[]>([]);
     const [sharedchallengeIds, setsharedchallengeids] = useState<string[]>([]);
@@ -37,84 +37,94 @@ const ChallengesByDifficulty = ({adminEdit, addChallengeToContest} : IProps) => 
     const [query, setquery] = useState<string>("");
     const [value, setvalue] = useState(0);
     const axiosIns = useAxiosPrivate();
-    const {appState} = useApp();
+    const { appState } = useApp();
     const userId = appState.auth.userID;
-    const {contestId} = useParams<ContestId>();
+    const { contestId } = useParams<ContestId>();
     const [challengeIds, setchallengeids] = useState<string[]>([]);
 
     useEffect(() => {
-        let difficulty : string;
+        let difficulty: string;
         switch (value) {
             case 0:
                 difficulty = "EASY"
                 break;
             case 1:
-                difficulty =  "MEDIUM"
+                difficulty = "MEDIUM"
                 break;
             case 2:
-                difficulty =  "HARD"
-                break; 
+                difficulty = "HARD"
+                break;
             default:
-                difficulty =  "EASY"
+                difficulty = "EASY"
                 break;
         }
-        getChallangesByDifficulty(axiosIns, 
-            difficulty, 
+        getChallangesByDifficulty(axiosIns,
+            difficulty,
             (res: any) => {
-            const listOfChallenges: any[] = res.data
-            setchallenges(listOfChallenges.map((challenge) : Challenge => ({challengeId: challenge.challengeId, title: challenge.title, difficulty: challenge.difficulty})))
-        },
-        () => {});
-        getSharedChallenges(axiosIns, userId!,(res: any) => {setsharedchallengeids(res.data.map((challenge: any) => challenge.challengeId))},() => {});
-        getOwnedChallenges(axiosIns, userId!,(res: any) => {setownedchallengeids(res.data.map((challenge: any) => challenge.challengeId))},() => {});
+                const listOfChallenges: any[] = res.data
+                setchallenges(listOfChallenges.map((challenge): Challenge => ({ challengeId: challenge.challengeId, title: challenge.title, difficulty: challenge.difficulty })))
+            },
+            () => { });
+        getSharedChallenges(axiosIns, userId!, (res: any) => { setsharedchallengeids(res.data.map((challenge: any) => challenge.challengeId)) }, () => { });
+        getOwnedChallenges(axiosIns, userId!, (res: any) => { setownedchallengeids(res.data.map((challenge: any) => challenge.challengeId)) }, () => { });
         if (contestId) {
             getChallengesInContest(axiosIns, contestId, (res: any) => {
                 setchallengeids([...res.data]);
             }
-            , () => {})
+                , () => { })
         }
 
-    }, [value,addChallengeToContest]);
+    }, [value, addChallengeToContest]);
 
-    return ( 
+    return (
         <>
-            <Tabs value={value} onChange={handleChange} centered>
+            <Tabs value={value} onChange={handleChange} variant="scrollable"
+                textColor="secondary"
+                indicatorColor="secondary"
+                scrollButtons={false}
+
+                sx={{
+                    height: '3rem',
+                    alignItems: 'center',
+                    borderColor: 'divider'
+                }}
+            >
                 <Tab label="EASY" />
                 <Tab label="MEDIUM" />
                 <Tab label="HARD" />
             </Tabs>
 
 
-            <TextField sx={{marginY: '2rem'}} id="outlined-basic" label="Search by title.." value={query} variant="outlined" onChange={(e) => setquery(e.target.value)}/>
-            
+            <TextField sx={{ marginY: '2rem' }} id="outlined-basic" label="Search by title.." value={query} variant="outlined" onChange={(e) => setquery(e.target.value)} />
+
             {challenges && challenges
-            .filter((challenge) => challenge.title.toLowerCase().includes(query.toLowerCase()))
-            .map((challenge) => (
+                .filter((challenge) => challenge.title.toLowerCase().includes(query.toLowerCase()))
+                .map((challenge) => (
 
-                <Card key={challenge.challengeId} sx={{marginY: '1rem', width: '100%'}} >
+                    <Card key={challenge.challengeId} sx={{ marginY: '1rem', width: '100%' }} >
 
-                    <CardContent>
-                        <Typography variant="h5" component="div">
-                        {challenge.title}
-                        </Typography>
-                        <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                        {challenge.difficulty}
-                        </Typography>
-                    </CardContent>  
+                        <CardContent>
+                            <Typography variant="h5" component="div">
+                                {challenge.title}
+                            </Typography>
+                            <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                                {challenge.difficulty}
+                            </Typography>
+                        </CardContent>
 
-                    <CardActions>
-                        {(!ownedchallengeIds.includes(challenge.challengeId) && !sharedchallengeIds.includes(challenge.challengeId)) && <Typography variant="body2" color="darkorange" sx={{marginX: 2}}>You Don't Have Access</Typography>}
-                        {(sharedchallengeIds.includes(challenge.challengeId) || ownedchallengeIds.includes(challenge.challengeId)) && <Link to={`${location.pathname}/${challenge.challengeId}`}><Button size="small">View</Button></Link>}
-                        {(sharedchallengeIds.includes(challenge.challengeId) || ownedchallengeIds.includes(challenge.challengeId)) && addChallengeToContest && !challengeIds.includes(challenge.challengeId) && <Button size="small" onClick={() => addChallengeToContest(challenge.challengeId)}>Add to Contest</Button>}
-                        {(sharedchallengeIds.includes(challenge.challengeId) || ownedchallengeIds.includes(challenge.challengeId)) && challengeIds.includes(challenge.challengeId) && addChallengeToContest && <Typography variant="body2" color="darkblue" sx={{marginX: 2}} >Already Added to the contest</Typography>}
-                    </CardActions>
+                        <CardActions>
+                            {(!ownedchallengeIds.includes(challenge.challengeId) && !sharedchallengeIds.includes(challenge.challengeId)) && <Typography variant="body2" color="darkorange" sx={{ marginX: 2 }}>You Don't Have Access</Typography>}
+                            {(sharedchallengeIds.includes(challenge.challengeId) || ownedchallengeIds.includes(challenge.challengeId)) && <Link to={`${location.pathname}/${challenge.challengeId}`}><Button size="small">View</Button></Link>}
+                            {(sharedchallengeIds.includes(challenge.challengeId) || ownedchallengeIds.includes(challenge.challengeId)) && addChallengeToContest && !challengeIds.includes(challenge.challengeId) && <Button size="small" onClick={() => addChallengeToContest(challenge.challengeId)}>Add to Contest</Button>}
+                            {(sharedchallengeIds.includes(challenge.challengeId) || ownedchallengeIds.includes(challenge.challengeId)) && challengeIds.includes(challenge.challengeId) && addChallengeToContest && <Typography variant="body2" color="darkblue" sx={{ marginX: 2 }} >Already Added to the contest</Typography>}
+                        </CardActions>
 
-                </Card>
-            ))}
+                    </Card>
+                ))}
 
 
         </>
     );
 }
- 
+
 export default ChallengesByDifficulty;

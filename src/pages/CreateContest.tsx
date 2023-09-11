@@ -84,7 +84,7 @@ const CreateContest = () => {
 
     return ( 
         <Layout>
-            <Typography variant="h3" gutterBottom>
+            <Typography variant="h4" gutterBottom>
                     Create a Contest
             </Typography>
 

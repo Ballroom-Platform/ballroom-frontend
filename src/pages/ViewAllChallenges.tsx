@@ -12,7 +12,7 @@ type Challenge = {
     difficulty: string;
 };
 
-const ViewAllChallenges : React.FC = () => {
+const ViewAllChallenges: React.FC = () => {
 
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setvalue(newValue);
@@ -24,63 +24,73 @@ const ViewAllChallenges : React.FC = () => {
     const axiosIns = useAxiosPrivate();
 
     useEffect(() => {
-        let difficulty : string;
+        let difficulty: string;
         switch (value) {
             case 0:
                 difficulty = "EASY"
                 break;
             case 1:
-                difficulty =  "MEDIUM"
+                difficulty = "MEDIUM"
                 break;
             case 2:
-                difficulty =  "HARD"
+                difficulty = "HARD"
                 break;
             default:
-                difficulty =  "EASY"
+                difficulty = "EASY"
                 break;
         }
         getChallangesByDifficulty(axiosIns,
             difficulty,
             (res: any) => {
-            const listOfChallenges: any[] = res.data
-            setchallenges(listOfChallenges.map((challenge) : Challenge => ({challengeId: challenge.challengeId, title: challenge.title, difficulty: challenge.difficulty})))
-        },
-        () => {})
+                const listOfChallenges: any[] = res.data
+                setchallenges(listOfChallenges.map((challenge): Challenge => ({ challengeId: challenge.challengeId, title: challenge.title, difficulty: challenge.difficulty })))
+            },
+            () => { })
     }, [value]);
 
     return (
         <Layout>
-            <Tabs value={value} onChange={handleChange} centered>
+            <Tabs value={value} onChange={handleChange} variant="scrollable"
+                textColor="secondary"
+                indicatorColor="secondary"
+                scrollButtons={false}
+
+                sx={{
+                    height: '3rem',
+                    alignItems: 'center',
+                    borderColor: 'divider'
+                }}
+            >
                 <Tab label="EASY" />
                 <Tab label="MEDIUM" />
                 <Tab label="HARD" />
             </Tabs>
 
-            <TextField sx={{marginY: '2rem'}} id="outlined-basic" label="Search by title.." value={query} variant="outlined" onChange={(e) => setquery(e.target.value)}/>
-           
+            <TextField sx={{ marginY: '2rem' }} id="outlined-basic" label="Search by title.." value={query} variant="outlined" onChange={(e) => setquery(e.target.value)} />
+
             {challenges && challenges
-            .filter((challenge) => challenge.title.toLowerCase().includes(query.toLowerCase()))
-            .map((challenge) => (
+                .filter((challenge) => challenge.title.toLowerCase().includes(query.toLowerCase()))
+                .map((challenge) => (
 
-                <Card key={challenge.challengeId} sx={{marginY: '1rem', width: '100%'}} >
+                    <Card key={challenge.challengeId} sx={{ marginY: '1rem', width: '100%' }} >
 
-                    <CardContent>
-                        <Typography variant="h5" component="div">
-                        {challenge.title}
-                        </Typography>
-                        <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                        {challenge.difficulty}
-                        </Typography>
-                    </CardContent>
+                        <CardContent>
+                            <Typography variant="h5" component="div">
+                                {challenge.title}
+                            </Typography>
+                            <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                                {challenge.difficulty}
+                            </Typography>
+                        </CardContent>
 
-                    <CardActions>
-                                <Link to={`/challenges/${challenge.challengeId}`}><Button size="small">View</Button></Link>
-                    </CardActions>
+                        <CardActions>
+                            <Link to={`/challenges/${challenge.challengeId}`}><Button size="small">View</Button></Link>
+                        </CardActions>
 
-                </Card>
-            ))}
-    </Layout>
+                    </Card>
+                ))}
+        </Layout>
     );
 }
- 
+
 export default ViewAllChallenges;

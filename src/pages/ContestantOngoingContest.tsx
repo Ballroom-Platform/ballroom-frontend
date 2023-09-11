@@ -34,7 +34,8 @@ import { AxiosResponse } from "axios";
 import { Timer } from "@mui/icons-material";
 import MarkdownRenderer from "../helpers/MarkdownRenderer";
 import { formatUTCDate, getDateString } from "../helpers/dateConverter";
-
+import Container from "@mui/material/Container";
+import Grid from "@mui/material/Grid";
 
 type ContestId = {
     contestId: string;
@@ -81,7 +82,7 @@ const ContestantOngoingContest = () => {
             axiosIns,
             contestId!,
             userId!,
-            (res: any) => {setshowNotification(true); window.location.reload();},
+            (res: any) => { setshowNotification(true); window.location.reload(); },
             (err: any) => {
                 setalreadyNotification(true);
             }
@@ -140,33 +141,48 @@ const ContestantOngoingContest = () => {
             {
                 !loading && (
                     <Layout>
-                        <Typography align="center" variant="h3" sx={{ fontWeight: "bold" }} gutterBottom>
-                            {contest?.title}
-                        </Typography>
+                        <Container
+                            sx={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                justifyContent: 'space-between',
+                                alignItems: 'left',
+                                marginLeft: 0,
+                                paddingLeft: 0,
+                            }}
+                        >
+                            <Grid
+                                sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                }}
+                            >
+                                <Typography variant="h4" gutterBottom>
+                                    {contest?.title}
+                                </Typography>
+                                <Typography sx={{ marginTop: 1, marginBottom: 2, color: "orange" }} variant="h6" textAlign="left" color="red" gutterBottom>
+                                    {contest ? "STARTED" : "Loading..."}
+                                </Typography>
+                            </Grid>
 
-                        {registrantIds.includes(userId!) ?
-                            (
-                                <div style={{ textAlign: "center" }}>
-                                    <Typography align="center" variant="h5" sx={{ fontWeight: "bold" }} gutterBottom>
-                                        Contest Already Started ! You can play now !
-                                    </Typography>
-                                    <Button variant="contained" sx={{ marginY: "1rem", backgroundColor: "darkgreen" }} onClick={handlerPlay}>
-                                        Play Now
-                                    </Button>
-                                </div>
+                            <Grid>
+                                {registrantIds.includes(userId!) ?
+                                    (
 
-                            )
-                            :
-                            (
-                                <div style={{ textAlign: "center" }}>
-                                    <Typography align="center" variant="h5" sx={{ fontWeight: "bold" }} gutterBottom>
-                                        Contest Already Started ! You can regitser and play now !
-                                    </Typography>
-                                    <Button variant="contained" sx={{ marginY: "1rem", backgroundColor: "darkgreen" }} onClick={handler}>
-                                        Register
-                                    </Button>
-                                </div>
-                            )}
+                                        <Button variant="contained" sx={{ marginY: "1rem", backgroundColor: "darkgreen" }} onClick={handlerPlay}>
+                                            Play
+                                        </Button>
+
+
+                                    )
+                                    :
+                                    (
+                                        <Button variant="contained" sx={{ marginY: "1rem", backgroundColor: "darkgreen" }} onClick={handler}>
+                                            Register and Play
+                                        </Button>
+                                    )}
+                            </Grid>
+                        </Container>
 
                         <div>
                             {contest && <img src={URL.createObjectURL(arrayToFile(contest.imageUrl, "image.png"))} alt="Contest Image" style={{width: "100%", height: "auto", marginTop: 2, marginBottom: 2}}/>}
@@ -210,7 +226,7 @@ const ContestantOngoingContest = () => {
                             >
                                 <CloseIcon fontSize="small" />{" "}
                             </IconButton>} />
-                    </Layout>
+                    </Layout >
                 )
             }
         </>

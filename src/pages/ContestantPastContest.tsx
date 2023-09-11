@@ -11,6 +11,8 @@ import LeaderboardTable from "../components/LeaderboardTable";
 import MarkdownRenderer from "../helpers/MarkdownRenderer";
 import { getReadmeContest } from "../api/contestant";
 import { AxiosResponse } from "axios";
+import Container from "@mui/material/Container";
+import Grid from "@mui/material/Grid";
 
 
 type ContestId = {
@@ -24,12 +26,12 @@ interface IProps {
 function arrayToBlob(array: number[]): Blob {
     const uint8Array = new Uint8Array(array);
     return new Blob([uint8Array]);
-  }
-  
-  function arrayToFile(array: number[], fileName: string): File {
+}
+
+function arrayToFile(array: number[], fileName: string): File {
     const blob = arrayToBlob(array);
     return new File([blob], fileName);
-  }
+}
 
 const ContestantPastContest = () => {
     const axiosIns = useAxiosPrivate();
@@ -62,19 +64,60 @@ const ContestantPastContest = () => {
 
     return (
         <Layout>
-            <Typography variant="h4" textAlign="center" fontWeight={"bold"} gutterBottom>
-                {contest ? contest.title + " has ended." : "Loading..."}
-            </Typography>
+            <Container
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'left',
+                    marginLeft: 0,
+                    paddingLeft: 0,
+                }}
+            >
+                <Grid
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                    }}
+                >
+                    <Typography variant="h4" textAlign="left" gutterBottom>
+                        {contest ? contest.title : "Loading..."}
+                    </Typography>
+                    <Typography sx={{ marginTop: 1, marginBottom: 2, color: "red" }} variant="h6" textAlign="left" color="red" gutterBottom>
+                        {contest ? "ENDED" : "Loading..."}
+                    </Typography>
+                </Grid>
+            </Container>
 
-            <Tabs value={selectedTab} onChange={handleChangeTab} centered>
+            <Tabs value={selectedTab} onChange={handleChangeTab} variant="scrollable"
+                textColor="secondary"
+                indicatorColor="secondary"
+                scrollButtons={false}
+
+
+                sx={{
+                    height: '3rem',
+                    alignItems: 'center',
+                    borderColor: 'divider',
+                    marginBottom: '2rem'
+                }}
+            >
                 <Tab label="ABOUT" />
                 <Tab label="LEADERBOARD" />
             </Tabs>
+            
+            {selectedTab === 0 &&
+                <>
+                    <div>
+                        {contest && <img src={URL.createObjectURL(arrayToFile(contest.imageUrl, "image.png"))} alt="Contest Image" style={{ width: "100%", height: "auto", marginTop: 2, marginBottom: 2 }} />}
+                        <MarkdownRenderer source={post} />
+                    </div>
+                </>
+            }
 
             {selectedTab === 0 &&
                 <>
                     <div>
-                        {contest && <img src={URL.createObjectURL(arrayToFile(contest.imageUrl, "image.png"))} alt="Contest Image" style={{width: "100%", height: "auto", marginTop: 2, marginBottom: 2}}/>}
                         <MarkdownRenderer source={post} />
                     </div>
                 </>

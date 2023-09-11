@@ -38,34 +38,45 @@ const ShareContest = ({ ownerID, giveAccessToContest }: IProps) => {
         setselectedTab(newValue);
     };
 
-    const getSuccess = (res : AxiosResponse) => {
-        const tempArr = res.data.data.map((item:User) => (item.userId));
+    const getSuccess = (res: AxiosResponse) => {
+        const tempArr = res.data.data.map((item: User) => (item.userId));
         setuserids([...tempArr]);
     }
-  
-    const getFail = (err: AxiosError) =>{
+
+    const getFail = (err: AxiosError) => {
         console.log("Getting data failed", err)
     }
 
     useEffect(() => {
         getContestAdminAccess(axiosPrivate, contestId!, getSuccess, getFail);
- 
+
         getAllUsers(axiosIns, (res: any) => {
             const listOfUsers: any[] = res.data;
-            setusers(listOfUsers.map((user): User => ({ userId: user.user_id, username: user.username, fullname: user.fullname, role: user.role })));    
+            setusers(listOfUsers.map((user): User => ({ userId: user.user_id, username: user.username, fullname: user.fullname, role: user.role })));
         }, () => { });
-    }, [selectedTab,giveAccessToContest]);
+    }, [selectedTab, giveAccessToContest]);
 
     return (
         <>
-            <Tabs value={selectedTab} onChange={handleChangeTab} centered>
+            <Tabs value={selectedTab} onChange={handleChangeTab}
+                variant="scrollable"
+                textColor="secondary"
+                indicatorColor="secondary"
+                scrollButtons={false}
+
+                sx={{
+                    height: '3rem',
+                    alignItems: 'center',
+                    borderColor: 'divider'
+                }}
+            >
                 <Tab label="USERS" />
                 <Tab label="SHARED-LIST" />
             </Tabs>
 
             {selectedTab === 0 &&
                 <>
-                    <Typography variant="h6" gutterBottom>
+                    <Typography sx={{ marginY: "2rem",}} variant="h6" gutterBottom>
                         Share this contest with others
                     </Typography>
 
@@ -77,8 +88,8 @@ const ShareContest = ({ ownerID, giveAccessToContest }: IProps) => {
                         .filter((user) => user.userId !== ownerID)
                         .map((user) => (
 
-                            <Card key={user.userId} sx={{ marginY: '1rem', width: '100%' }} > 
-                                
+                            <Card key={user.userId} sx={{ marginY: '1rem', width: '100%' }} >
+
                                 <CardContent>
                                     <Typography variant="h5" component="div">
                                         Full Name : {user.fullname}
@@ -86,17 +97,17 @@ const ShareContest = ({ ownerID, giveAccessToContest }: IProps) => {
                                     <Typography sx={{ mb: 1.5 }} color="text.secondary">
                                         User name : {user.username}
                                     </Typography>
-                                    
+
                                 </CardContent>
-                               
-                                {   
+
+                                {
                                     userIds.includes(user.userId) ?
                                         <Typography sx={{ mb: 1.5, color: 'green', paddingLeft: '1rem' }} color="text.secondary">Already access granted</Typography> :
                                         <CardActions>
-                                            
+
                                             {giveAccessToContest && <Button sx={{ color: 'black' }} size="small" onClick={() => { giveAccessToContest(user.userId, "VIEW"); }}>Give view access</Button>}
 
-                                            {giveAccessToContest && <Button sx={{ color: 'blue' }} size="small" onClick={() => { giveAccessToContest(user.userId, "EDIT"); } }>Give edit access</Button>}
+                                            {giveAccessToContest && <Button sx={{ color: 'blue' }} size="small" onClick={() => { giveAccessToContest(user.userId, "EDIT"); }}>Give edit access</Button>}
 
                                         </CardActions>
                                 }
@@ -106,15 +117,15 @@ const ShareContest = ({ ownerID, giveAccessToContest }: IProps) => {
                 </>
             }
 
-            {selectedTab === 1 && 
+            {selectedTab === 1 &&
                 <div>
-                    <Typography variant="h6" sx={{marginY:"1rem"}} gutterBottom>
+                    <Typography variant="h6" sx={{ marginY: "1rem" }} gutterBottom>
                         Users with access to this contest
                     </Typography>
                     <AdminAccessContestTable contestId={contestId!} userID={appState.auth.userID!} />
                 </div>
             }
-            
+
         </>
     );
 }

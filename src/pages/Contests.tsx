@@ -1,4 +1,4 @@
-import { Box, CircularProgress, Grid, TextField } from "@mui/material"
+import { Box, CircularProgress, Grid, TextField, Typography } from "@mui/material"
 import { AxiosResponse } from "axios"
 import { useEffect, useState } from "react"
 import { useNavigate, useLocation } from "react-router"
@@ -12,8 +12,8 @@ import { compareTime, getDateString } from "../helpers/dateConverter"
 import { getContest, getOwnerContests, getSharedContests } from "../api/admin"
 
 
-export const Contests : React.FC = () => {
-    const {appState} = useApp();
+export const Contests: React.FC = () => {
+    const { appState } = useApp();
     console.log(appState);
     const axiosPrivate = useAxiosPrivate()
     const navigate = useNavigate();
@@ -39,7 +39,7 @@ export const Contests : React.FC = () => {
 
     const [contests, setContests] = useState<Array<IContest>>([] as Array<IContest>);
 
-    const getContestsSuccess = (res : AxiosResponse) => {
+    const getContestsSuccess = (res: AxiosResponse) => {
         setContests(res.data);
         setCheck1(false);
     }
@@ -55,32 +55,35 @@ export const Contests : React.FC = () => {
     }
 
     useEffect(() => {
-        if(loading){
-            if(check1) getContests(axiosPrivate,getContestsSuccess, getContestsFail);
-            else if(check2)getOwnerContests(axiosIns, userId!, (res: any) => {setownedcontests((prevstate) => prevstate ? [...prevstate, ...res.data] : [{}]); setCheck2(false);},(err: any) => console.log(err));
-            else if(check3)getSharedContests(axiosIns, userId!, (res: any) => {setsharedcontests((prevstate) => prevstate ? [...prevstate, ...res.data] : [{}]); setCheck3(false);},(err: any) => console.log(err));
+        if (loading) {
+            if (check1) getContests(axiosPrivate, getContestsSuccess, getContestsFail);
+            else if (check2) getOwnerContests(axiosIns, userId!, (res: any) => { setownedcontests((prevstate) => prevstate ? [...prevstate, ...res.data] : [{}]); setCheck2(false); }, (err: any) => console.log(err));
+            else if (check3) getSharedContests(axiosIns, userId!, (res: any) => { setsharedcontests((prevstate) => prevstate ? [...prevstate, ...res.data] : [{}]); setCheck3(false); }, (err: any) => console.log(err));
 
             else setUserContest();
         }
     }, [loading, check1, check2, check3])
 
 
-    return(
+    return (
         <Layout>
+            <Typography variant="h4" gutterBottom>
+                Contests
+            </Typography>
             {
                 loading && <Box width="100%" textAlign="center" padding="40px"><CircularProgress /></Box>
             }
             {!loading && (
                 <>
-                <TextField sx={{  marginX: '1.4rem' }} id="outlined-basic" label="Search by title" value={query} variant="outlined" onChange={(e) => setquery(e.target.value)} />
-                    <Grid>
+                    <TextField sx={{ marginY: '1rem' }} id="outlined-basic" label="Search by title" value={query} variant="outlined" onChange={(e) => setquery(e.target.value)} />
+                    <Grid container sx={{ marginY: '2rem' }}>
                         {contests
-                        .filter((item) => item.title.toLowerCase().includes(query.toLowerCase()))
-                        .map((item) => 
-                            contestIds.includes(item.contestId) ? null :
-                            <ContestCard contestImageURL={item.imageUrl} key={item.contestId} contestId={item.contestId} contestName={item.title} startTime={getDateString(item.startTime)} endTime={getDateString(item.endTime)} owner="" accessType="" clickHandler={clickHandler}/>
-                            
-                        )}
+                            .filter((item) => item.title.toLowerCase().includes(query.toLowerCase()))
+                            .map((item) =>
+                                contestIds.includes(item.contestId) ? null :
+                                    <ContestCard contestImageURL={item.imageUrl} key={item.contestId} contestId={item.contestId} contestName={item.title} startTime={getDateString(item.startTime)} endTime={getDateString(item.endTime)} owner="" accessType="" clickHandler={clickHandler} />
+
+                            )}
                     </Grid>
                 </>
             )}
