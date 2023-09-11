@@ -40,6 +40,7 @@ export interface IContest {
   problemFiles : string,
   forcedState : string,
   challenges : Array<string>
+  imageUrl: Array<number>;
 }
 
 export interface IChallenge {
@@ -90,6 +91,7 @@ export type IMinimalContest = {
   startTime: BalDateTime;
   endTime: BalDateTime;
   moderator: string;
+  imageUrl: Array<number>;
 }
 
 export type AccessContest = {
@@ -100,6 +102,7 @@ export type AccessContest = {
   endTime: BalDateTime;
   accessType: string;
   moderator: string;
+  imageUrl: Array<number>;
 }
 
 export type User = {
