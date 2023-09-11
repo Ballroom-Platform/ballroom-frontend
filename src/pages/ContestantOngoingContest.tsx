@@ -150,7 +150,7 @@ const ContestantOngoingContest = () => {
                                 <Typography variant="h4" gutterBottom>
                                     {contest?.title}
                                 </Typography>
-                                <Typography sx={{ marginTop: 1, marginBottom: 2, color: "yellow" }} variant="h6" textAlign="left" color="red" gutterBottom>
+                                <Typography sx={{ marginTop: 1, marginBottom: 2, color: "orange" }} variant="h6" textAlign="left" color="red" gutterBottom>
                                     {contest ? "STARTED" : "Loading..."}
                                 </Typography>
                             </Grid>
