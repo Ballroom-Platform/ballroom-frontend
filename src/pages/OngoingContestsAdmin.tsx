@@ -71,9 +71,9 @@ const OngoingContestsAdmin = () => {
                 .filter((item) => compareTime(item.startTime,item.endTime) === "Ongoing")
                 .filter((item) => item.title.toLowerCase().includes(query.toLowerCase()))
                 .map((contest) => 
-                        <ContestCard contestImageURL={null} key={contest.contestId} contestId={contest.contestId} contestName={contest.title} startTime={getDateString(contest.startTime)} endTime={getDateString(contest.endTime)} owner="" accessType="" clickHandler={clickHandler}/>
+                        <ContestCard contestImageURL={contest.imageUrl} key={contest.contestId} contestId={contest.contestId} contestName={contest.title} startTime={getDateString(contest.startTime)} endTime={getDateString(contest.endTime)} owner="" accessType="" clickHandler={clickHandler}/>
                 )}
-                    
+                
                 </Grid>
             </>
             }
@@ -88,14 +88,14 @@ const OngoingContestsAdmin = () => {
                 .filter((item) => compareTime(item.startTime,item.endTime) === "Ongoing")
                 .filter((item) => item.title.toLowerCase().includes(query.toLowerCase()))
                 .filter((contest) => contest.accessType === "EDIT").map((contest) => 
-                        <ContestCard contestImageURL={null} key={contest.contestId} contestId={contest.contestId} contestName={contest.title} startTime={getDateString(contest.startTime)} endTime={getDateString(contest.endTime)} owner="" accessType={contest.accessType} clickHandler={clickHandler}/>        
+                        <ContestCard contestImageURL={contest.imageUrl} key={contest.contestId} contestId={contest.contestId} contestName={contest.title} startTime={getDateString(contest.startTime)} endTime={getDateString(contest.endTime)} owner="" accessType={contest.accessType} clickHandler={clickHandler}/>        
                 )} 
                 
                 {contestsshared
                 .filter((item) => compareTime(item.startTime,item.endTime) === "Ongoing")
                 .filter((item) => item.title.toLowerCase().includes(query.toLowerCase()))
                 .filter((contest) => contest.accessType === "VIEW").map((contest) => 
-                        <ContestCard contestImageURL={null} key={contest.contestId} contestId={contest.contestId} contestName={contest.title} startTime={getDateString(contest.startTime)} endTime={getDateString(contest.endTime)} owner="" accessType={contest.accessType} clickHandler={clickHandler}/>        
+                        <ContestCard contestImageURL={contest.imageUrl} key={contest.contestId} contestId={contest.contestId} contestName={contest.title} startTime={getDateString(contest.startTime)} endTime={getDateString(contest.endTime)} owner="" accessType={contest.accessType} clickHandler={clickHandler}/>        
                 )}
 
                 </Grid>

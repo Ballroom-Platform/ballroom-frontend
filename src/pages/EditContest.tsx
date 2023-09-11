@@ -26,6 +26,7 @@ const EditContest = () => {
     const [contest, setcontest] = useState<IMinimalContest>();
     const [startTime, setstartTime] = useState<BalDateTime | null>();
     const [endTime, setendTime] = useState<BalDateTime | null>();
+    const [bannerImage, setBannerImage] = useState<File | null>(null);
 
     const handleSubmit = () => {
         const formData = new FormData();
@@ -33,11 +34,21 @@ const EditContest = () => {
         formData.append('startTime', getUTCDateString(startTime!));
         formData.append('endTime', getUTCDateString(endTime!));
         formData.append('readme', readmeFile[0], "readme001 "+ "_" + Date.now());
+        if (bannerImage) {
+            formData.append('bannerImage', bannerImage, "bannerImage001 " + "_" + Date.now());
+        }
         editContest(axiosIns, formData, contestId!, (res: any) => {setshowSuccessNotification(true);}, (err: any) => setshowFailNotification(true));
     }
 
     const onReadmeFileChange = (e : any) => {
         setReadmeFile(prev => ({...prev, ...e.target.files}));
+    }
+
+    const onBannerImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file) {
+            setBannerImage(file);
+        }
     }
 
     useEffect(() => {
@@ -83,9 +94,21 @@ const EditContest = () => {
 
                     <br/>
 
-                    <InputWrapper  label="Upload updated Readme .md File: "><input onChange={onReadmeFileChange} id="readmeInput" type="file" name="readmeFile" accept=".md"  style={{flex:6}}/></InputWrapper>
+                    <InputWrapper  label="Upload updated Readme .md File: "><input onChange={onReadmeFileChange} id="readmeInput" type="file" name="readmeFile" accept=".md"  style={{ flex: 5 }}/></InputWrapper>
 
                     <br/>
+
+                    <InputWrapper label="Upload new Contest banner image: "><input onChange={onBannerImageChange} id="bannerImageInput" type="file" name="bannerImage" accept="image/*" style={{ flex: 5 }} /></InputWrapper>
+
+                    {bannerImage && (<div>
+                        <h4>Selected Image Preview:</h4>
+                        <img
+                            src={URL.createObjectURL(bannerImage)}
+                            alt="Selected Image"
+                            width="300"
+                            height="200"
+                        />
+                    </div>)}
 
                     {startTime && endTime && ((Date.parse(getDateString(startTime)) > Date.parse(getDateString(endTime))) && 
                         (<>

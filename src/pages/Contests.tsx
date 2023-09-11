@@ -75,13 +75,13 @@ export const Contests: React.FC = () => {
             }
             {!loading && (
                 <>
-                    <TextField sx={{marginY: '1rem'}} id="outlined-basic" label="Search by title" value={query} variant="outlined" onChange={(e) => setquery(e.target.value)} />
-                    <Grid container sx={{marginY: '2rem'}}>
+                    <TextField sx={{ marginY: '1rem' }} id="outlined-basic" label="Search by title" value={query} variant="outlined" onChange={(e) => setquery(e.target.value)} />
+                    <Grid container sx={{ marginY: '2rem' }}>
                         {contests
                             .filter((item) => item.title.toLowerCase().includes(query.toLowerCase()))
                             .map((item) =>
                                 contestIds.includes(item.contestId) ? null :
-                                    <ContestCard contestImageURL={null} key={item.contestId} contestId={item.contestId} contestName={item.title} startTime={getDateString(item.startTime)} endTime={getDateString(item.endTime)} owner="" accessType="" clickHandler={clickHandler} />
+                                    <ContestCard contestImageURL={item.imageUrl} key={item.contestId} contestId={item.contestId} contestName={item.title} startTime={getDateString(item.startTime)} endTime={getDateString(item.endTime)} owner="" accessType="" clickHandler={clickHandler} />
 
                             )}
                     </Grid>
