@@ -51,15 +51,16 @@ export const Layout: React.FC<IProps> = ({ children }) => {
     <main style={{ display: 'flex', flexDirection: 'row' }}>
       <AppBar position="fixed" color="inherit" style={{ minHeight: "60px", justifyContent: "center" }}>
 
-        <Container
+        <Container maxWidth={false}
           sx={{
+            
             display: 'flex',
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-between',
           }}
         >
-          <img src='../ballroom-logo.png' width="10%" alt="Ballroom logo" />
+          <img src='../../ballroom-logo.png' height="33.5" alt="Ballroom logo" />
           <Grid
             item
             lg={4}

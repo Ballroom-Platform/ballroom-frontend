@@ -83,7 +83,7 @@ const ContestantPastContest = () => {
                     <Typography variant="h4" textAlign="left" gutterBottom>
                         {contest ? contest.title : "Loading..."}
                     </Typography>
-                    <Typography sx={{ marginTop: 1, marginBottom: 2, color: "red" }} variant="h6" textAlign="left" color="red" gutterBottom>
+                    <Typography sx={{ marginTop: 1, marginBottom: 2, color: "brown" }} variant="h6" textAlign="left" color="red" gutterBottom>
                         {contest ? "ENDED" : "Loading..."}
                     </Typography>
                 </Grid>
@@ -105,7 +105,7 @@ const ContestantPastContest = () => {
                 <Tab label="ABOUT" />
                 <Tab label="LEADERBOARD" />
             </Tabs>
-            
+
             {selectedTab === 0 &&
                 <>
                     <div>
