@@ -221,14 +221,6 @@ const ContestControls: React.FC = () => {
 
             {selectedTab === 1 &&
                 <>
-                    <div>
-                        <MarkdownRenderer source={post} />
-                    </div>
-                </>
-            }
-
-            {selectedTab === 1 &&
-                <>
                     {
                         challenges && challenges.map((challenge) => (
 
