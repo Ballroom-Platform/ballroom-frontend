@@ -13,6 +13,10 @@ export default function ProductHero(props:any) {
     props.nav();
   }
 
+  function redirectToGetStarted(e: any) {
+    window.open('https://github.com/Ballroom-Platform/ballroom-backend/blob/m2/Get_Started.md');
+  }
+
   return (
     <ProductHeroLayout
       sxBackground={{
@@ -44,6 +48,7 @@ export default function ProductHero(props:any) {
         component="a"
         sx={{ minWidth: 200, mr:2, ml:2, mt:2 }}
         className='hero-button'
+        onClick={redirectToGetStarted}
       >
         Get Started
       </Button>
