@@ -33,7 +33,7 @@ export const createContest = (axiosPrivate : AxiosInstance, data: FormData, succ
     const headers = {
         "Content-Type": "multipart/form-data",
     };
-    axiosPrivate({url, method, headers, data }).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
+    axiosPrivate({url, method, headers, data }).then((res: AxiosResponse) => successHandler(res)).catch((err) => failHandler(err));
 }
 
 export const addChallenge = (axiosPrivate : AxiosInstance, contestId: string, challengeId: string, successHandler : Function, failHandler : Function)=> {
@@ -49,7 +49,7 @@ export const createChallenge = (axiosPrivate : AxiosInstance, data: FormData, su
     const headers = {
         "Content-Type": "multipart/form-data",
     };
-    axiosPrivate({url, method, headers, data }).then((res: AxiosResponse) => successHandler(res)).catch(() => failHandler());
+    axiosPrivate({url, method, headers, data }).then((res: AxiosResponse) => successHandler(res)).catch((err) => failHandler(err));
 }
 
 export const editChallenge = (axiosPrivate : AxiosInstance, data: FormData, challengeId: string, successHandler : Function, failHandler : Function)=> {
