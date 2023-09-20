@@ -59,7 +59,7 @@ const CreateContest = () => {
         formData.append('startTime', getUTCDateString(startTime!));
         formData.append('endTime', getUTCDateString(endTime!));
         formData.append('moderator', appState.auth.userID!);
-        createContest(axiosIns, formData, (res: any) => {setshowNotification(true); clearAllInputs(); navigateContest();}, (err: any) => console.log("ERROR OCCURED")) 
+        createContest(axiosIns, formData, (res: any) => {setshowNotification(true); clearAllInputs(); navigateContest();}, (err: any) => console.log(err.message)) 
     }
 
     const onReadmeFileChange = (e : any) => {

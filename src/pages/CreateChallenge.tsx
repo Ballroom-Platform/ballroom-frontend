@@ -53,7 +53,7 @@ const CreateChallenge = () => {
         formData.append('title', challengeTitle)
         formData.append('difficulty', challengeDifficulty)
         formData.append('authorId', userId!)
-        createChallenge(axiosIns, formData, (res: any) => {setshowNotification(true); clearAllInputs(); navigateToChallenges();}, (err: any) => console.log("ERROR OCCURED"))
+        createChallenge(axiosIns, formData, (res: any) => {setshowNotification(true); clearAllInputs(); navigateToChallenges();}, (err: any) => console.log(err.message))
     }
 
     const onTestCaseFileChange = (e : any) => {
