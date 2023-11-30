@@ -1,7 +1,7 @@
 export const asgardeoConfig = {
-    signInRedirectURL: "https://localhost:3000/loginHandler",
-    signOutRedirectURL: "https://localhost:3000/",
-    clientID: process.env.REACT_APP_CLIENT_ID!,
-    baseUrl: "https://api.asgardeo.io/t/ballroomhackathon",
+    signInRedirectURL: window.config.signInRedirectURL,
+    signOutRedirectURL: window.config.signOutRedirectURL,
+    clientID: window.config.clientID!,
+    baseUrl: window.config.baseUrl,
     scope: [ "openid","profile" ]
 }
