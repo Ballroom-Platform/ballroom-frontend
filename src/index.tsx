@@ -13,6 +13,16 @@ const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 
+interface Window {
+  config: {
+    signInRedirectURL: string;
+    signOutRedirectURL: string;
+    clientID: string;
+    baseUrl: string;
+    // Add other properties as needed
+  };
+}
+
 const asgardeoConfig = {
   signInRedirectURL: window.config.signInRedirectURL,
   signOutRedirectURL: window.config.signOutRedirectURL,
