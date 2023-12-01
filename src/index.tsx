@@ -8,19 +8,16 @@ import { AuthProvider } from '@asgardeo/auth-react';
 import { defaultTheme } from './themes/default';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import AppContextProvider from './contexts/AppContext';
-
-const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
-);
-
-interface Window {
-  config: {
+interface Config {
     signInRedirectURL: string;
     signOutRedirectURL: string;
     clientID: string;
     baseUrl: string;
-    // Add other properties as needed
   };
+declare global {
+  interface Window {
+    config: Config;
+  }
 }
 
 const asgardeoConfig = {
@@ -31,7 +28,7 @@ const asgardeoConfig = {
   scope: [ "openid","profile" ]
 }
 
-root.render(
+ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <ThemeProvider theme={defaultTheme}>
       <AuthProvider config={asgardeoConfig}>
         <AppContextProvider>
