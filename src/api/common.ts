@@ -34,15 +34,18 @@ export const getAllUsers = (axiosPrivate: AxiosInstance, successHandler : Functi
 }
 
 export const getUserRole = async (userId: string) => {
-    const url = `${BFF_URLS.userService}/users/${userId}/roles`
+    const url = `${BFF_URLS.userService}/users/${userId}/roles`;
     const method = "GET";
     const headers = {
-        "ngrok-skip-browser-warning": true
+        "ngrok-skip-browser-warning": true,
+        "Access-Control-Allow-Origin": "https://2b34f7b5-5b06-4f55-ba18-16bffa3b1bba.e1-us-east-azure.choreoapps.dev"
     };
+
     try {
         const res = await axios({ url, method, headers });
         return res.data.data.role;
-    } catch {
+    } catch (error) {
+        console.error("Error:", error);
         return null;
     }
-}
+};
