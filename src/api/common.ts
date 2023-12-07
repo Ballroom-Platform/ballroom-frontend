@@ -38,7 +38,7 @@ export const getUserRole = async (userId: string) => {
     const method = "GET";
     const headers = {
         "ngrok-skip-browser-warning": true,
-        "Access-Control-Allow-Origin": "https://2b34f7b5-5b06-4f55-ba18-16bffa3b1bba.e1-us-east-azure.choreoapps.dev"
+        "Access-Control-Allow-Origin": "https://2b34f7b5-5b06-4f55-ba18-16bffa3b1bba.e1-us-east-azure.choreoapps.dev",
     };
 
     try {
